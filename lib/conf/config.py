@@ -1,7 +1,6 @@
 import typing as ty
 
 from pydantic import BaseModel
-from starlette.routing import Host
 
 
 class Base(BaseModel): ...

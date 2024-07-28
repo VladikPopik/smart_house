@@ -14,7 +14,7 @@ class dbInstance(metaclass=Singleton):
         )
 
     @contextmanager
-    def session(self) -> ty.Generator:
+    def session(self) -> ty.Any:
         conn = self.engine.connect()
         try:
             yield conn

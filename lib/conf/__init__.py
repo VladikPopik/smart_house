@@ -1,6 +1,6 @@
 from .config_parser import Config
 
-config: Config = Config()
+config: Config | None = Config()
 config.construct(
     "/home/vladikpopik/my_projects/smart_house/backend/smart_house/conf/manager.json"
 )
