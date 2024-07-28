@@ -1,5 +1,5 @@
 import typing as ty
-from sqlalchemy import insert, select, delete, update
+from sqlalchemy import insert, select# delete, update
 from .table import user_table
 from lib.db.db_instance import dbInstance
 

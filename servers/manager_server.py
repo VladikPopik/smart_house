@@ -13,7 +13,7 @@ def __init_uvicorn() -> None:
     def shutdown() -> None:
         dbInstance().close_connection()
 
-    ssl_d: ty.Dict[str, str] = (
+    ssl_d: ty.Dict[ty.Any, ty.Any] = (
         {
             "ssl_keyfile": config.ssl_conn.SSL_KEY,
             "ssl_certfile": config.ssl_conn.SSL_CERT,

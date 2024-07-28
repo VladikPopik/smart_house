@@ -1,6 +1,6 @@
 import typing as ty
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
 class Base(BaseModel): ...

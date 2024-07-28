@@ -2,7 +2,6 @@ import typing as ty
 from contextlib import contextmanager
 
 import sqlalchemy as sa
-from sqlalchemy.orm import Session, sessionmaker
 
 from lib.conf import config
 from lib.utils import Singleton
@@ -15,7 +14,7 @@ class dbInstance(metaclass=Singleton):
         )
 
     @contextmanager
-    def session(self) -> ...:
+    def session(self) -> ty.Generator[sa.Connection]:
         conn = self.engine.connect()
         try:
             yield conn
