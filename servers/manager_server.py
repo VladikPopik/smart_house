@@ -18,7 +18,7 @@ def __init_uvicorn() -> None:
             "ssl_keyfile": config.ssl_conn.SSL_KEY,
             "ssl_certfile": config.ssl_conn.SSL_CERT,
         }
-        if config.SSL_ENABLED()
+        if config.SSL_ENABLED
         else {}
     )
 

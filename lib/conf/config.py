@@ -1,6 +1,7 @@
 import typing as ty
 
 from pydantic import BaseModel
+from starlette.routing import Host
 
 
 class Base(BaseModel): ...
@@ -20,3 +21,9 @@ class SERVICE(Base):
     host: str
     port: int
     log_level: str
+
+
+class JWT(Base):
+    SECRET_KEY: str = "my_secret_key"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
