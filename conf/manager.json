@@ -10,6 +10,6 @@
     "SSL_CERT": "/etc/ssl/certs/ssl-cert-snakeoil.pem"
   },
   "SQL": {
-    "CONNECTION_STRING": "mysql+pymysql://vladik:N0Tweak$_@123!@localhost:3306/my_house"
+    "CONNECTION_STRING": "mysql+pymysql://vladik:'N0Tweak$_@123!'@localhost:3306/my_house"
   }
 }

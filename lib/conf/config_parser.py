@@ -1,18 +1,10 @@
-import typing as ty
 import json
-from typing_extensions import Literal
-
-from lib.utils import Singleton
-from .config import SSL, SQL_CONNECTION, SERVICE
 from pathlib import Path
 
-
-if ty.TYPE_CHECKING:
-    ...
+from .config import SERVICE, SQL_CONNECTION, SSL
 
 
 class Config:
-
     config_file: str | Path = ""
 
     @classmethod
@@ -22,10 +14,10 @@ class Config:
 
     @classmethod
     def parse_config(cls) -> None:
-        with open(cls.config_file, 'r') as cfg:
+        with open(cls.config_file, "r") as cfg:
             data = json.load(cfg)
-        cls.ssl_conn: SSL = SSL(**data['SSL'])
-        cls.sql_conn = SQL_CONNECTION(**data['SQL'])
+        cls.ssl_conn: SSL = SSL(**data["SSL"])
+        cls.sql_conn = SQL_CONNECTION(**data["SQL"])
         cls.service = SERVICE(**data["SERVICE"])
 
     @classmethod
