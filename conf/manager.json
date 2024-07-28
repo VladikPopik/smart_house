@@ -1,0 +1,15 @@
+{
+  "SERVICE": {
+    "host": "127.0.0.1",
+    "port": 8080,
+    "log_level": "info"
+  },
+  "SSL": {
+    "PROTOCOL": "http",
+    "SSL_KEY": "/etc/ssl/private/ssl-cert-snakeoil.key",
+    "SSL_CERT": "/etc/ssl/certs/ssl-cert-snakeoil.pem"
+  },
+  "SQL": {
+    "CONNECTION_STRING": "mysql+pymysql://vladik:N0Tweak$_@123!@localhost:3306/my_house"
+  }
+}
