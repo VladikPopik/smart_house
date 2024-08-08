@@ -14,10 +14,11 @@ class Config(metaclass=Singleton):
     def parse_config(self) -> None:
         with open(self.config_file, "r") as cfg:
             data = json.load(cfg)
-        self.ssl_conn: SSL = SSL(**data["SSL"])
-        self.sql_conn = SQL_CONNECTION(**data["SQL"])
-        self.service = SERVICE(**data["SERVICE"])
-        self.JWT: JWT = JWT(**data["JWT"])
+            
+        self.ssl_conn: SSL = SSL(**data.get("SSL"))
+        self.sql_conn = SQL_CONNECTION(**data.get("SQL"))
+        self.service = SERVICE(**data.get("SERVICE"))
+        self.JWT: JWT = JWT(**data.get("JWT"))
 
     @property
     def SSL_ENABLED(self) -> bool:

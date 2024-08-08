@@ -11,7 +11,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 from lib.manager.auth.schemas import (
     CreateUser,
-    #RegisterUser,
     LoginUser,
     GetToken
 )
@@ -58,7 +57,7 @@ async def register(user: CreateUser) -> ty.Dict[str, ty.Any]:
     user.password = hashed_password
     await u_crud.create_user(user.model_dump(exclude="password"))
     await u_crud.register_user({"user_login": user.user_login, "user_password": user.password})
-    return {"message": "User created", "username": user.user_login}
+    return {"message": "User sucessfully created", "username": user.user_login}
 
 @auth_router.post("/token", response_model=GetToken)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
