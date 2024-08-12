@@ -14,12 +14,9 @@ class dbInstance(metaclass=Singleton):
         )
 
     @contextmanager
-    def session(self) -> ty.Any:
+    def session(self) -> ty.Any: #ty.Generator[sa.Connection | None | None]
         conn = self.engine.connect()
         try:
             yield conn
         except:
             conn.close()
-
-    def close_connection(self) -> None:
-        self.engine.close()

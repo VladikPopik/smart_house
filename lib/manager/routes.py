@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from lib.conf import config
 from lib.manager.auth import auth_router
+from lib.manager.monthly_plan import plan_router
 
 app = FastAPI(openapi_url="/openapi.json", docs_url="/docs")
 
@@ -22,4 +23,10 @@ app.include_router(
     auth_router,
     prefix="/auth",
     tags=["auth"],
+)
+
+app.include_router(
+    plan_router,
+    prefix="/budget",
+    tags=["budget"]
 )
