@@ -10,7 +10,7 @@ class Base(BaseModel):
         cls,
         json_data: str | bytes | bytearray,
         *, strict: bool | None = None,
-        context: ty.Any | None = None) -> ty.Self:
+        context: ty.Any | None = None) -> ty.Self | ty.ByteString:
         if (
             isinstance(json_data, str) or
             isinstance(json_data, bytes)
@@ -26,7 +26,12 @@ class SSL(Base):
 
 
 class SQL_CONNECTION(Base):
-    CONNECTION_STRING: str
+    engine: str
+    user: str
+    password: str
+    host: str
+    port: int
+    db: str
 
 
 class SERVICE(Base):

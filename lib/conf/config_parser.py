@@ -1,4 +1,5 @@
 import json
+import typing as ty
 from pathlib import Path
 
 from .config import JWT, SERVICE, SQL_CONNECTION, SSL

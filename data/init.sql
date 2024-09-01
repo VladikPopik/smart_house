@@ -1,3 +1,7 @@
+CREATE USER IF NOT EXISTS'admin'@'localhost' IDENTIFIED BY 'Admin123!';
+
+GRANT ALL PRIVILEGES ON my_house.* TO 'admin'@'localhost';
+
 CREATE DATABASE IF NOT EXISTS my_house;
 
 use my_house;

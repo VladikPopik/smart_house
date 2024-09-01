@@ -1,7 +1,7 @@
 {
   "SERVICE": {
-    "host": "127.0.0.1",
-    "port": 8000,
+    "host": "0.0.0.0",
+    "port": 8001,
     "log_level": "info"
   },
   "SSL": {
@@ -10,7 +10,12 @@
     "SSL_CERT": "/etc/ssl/certs/ssl-cert-snakeoil.pem"
   },
   "SQL": {
-    "CONNECTION_STRING": "mysql+pymysql://admin:Admin123!@localhost:3306/my_house"
+    "engine": "mysql+pymysql",
+    "user": "root",
+    "password": "admin",
+    "host": "db",
+    "port": 3306,
+    "db": "my_house"
   },
   "JWT": {
     "SECRET_KEY": "my_secret_key",
