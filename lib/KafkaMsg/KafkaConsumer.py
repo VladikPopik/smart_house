@@ -1,12 +1,9 @@
 import typing as ty
+from abc import ABC, abstractmethod
 
 from kafka import KafkaConsumer
 
 
-class KafkaConsumerFactory:
-    @classmethod
-    def create_consumer(cls, *args: ty.Any, **kwargs: ty.Any) -> KafkaConsumer:
-        cls.consumer = KafkaConsumer(*args, **kwargs)
-        return cls.consumer
-    @classmethod
-    def send_msg(cls, msg: str | bytes | dict[ty.Any, ty.Any]): ...
+# class KafkaConsumerFactory(ABC):
+#     @abstractmethod
+#     def create_consumer()

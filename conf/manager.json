@@ -11,8 +11,8 @@
   },
   "SQL": {
     "engine": "mysql+pymysql",
-    "user": "root",
-    "password": "admin",
+    "user": "admin",
+    "password": "Admin123!",
     "host": "db",
     "port": 3306,
     "db": "my_house"
