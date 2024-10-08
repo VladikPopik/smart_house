@@ -24,7 +24,7 @@ class BaseConsumer[T, R](AbstractConsumer[T, R]):
         """Recieve message via kafka."""
         try:
             msg: T = next(self._consumer)
-            msg = self._read_data(msg)
+            msg = self._cast_data(msg)
             return msg
         except Exception as e:
             raise e
@@ -34,7 +34,7 @@ class BaseConsumer[T, R](AbstractConsumer[T, R]):
         self._consumer.subscribe(topics)
         return topics
 
-    def _read_data(self, msg: T) -> R:
+    def _cast_data(self, msg: T) -> R:
         """Cast data for receive method."""
         return msg
 
@@ -64,7 +64,7 @@ class JSONConsumer[
     ]
 ):
     @ty.override
-    def _read_data(self, msg: json_type_alias) -> json_return_type_alias:
+    def _cast_data(self, msg: json_type_alias) -> json_return_type_alias:
         try:
             return json.load(msg)
         except json.JSONDecodeError as e:
@@ -81,7 +81,7 @@ class StrConsumer[
     ]
 ):
     @ty.override
-    def _read_data(self, msg: bytes) -> str:
+    def _cast_data(self, msg: bytes) -> str:
         try:
             return msg.decode("utf-8")
         except UnicodeDecodeError as e:

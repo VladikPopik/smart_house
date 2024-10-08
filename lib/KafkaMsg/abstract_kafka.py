@@ -18,7 +18,7 @@ class AbstractConsumer[T, R](ABC):
         ...
 
     @abstractmethod
-    def _read_data(self, msg: T) -> R:
+    def _cast_data(self, msg: T) -> R:
         """Cast data for receive method."""
         ...
 
