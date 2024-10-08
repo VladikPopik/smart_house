@@ -39,6 +39,3 @@ app.include_router(
     prefix="/mon_ws",
     tags=["mon_ws"], 
 )
-
-test_producer()
-test_consumer()
