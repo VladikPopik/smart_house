@@ -1,5 +1,13 @@
 import typing as ty
 
+from lib.manager.auth.schemas import (
+    CreateUser,
+    LoginUser,
+    GetToken
+)
+
+from lib.db.mysql.user import crud as u_crud
+from lib.conf import config
 import jwt
 from datetime import datetime, timedelta
 
@@ -7,15 +15,8 @@ from fastapi import HTTPException, APIRouter, status, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from passlib.context import CryptContext
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-from lib.manager.auth.schemas import (
-    CreateUser,
-    LoginUser,
-    GetToken
-)
-from lib.db.mysql.user import crud as u_crud
-from lib.conf import config
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 auth_router = APIRouter()
 

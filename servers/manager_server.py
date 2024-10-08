@@ -4,7 +4,6 @@ import typing as ty
 import uvicorn
 
 from lib.conf import config
-from lib.db.db_instance import dbInstance
 from lib.manager.routes import app as rest_app
 
 
@@ -18,11 +17,11 @@ def __init_uvicorn() -> None:
             "ssl_keyfile": config.ssl_conn.SSL_KEY,
             "ssl_certfile": config.ssl_conn.SSL_CERT,
         }
-        if config.SSL_ENABLED
+        if config.ssl_enabled
         else {}
     )
 
-    # TODO: add config and SSL connetion
+    # TODO (VladikPopik): add config and SSL connetion  # noqa: TD003
     uvicorn_config = uvicorn.Config(
         rest_app,
         host=config.service.host,

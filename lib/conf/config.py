@@ -3,7 +3,7 @@ import json
 from pydantic import BaseModel, model_validator
 
 
-class Base(BaseModel): 
+class Base(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def model_validate_json(

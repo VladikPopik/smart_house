@@ -1,4 +1,3 @@
-import datetime
 import uuid
 from sqlalchemy import MetaData, Table, Column, TIMESTAMP, FLOAT, CHAR, String
 
