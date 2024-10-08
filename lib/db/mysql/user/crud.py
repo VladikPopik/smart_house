@@ -6,8 +6,7 @@ from lib.db.db_instance import dbInstance
 async def create_user(user_info: ty.Dict[str, ty.Any]) -> None:
     with dbInstance().session() as session:
         session.execute(insert(user_table).values(**user_info))
-        session.commit()
-
+        
 async def get_user(user_login: str) -> ty.Dict[str, ty.Any]:
     with dbInstance().session() as session:
         user: ty.Dict[ty.Any, ty.Any] = session.execute(
@@ -16,11 +15,9 @@ async def get_user(user_login: str) -> ty.Dict[str, ty.Any]:
                 user_table.c.user_login==user_login
             )
         ).first()
-        session.commit()
-
+        
         return user
 
 async def register_user(login_info: ty.Dict[ty.Any, ty.Any]) -> None:
     with dbInstance().session() as session:
         session.execute(insert(login_table).values(**login_info))
-        session.commit()
