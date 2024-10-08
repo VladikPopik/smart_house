@@ -68,6 +68,7 @@ class JSONConsumer[
         try:
             return json.load(msg)
         except json.JSONDecodeError as e:
+            print(f"{e}")
             raise e
         
 
@@ -85,4 +86,5 @@ class StrConsumer[
         try:
             return msg.decode("utf-8")
         except UnicodeDecodeError as e:
+            print(f"{e}")
             raise e

@@ -17,6 +17,7 @@ class BaseProducer[T, R](AbstractProducer[T, R]):
             value = self._convert_data(value)
             self._producer.send(topic, value, key)
         except Exception as e:
+            print(f"{e}")
             raise e
 
     def close(self, timeout: int) -> bool:
@@ -32,6 +33,7 @@ class BaseProducer[T, R](AbstractProducer[T, R]):
         try:
             yield producer if producer.bootstrap_connected() else None
         except Exception as e:
+            print(f"{e}")
             raise e
 
 json_type_alias: ty.TypeAlias = dict[str, ty.Any] | list[ty.Any]
@@ -48,6 +50,7 @@ class JSONProducer(
         try:
             return json.dump(data)
         except json.JSONDecodeError as e:
+            print(f"{e}")
             raise e
         
 
@@ -61,4 +64,5 @@ class StrProducer(
         try:
             return data.encode()
         except Exception as e:
+            print(f"{e}")
             raise e
