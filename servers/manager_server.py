@@ -35,6 +35,7 @@ def __init_uvicorn() -> None:
 
 
 def main() -> None:
+    """Run backend service."""
     __init_uvicorn()
 
     asyncio.get_event_loop().run_forever()
