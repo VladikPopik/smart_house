@@ -82,11 +82,13 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 
 @auth_router.get("/verify-token/{token}")
-async def verify_user_token(token: str):
+async def verify_user_token(token: str) -> dict[str, str]:
+    """Function to verify token."""
     verify_token(token=token)
     return {"message": "Token is valid"}
 
 
 @auth_router.get("/logout")
-async def logout():
+async def logout() -> ty.Literal[True]:
+    """Logout."""
     return True

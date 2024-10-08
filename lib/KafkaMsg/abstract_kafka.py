@@ -2,7 +2,6 @@ import typing as ty
 
 from abc import ABC, abstractmethod
 
-from kafka import Topic
 
 class AbstractConsumer[T](ABC):
     @abstractmethod

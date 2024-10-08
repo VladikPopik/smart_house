@@ -1,4 +1,3 @@
-import typing as ty
 from contextlib import contextmanager
 import sqlalchemy as sa
 
