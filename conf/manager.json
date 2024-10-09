@@ -10,7 +10,7 @@
     "SSL_CERT": "/etc/ssl/certs/ssl-cert-snakeoil.pem"
   },
   "SQL": {
-    "engine": "mysql+pymysql",
+    "engine": "mysql+aiomysql",
     "user": "admin",
     "password": "Admin123!",
     "host": "db",

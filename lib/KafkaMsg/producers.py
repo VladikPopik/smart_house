@@ -23,11 +23,11 @@ class BaseProducer[T, R](AbstractProducer[T, R]):
     def close(self, timeout: int) -> bool:
         """Close producer."""
         self._producer.close(timeout)
-
+        return True
     def _cast_data(self, data: T) -> R:
         return data
 
-    async def get_producer(self) -> AsyncGenerator[ty.Self, None, None]:
+    async def get_producer(self) -> AsyncGenerator[ty.Self, None]:
         """Context manager to get consumer."""
         producer = self._producer
         try:
@@ -52,7 +52,7 @@ class JSONProducer(
         except json.JSONDecodeError as e:
             print(f"{e}")
             raise e
-        
+
 
 class StrProducer(
     BaseProducer[

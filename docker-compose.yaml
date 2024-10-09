@@ -1,6 +1,6 @@
 services:
   db:
-    build: ../db
+    build: ./db
     environment:
       MYSQL_ROOT_PASSWORD: admin
     ports:

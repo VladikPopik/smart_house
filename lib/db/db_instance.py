@@ -5,7 +5,6 @@ import sqlalchemy as sa
 from lib.conf import config
 from lib.utils import Singleton
 
-from collections.abc import Generator
 
 class DBInstance(metaclass=Singleton):
     def __init__(self) -> None:
@@ -17,16 +16,16 @@ class DBInstance(metaclass=Singleton):
             database=config.sql_conn.db,
             port=config.sql_conn.port
         )
-        self.engine: sa.Engine = sa.create_engine(url=url)
+        self.engine: sa.Engine = sa.create_async_engine(url=url)
 
     @asynccontextmanager
-    def session(self) -> ty.Any:  # ty.Generator[sa.Connection | None | None]
+    def session(self) -> ty.Any:
         conn = self.engine.connect()
         try:
             yield conn
             conn.commit()
         except:
-            raise Exception("Cannot connect to bd")
+            raise Exception("Cannot connect to db")
         finally:
             conn.rollback()
             conn.close()
