@@ -44,3 +44,8 @@ class JWT(Base):
     SECRET_KEY: str = "my_secret_key"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+
+
+class Kafka(Base):
+    bootstrap_server: str = "kafka:9092"
+    

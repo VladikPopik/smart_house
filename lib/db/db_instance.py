@@ -1,8 +1,6 @@
 import typing as ty
-from contextlib import contextmanager
-import abc
+from contextlib import asynccontextmanager
 import sqlalchemy as sa
-from urllib.parse import quote_plus
 
 from lib.conf import config
 from lib.utils import Singleton
@@ -19,12 +17,14 @@ class dbInstance(metaclass=Singleton):
         )
         self.engine: sa.Engine = sa.create_engine(url=url)
 
-    @contextmanager
+    @asynccontextmanager
     def session(self) -> ty.Any:  # ty.Generator[sa.Connection | None | None]
         conn = self.engine.connect()
         try:
             yield conn
+            conn.commit()
         except:
             raise Exception("Cannot connect to bd")
         finally:
+            conn.rollback()
             conn.close()

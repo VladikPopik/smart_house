@@ -4,7 +4,7 @@ import typing as ty
 import uvicorn
 
 from lib.conf import config
-from lib.db.db_instance import dbInstance
+from lib.db import db_instance
 from lib.manager.routes import app as rest_app
 
 

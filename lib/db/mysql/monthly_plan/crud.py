@@ -4,7 +4,7 @@ import uuid
 
 from sqlalchemy import delete, insert, select, update
 
-from lib.db.db_instance import dbInstance
+from lib.db import db_instance
 
 from .table import budget_table
 
@@ -15,7 +15,7 @@ async def create_budget(
     plan_money: float,
     budget_type: str,
 ) -> None:
-    with dbInstance().session() as session:
+    async with db_instance.session() as session:
         session.execute(
             insert(budget_table).values(
                 id=uuid.uuid4(),
@@ -30,7 +30,7 @@ async def create_budget(
 
 
 async def read_budget(uuid: uuid.UUID) -> tuple[ty.Any]:
-    with dbInstance().session() as session:
+    async with db_instance.session() as session:
         budget = session.execute(
             select(budget_table).where(budget_table.c.id == uuid)
         )
@@ -40,7 +40,7 @@ async def read_budget(uuid: uuid.UUID) -> tuple[ty.Any]:
 
 
 async def read_budget_by_start_time(ts_from) -> list[ty.Any]:
-    with dbInstance().session() as session:
+    async with db_instance.session() as session:
         budgets = session.execute(
             select(budget_table).where(budget_table.c.ts_from == ts_from)
         )
@@ -50,7 +50,7 @@ async def read_budget_by_start_time(ts_from) -> list[ty.Any]:
 
 
 async def delete_budget(uuid: uuid.UUID) -> None:
-    with dbInstance().session() as session:
+    async with db_instance.session() as session:
         session.execute(delete(budget_table).where(budget_table.c.id == uuid))
         session.commit()
 
@@ -58,7 +58,7 @@ async def delete_budget(uuid: uuid.UUID) -> None:
 
 
 async def update_budget(uuid, **budget_info: ty.Dict[str, ty.Any]) -> uuid.UUID:
-    with dbInstance().session() as session:
+    async with db_instance.session() as session:
         uuid = session.execute(
             update(budget_table)
             .where(budget_table.c.id == uuid)
@@ -67,3 +67,10 @@ async def update_budget(uuid, **budget_info: ty.Dict[str, ty.Any]) -> uuid.UUID:
         session.commit()
 
     return uuid
+
+async def get_budgets() -> ty.Any:
+    async with db_instance.ession() as session:
+        data = session.execute(
+            select(budget_table)
+        )
+    return data
