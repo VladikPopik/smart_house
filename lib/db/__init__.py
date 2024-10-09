@@ -1,7 +1,7 @@
-from .db_instance import dbInstance
+from .db_instance import DBInstance
 
-db_instance = dbInstance()
+db_instance = DBInstance()
 
 __all__ = [
-    "db_instance"
+    "DBInstance"
 ]

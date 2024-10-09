@@ -7,7 +7,7 @@ from fastapi import APIRouter
 
 plan_router = APIRouter()
 
-#TODO: CREATE PROPER TIMESTAMP FORMAT
+#TODO @VladikPopik: CREATE PROPER TIMESTAMP FORMAT
 @plan_router.post("/budget")
 async def create_budget(
     ts_from: d_time, ts_to: d_time, plan_money: float, budget_type: str
@@ -28,4 +28,4 @@ async def read_budget(
     uuid: uuid.UUID
 ) -> Budget:
     budget = await p_crud.read_budget(uuid=uuid)
-    return budget
+    return Budget(budget)

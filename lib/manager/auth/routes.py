@@ -1,5 +1,13 @@
 import typing as ty
 
+from lib.manager.auth.schemas import (
+    CreateUser,
+    LoginUser,
+    GetToken
+)
+
+from lib.db.mysql.user import crud as u_crud
+from lib.conf import config
 import jwt
 from datetime import datetime, timedelta
 
@@ -7,15 +15,8 @@ from fastapi import HTTPException, APIRouter, status, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from passlib.context import CryptContext
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-from lib.manager.auth.schemas import (
-    CreateUser,
-    LoginUser,
-    GetToken
-)
-from lib.db.mysql.user import crud as u_crud
-from lib.conf import config
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 auth_router = APIRouter()
 
@@ -81,11 +82,13 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 
 @auth_router.get("/verify-token/{token}")
-async def verify_user_token(token: str):
+async def verify_user_token(token: str) -> dict[str, str]:
+    """Function to verify token."""
     verify_token(token=token)
     return {"message": "Token is valid"}
 
 
 @auth_router.get("/logout")
-async def logout():
+async def logout() -> ty.Literal[True]:
+    """Logout."""
     return True

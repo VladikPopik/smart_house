@@ -1,0 +1,83 @@
+[lint]
+select = [
+    "F",
+    "E",
+    "W",
+    "I001",
+    "N",
+    "UP",
+    "YTT",
+    "ASYNC",
+    "S",
+    "BLE",
+    "FBT",
+    "B",
+    "A",
+    "COM",
+    "C4",
+    "DTZ",
+    "T10",
+    "EM",
+    "ISC",
+    "ICN",
+    "G",
+    "INP",
+    "PIE",
+    "T20",
+    "PT",
+    "Q",
+    "RET",
+    "SLF",
+    "SLOT",
+    "SIM",
+    "TID252",
+    "TCH005",
+    "TCH010",
+    "ARG",
+    "TD",
+    "ERA",
+    "PD",
+    "PGH",
+    "PL",
+    "TRY",
+    "FLY",
+    "NPY",
+    "PERF",
+    "LOG",
+    "RUF",
+    "PTH",
+    "D",
+    "ANN",
+]
+ignore = [
+    "D212",
+    "D203",
+    "RSE102",
+    "S101",
+    "ANN101",
+    "ANN102",
+    "COM812",
+    "ISC001",
+    "E501",
+    "D107",
+    "I001",
+    "D101",
+    "D100",
+    "D104"
+]
+
+[lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"**/{tests,docs,tools}/*" = ["E402", "ANN", "D", "S101"]
+
+[lint.isort]
+
+[lint.pydocstyle]
+convention = "google"
+
+[format]
+docstring-code-format = true
+
+[lint.flake8-pytest-style]
+fixture-parentheses = false
+mark-parentheses = false

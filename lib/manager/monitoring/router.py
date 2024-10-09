@@ -14,10 +14,10 @@ async def push_data_monitroing_ws(websocket: WebSocket):
             ttx = await websocket.receive_text()
             print(ttx)
             # Send message to the client
-            resp = {'value': np.random.random(), "time": time.time()}
+            resp = {"value": np.random.random(), "time": time.time()}
             print(resp)
             await websocket.send_json(resp)
             await asyncio.sleep(2)
         except Exception as e:
-            print('error:', e)
+            print("error:", e)
             break

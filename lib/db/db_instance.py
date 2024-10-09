@@ -5,7 +5,9 @@ import sqlalchemy as sa
 from lib.conf import config
 from lib.utils import Singleton
 
-class dbInstance(metaclass=Singleton):
+from collections.abc import Generator
+
+class DBInstance(metaclass=Singleton):
     def __init__(self) -> None:
         url = sa.URL.create(
             config.sql_conn.engine,

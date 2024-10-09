@@ -1,5 +1,4 @@
 import json
-import typing as ty
 from pathlib import Path
 
 from .config import JWT, SERVICE, SQL_CONNECTION, SSL
@@ -13,14 +12,15 @@ class Config(metaclass=Singleton):
             self.config_file = config_file
 
     def parse_config(self) -> None:
-        with open(self.config_file, "r") as cfg:
+        with Path.open(self.config_file) as cfg:
             data = json.load(cfg)
-            
+
         self.ssl_conn: SSL = SSL(**data.get("SSL"))
         self.sql_conn = SQL_CONNECTION(**data.get("SQL"))
         self.service = SERVICE(**data.get("SERVICE"))
         self.JWT: JWT = JWT(**data.get("JWT"))
 
     @property
-    def SSL_ENABLED(self) -> bool:
+    def ssl_enabled(self) -> bool:
+        """Property to verify about ssl certifications."""
         return self.ssl_conn.PROTOCOL == "https"

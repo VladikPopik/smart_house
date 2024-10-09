@@ -26,7 +26,6 @@ async def create_budget(
             )
         )
         session.commit()
-    return
 
 
 async def read_budget(uuid: uuid.UUID) -> tuple[ty.Any]:
@@ -54,7 +53,6 @@ async def delete_budget(uuid: uuid.UUID) -> None:
         session.execute(delete(budget_table).where(budget_table.c.id == uuid))
         session.commit()
 
-    return
 
 
 async def update_budget(uuid, **budget_info: ty.Dict[str, ty.Any]) -> uuid.UUID:

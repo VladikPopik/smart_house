@@ -1,7 +1,6 @@
 # smart_house
-sudo docker run --name my_db -it mysql_db <> command to run mysql db
-sudo docker compose up --build <> run server in /smart_house
+Сервис бэк-энда для системы умного дома (Kafka cluster, zookeeper, fastapi(python3.12), mysql_db)
 
-
-cd /smart_house
-sudo docker compose up
+Чтобы запустить сервис нужно написать \n 
+sudo docker compose up -d \n
+sudo docker ps (Чтобы посмотрень статусы сервисов) \n
