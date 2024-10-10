@@ -1,6 +1,6 @@
-CREATE USER IF NOT EXISTS'admin'@'localhost' IDENTIFIED BY 'Admin123!';
+CREATE USER IF NOT EXISTS'admin'@'%' IDENTIFIED BY 'Admin123!';
 
-GRANT ALL PRIVILEGES ON my_house.* TO 'admin'@'localhost';
+GRANT ALL PRIVILEGES ON my_house.* TO 'admin'@'%';
 
 CREATE DATABASE IF NOT EXISTS my_house;
 
@@ -21,3 +21,9 @@ CREATE TABLE login(
     REFERENCES user(user_login)
     ON DELETE CASCADE
 );
+
+CREATE TABLE alerts(
+    uuid CHAR(64) PRIMARY KEY,
+    data TIMESTAMP NOT NULL,
+    status CHAR(2)
+)

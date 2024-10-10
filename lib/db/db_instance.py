@@ -1,5 +1,5 @@
 import typing as ty
-from contextlib import asynccontextmanager
+from contextlib import contextmanager
 import sqlalchemy as sa
 
 from lib.conf import config
@@ -16,9 +16,9 @@ class DBInstance(metaclass=Singleton):
             database=config.sql_conn.db,
             port=config.sql_conn.port
         )
-        self.engine: sa.Engine = sa.create_async_engine(url=url)
+        self.engine: sa.Engine = sa.create_engine(url=url)
 
-    @asynccontextmanager
+    @contextmanager
     def session(self) -> ty.Any:
         conn = self.engine.connect()
         try:

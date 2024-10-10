@@ -5,7 +5,7 @@ from lib.conf import config
 from lib.manager.auth import auth_router
 from lib.manager.monthly_plan import plan_router
 from lib.manager.monitoring import monitoring_router_ws
-
+from lib.manager.motion import motion_ws_router
 
 app = FastAPI(openapi_url="/openapi.json", docs_url="/docs")
 
@@ -37,4 +37,9 @@ app.include_router(
     monitoring_router_ws,
     prefix="/mon_ws",
     tags=["mon_ws"],
+)
+app.include_router(
+    motion_ws_router,
+    prefix="/motion_ws",
+    tags=["motions_ws"]
 )
