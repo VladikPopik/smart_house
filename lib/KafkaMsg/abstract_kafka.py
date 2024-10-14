@@ -8,7 +8,7 @@ class AbstractConsumer[T, R](ABC):
     """Absctract Factory for Kafka Consumers."""
 
     @abstractmethod
-    def recieve(self, topic: str) -> dict[str, R]:
+    def recieve(self, _topic: str | None = None) -> dict[str, R]:
         """Recieve message via kafka."""
         ...
 

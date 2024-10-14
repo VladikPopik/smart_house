@@ -20,7 +20,7 @@ class BaseConsumer[T, R](AbstractConsumer[T, R]):
             **configs
         )
 
-    def recieve(self, _topic: str) -> dict[str, R]:
+    def recieve(self, _topic: str | None = None) -> dict[str, R]:
         """Recieve message via kafka."""
         try:
             msg: T = next(self._consumer)

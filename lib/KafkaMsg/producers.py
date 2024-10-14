@@ -11,10 +11,10 @@ class BaseProducer[T, R](AbstractProducer[T, R]):
     def __init__(self, **configs: dict[str, ty.Any]) -> None:
         self._producer = KafkaProducer(**configs)
 
-    def send(self, topic: str, value: T, key: str) -> None:
+    def send(self, topic: str, value: T | None=None, key: str | None=None) -> None:
         """Method to send message via kafka."""
         try:
-            value = self._convert_data(value)
+            value = self._cast_data(value)
             self._producer.send(topic, value, key)
         except Exception as e:
             print(f"{e}")

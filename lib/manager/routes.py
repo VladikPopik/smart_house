@@ -43,3 +43,22 @@ app.include_router(
     prefix="/motion_ws",
     tags=["motions_ws"]
 )
+
+from lib.KafkaMsg.producers import StrProducer
+
+configs = {
+    "bootstrap_servers": ["kafka:9092"],
+}
+
+p = StrProducer(**configs)
+p.send("test", "123123123")
+print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SENT")
+
+# from lib.KafkaMsg.consumers import StrConsumer
+
+# configs = {"bootstrap_servers": ["kafka:9092"]}
+# topics = ["test"]
+# c = StrConsumer(*topics, **configs)
+# v = c.recieve()
+# print(f"RECIEVED @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ value {v}")
+
