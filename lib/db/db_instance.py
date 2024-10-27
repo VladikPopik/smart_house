@@ -14,18 +14,20 @@ class DBInstance(metaclass=Singleton):
             password=config.sql_conn.password,
             host=config.sql_conn.host,
             database=config.sql_conn.db,
-            port=config.sql_conn.port
+            port=config.sql_conn.port,
         )
         self.engine: sa.Engine = sa.create_engine(url=url)
 
     @contextmanager
-    def session(self) -> ty.Any:
+    def session(self):
+        """Context manager for db connection."""
         conn = self.engine.connect()
         try:
             yield conn
-            conn.commit()
         except:
+            # TODO <me>: Create logger system
+            conn.rollback()
             raise Exception("Cannot connect to db")
         finally:
-            conn.rollback()
+            conn.commit()
             conn.close()

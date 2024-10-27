@@ -4,6 +4,7 @@ from pathlib import Path
 from .config import JWT, SERVICE, SQL_CONNECTION, SSL
 from lib.utils import Singleton
 
+
 class Config(metaclass=Singleton):
     config_file: str | Path = ""
 

@@ -9,25 +9,24 @@ from contextlib import asynccontextmanager
 
 from kafka import KafkaConsumer
 
+
 class BaseConsumer[T, R](AbstractConsumer[T, R]):
     """Base consumer realization."""
-    def __init__(self,
-    *topics: tuple[ty.Any, ...],
-    **configs: dict[str, ty.Any]
+
+    def __init__(
+        self, *topics: tuple[ty.Any, ...], **configs: dict[str, ty.Any]
     ) -> None:
-        self._consumer = KafkaConsumer(
-            *topics,
-            **configs
-        )
+        self._consumer = KafkaConsumer(*topics, **configs)
 
     def recieve(self, _topic: str | None = None) -> dict[str, R]:
         """Recieve message via kafka."""
         try:
-            msg: T = next(self._consumer)
+            msg: T = next(self._consumer) # pyright: ignore[reportUnknownVariableType]
             msg = self._cast_data(msg)
-            return msg
+
         except Exception as e:
             raise e
+        return msg
 
     def subscribe(self, topics: tuple[str | None]) -> tuple[str | None]:
         """Subscribe to topics in kafka."""
@@ -36,7 +35,7 @@ class BaseConsumer[T, R](AbstractConsumer[T, R]):
 
     def _cast_data(self, msg: T) -> R:
         """Cast data for receive method."""
-        return msg
+        return ty.cast(R, msg)
 
     @asynccontextmanager
     async def get_consumer(self) -> AsyncGenerator[ty.Self | None, None]:
@@ -51,17 +50,13 @@ class BaseConsumer[T, R](AbstractConsumer[T, R]):
         finally:
             consumer.commit()
 
+
 json_type_alias: ty.TypeAlias = dict[str, ty.Any]
 json_return_type_alias: ty.TypeAlias = dict[str, ty.Any] | list[ty.Any]
 
-class JSONConsumer[
-    json_type_alias,
-    json_return_type_alias
-](
-    BaseConsumer[
-        json_type_alias,
-        json_return_type_alias
-    ]
+
+class JSONConsumer[json_type_alias, json_return_type_alias](
+    BaseConsumer[json_type_alias, json_return_type_alias]
 ):
     @ty.override
     def _cast_data(self, msg: json_type_alias) -> json_return_type_alias:
@@ -70,17 +65,9 @@ class JSONConsumer[
         except json.JSONDecodeError as e:
             print(f"{e}")
             raise e
-        
 
-class StrConsumer[
-    bytes,
-    str
-](
-    BaseConsumer[
-        bytes,
-        str
-    ]
-):
+
+class StrConsumer[bytes, str](BaseConsumer[bytes, str]):
     @ty.override
     def _cast_data(self, msg: bytes) -> str:
         try:

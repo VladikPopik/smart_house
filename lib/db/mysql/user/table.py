@@ -1,10 +1,4 @@
-from sqlalchemy import (Boolean,
-    Column,
-    MetaData,
-    String,
-    Table,
-    ForeignKey
-)
+from sqlalchemy import Boolean, Column, MetaData, String, Table, ForeignKey
 
 user_table = Table(
     "user",
@@ -20,6 +14,11 @@ user_table = Table(
 login_table = Table(
     "login",
     MetaData(),
-    Column("user_login", String(100), ForeignKey("users.user_login"), nullable=False),
+    Column(
+        "user_login",
+        String(100),
+        ForeignKey("users.user_login"),
+        nullable=False,
+    ),
     Column("user_password", String(100)),
 )

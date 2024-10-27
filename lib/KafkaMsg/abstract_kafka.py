@@ -23,7 +23,7 @@ class AbstractConsumer[T, R](ABC):
         ...
 
     @abstractmethod
-    async def get_consumer(self) -> AsyncGenerator[ty.Self, None, None]:
+    async def get_consumer(self) -> AsyncGenerator[ty.Self, None]:
         """Context manager to get consumer."""
         ...
 
@@ -45,6 +45,6 @@ class AbstractProducer[T, R](ABC):
         ...
 
     @abstractmethod
-    async def get_producer(self) -> AsyncGenerator[ty.Self, None, None]:
+    async def get_producer(self) -> AsyncGenerator[ty.Self, None]:
         """Context manager to get consumer."""
         ...

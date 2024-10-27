@@ -7,6 +7,7 @@ import base64
 
 motion_ws_router = APIRouter()
 
+
 @motion_ws_router.websocket("/motion_ws")
 async def push_data_motion_ws(websocket: WebSocket):
     await websocket.accept()

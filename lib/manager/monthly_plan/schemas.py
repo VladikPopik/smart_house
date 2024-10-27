@@ -2,6 +2,7 @@ import uuid
 from datetime import time as d_time
 from lib.conf.config import Base
 
+
 class Response(Base):
     code: int
     description: str
@@ -10,6 +11,7 @@ class Response(Base):
 class BudgetResponse(Base):
     status: str
     msg: Response
+
 
 class Budget(Base):
     uuid: uuid.UUID

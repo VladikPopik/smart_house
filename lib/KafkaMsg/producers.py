@@ -7,11 +7,14 @@ from kafka import KafkaProducer
 
 from collections.abc import AsyncGenerator
 
+
 class BaseProducer[T, R](AbstractProducer[T, R]):
     def __init__(self, **configs: dict[str, ty.Any]) -> None:
         self._producer = KafkaProducer(**configs)
 
-    def send(self, topic: str, value: T | None=None, key: str | None=None) -> None:
+    def send(
+        self, topic: str, value: T | None = None, key: str | None = None
+    ) -> None:
         """Method to send message via kafka."""
         try:
             value = self._cast_data(value)
@@ -24,6 +27,7 @@ class BaseProducer[T, R](AbstractProducer[T, R]):
         """Close producer."""
         self._producer.close(timeout)
         return True
+
     def _cast_data(self, data: T) -> R:
         return data
 
@@ -36,15 +40,12 @@ class BaseProducer[T, R](AbstractProducer[T, R]):
             print(f"{e}")
             raise e
 
+
 json_type_alias: ty.TypeAlias = dict[str, ty.Any] | list[ty.Any]
 json_return_type_alias: ty.TypeAlias = dict[str, ty.Any]
 
-class JSONProducer(
-    BaseProducer[
-        json_type_alias,
-        json_return_type_alias
-    ]
-):
+
+class JSONProducer(BaseProducer[json_type_alias, json_return_type_alias]):
     @ty.override
     def _cast_data(self, data: json_type_alias) -> json_return_type_alias:
         try:
@@ -54,11 +55,7 @@ class JSONProducer(
             raise e
 
 
-class StrProducer(
-    BaseProducer[
-        str, bytes
-    ]
-):
+class StrProducer(BaseProducer[str, bytes]):
     @ty.override
     def _cast_data(self, data: str) -> bytes:
         try:

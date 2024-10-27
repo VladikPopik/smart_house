@@ -7,5 +7,5 @@
 
 #     @classmethod
 #     def get(cls):
-#         if cls.__instance is None: 
+#         if cls.__instance is None:
 #             cls.__instance = WebSocket()

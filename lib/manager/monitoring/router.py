@@ -5,6 +5,7 @@ from fastapi import WebSocket, APIRouter
 
 monitoring_router_ws = APIRouter()
 
+
 @monitoring_router_ws.websocket("/monitoring_ws")
 async def push_data_monitroing_ws(websocket: WebSocket):
     await websocket.accept()

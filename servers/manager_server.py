@@ -9,8 +9,7 @@ from lib.manager.routes import app as rest_app
 
 def __init_uvicorn() -> None:
     @rest_app.on_event("shutdown")
-    def shutdown() -> None:
-        ...
+    def shutdown() -> None: ...
 
     ssl_d: ty.Dict[ty.Any, ty.Any] = (
         {

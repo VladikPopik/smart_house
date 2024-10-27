@@ -6,6 +6,8 @@ from lib.manager.auth import auth_router
 from lib.manager.monthly_plan import plan_router
 from lib.manager.monitoring import monitoring_router_ws
 from lib.manager.motion import motion_ws_router
+from lib.manager.settingsd import settings_router
+
 
 app = FastAPI(openapi_url="/openapi.json", docs_url="/docs")
 
@@ -27,32 +29,26 @@ app.include_router(
     tags=["auth"],
 )
 
-app.include_router(
-    plan_router,
-    prefix="/budget",
-    tags=["budget"]
-)
+app.include_router(plan_router, prefix="/budget", tags=["budget"])
 
 app.include_router(
     monitoring_router_ws,
     prefix="/mon_ws",
     tags=["mon_ws"],
 )
-app.include_router(
-    motion_ws_router,
-    prefix="/motion_ws",
-    tags=["motions_ws"]
-)
+app.include_router(motion_ws_router, prefix="/motion_ws", tags=["motions_ws"])
 
-from lib.KafkaMsg.producers import StrProducer
+app.include_router(settings_router, prefix="/settings", tags=["settings"])
 
-configs = {
-    "bootstrap_servers": ["kafka:9092"],
-}
+# from lib.KafkaMsg.producers import StrProducer
 
-p = StrProducer(**configs)
-p.send("test", "123123123")
-print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SENT")
+# configs = {
+#     "bootstrap_servers": ["kafka:9092"],
+# }
+
+# p = StrProducer(**configs)
+# p.send("test", "123123123")
+# print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SENT")
 
 # from lib.KafkaMsg.consumers import StrConsumer
 
@@ -61,4 +57,3 @@ print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SENT")
 # c = StrConsumer(*topics, **configs)
 # v = c.recieve()
 # print(f"RECIEVED @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ value {v}")
-

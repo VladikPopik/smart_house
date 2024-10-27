@@ -15,6 +15,7 @@ async def create_budget(
     plan_money: float,
     budget_type: str,
 ) -> None:
+    """CRUD to create budget."""
     with db_instance.session() as session:
         session.execute(
             insert(budget_table).values(
@@ -46,12 +47,15 @@ async def read_budget_by_start_time(ts_from) -> list[ty.Any]:
 
 
 async def delete_budget(uuid: uuid.UUID) -> None:
+    """CRUD delete for budget."""
     with db_instance.session() as session:
         session.execute(delete(budget_table).where(budget_table.c.id == uuid))
 
 
-
-async def update_budget(uuid, **budget_info: ty.Dict[str, ty.Any]) -> uuid.UUID:
+async def update_budget(
+    uuid: uuid.UUID, **budget_info: ty.Dict[str, ty.Any]
+) -> uuid.UUID:
+    """CRUD update for budget."""
     with db_instance.session() as session:
         uuid = session.execute(
             update(budget_table)
@@ -62,9 +66,9 @@ async def update_budget(uuid, **budget_info: ty.Dict[str, ty.Any]) -> uuid.UUID:
 
     return uuid
 
+
 async def get_budgets() -> ty.Any:
-    with db_instance.ession() as session:
-        data = session.execute(
-            select(budget_table)
-        )
+    """CRUD read for budget."""
+    with db_instance.session() as session:
+        data = session.execute(select(budget_table))
     return data

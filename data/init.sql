@@ -6,7 +6,7 @@ CREATE DATABASE IF NOT EXISTS my_house;
 
 use my_house;
 
-CREATE TABLE user(
+CREATE TABLE  IF NOT EXISTS user(
     user_login VARCHAR(100) PRIMARY KEY, 
     user_name VARCHAR(100), 
     user_email VARCHAR(100),
@@ -14,7 +14,7 @@ CREATE TABLE user(
     is_superuser BOOLEAN
 )
 
-CREATE TABLE login(
+CREATE TABLE IF NOT EXISTS  login(
     user_login VARCHAR(100),
     user_password VARCHAR(100),
     FOREIGN KEY (user_login)
@@ -22,8 +22,14 @@ CREATE TABLE login(
     ON DELETE CASCADE
 );
 
-CREATE TABLE alerts(
+CREATE TABLE IF NOT EXISTS  alerts(
     uuid CHAR(64) PRIMARY KEY,
     data TIMESTAMP NOT NULL,
     status CHAR(2)
+)
+
+CREATE TABLE IF NOT EXISTS  settingsd(
+    device_name CHAR(8) PRIMARY KEY,
+    device_type VARCHAR(100) NOT NULL,
+    voltage FLOAT NOT NULL
 )
