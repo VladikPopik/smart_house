@@ -29,23 +29,27 @@ async def get_all_devices() -> JSONResponse:
         )
 
 @settings_router.get("/device")  # , response_class=GetDevice # pyright: ignore[reportArgumentType]
-async def get_device(device_name: str) -> GetDevice:
+async def get_device(device_name: str) -> JSONResponse:
     """API to get all devices from server."""
     result = await cr.device_read(device_name)
-    return ty.cast(GetDevice, result)
+    return JSONResponse(jsonable_encoder(result), 200)
 
 @settings_router.post("/device") # , response_class=CreateDevice
-async def create_device(params: CreateDevice) -> None:
+async def create_device(params: CreateDevice) -> JSONResponse:
     """API to create device."""
     await cr.create_device(params.model_dump())
+    return JSONResponse(content="OK", status_code=200)
 
 @settings_router.delete("/device") #, response_class=DeleteDevice
-async def device_delete(device_name: str) -> None:
+async def device_delete(device_name: str) -> JSONResponse:
     """API to delete device from server."""
     await cr.device_delete(device_name)
+    return JSONResponse(content="OK", status_code=200)
+
 
 
 @settings_router.patch("/device") # , response_class=UpdateDevice
-async def device_update(device_name: str, params: UpdateDevice) -> str:
+async def device_update(device_name: str, params: UpdateDevice) -> JSONResponse:
     """API to update device by name."""
-    return await cr.device_update(device_name=device_name, params=params.model_dump())
+    result = await cr.device_update(device_name=device_name, params=params.model_dump())
+    return JSONResponse(jsonable_encoder(result), 200)

@@ -1,0 +1,15 @@
+/* .functions_button{
+    position: relative;
+    right:    20px;
+    top:      20px;
+    background-color: #228be6;
+    /* margin: auto; */
+/* } */ 
+
+.function_but{
+    position: absolute;
+    right:    0;
+    left: -100%;
+    top:      50;
+    background-color: #228be6;
+}
