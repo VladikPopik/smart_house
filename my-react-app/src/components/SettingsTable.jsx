@@ -84,7 +84,12 @@ export default function SettingsTable() {
         setData(t_data);
     }
 
-    window.addEventListener('load', fetchData, false);
+    useEffect(() => {
+        fetchData();
+        // setInterval(() => {
+        //     fetchData()
+        // }, 5000)
+    }, [])
 
     // useEffect(() => {
             
