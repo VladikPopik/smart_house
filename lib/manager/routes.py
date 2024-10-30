@@ -12,7 +12,7 @@ from lib.manager.settingsd import settings_router
 app = FastAPI(openapi_url="/openapi.json", docs_url="/docs")
 
 origins = [
-    f"{config.ssl_conn.PROTOCOL}://127.0.34.15",
+    f"{config.ssl_conn.PROTOCOL}://localhost:5173",
 ]
 
 app.add_middleware(
@@ -39,21 +39,3 @@ app.include_router(
 app.include_router(motion_ws_router, prefix="/motion_ws", tags=["motions_ws"])
 
 app.include_router(settings_router, prefix="/settings", tags=["settings"])
-
-# from lib.KafkaMsg.producers import StrProducer
-
-# configs = {
-#     "bootstrap_servers": ["kafka:9092"],
-# }
-
-# p = StrProducer(**configs)
-# p.send("test", "123123123")
-# print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SENT")
-
-# from lib.KafkaMsg.consumers import StrConsumer
-
-# configs = {"bootstrap_servers": ["kafka:9092"]}
-# topics = ["test"]
-# c = StrConsumer(*topics, **configs)
-# v = c.recieve()
-# print(f"RECIEVED @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ value {v}")

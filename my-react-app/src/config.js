@@ -1,7 +1,7 @@
 const config = {
-    "port": "80/api", 
-    "protocol": "http", 
-    "host": "127.0.34.15"
+    "port": 8001,
+    "protocol": "http",
+    "host": "127.0.0.1"
 }
 
 export default config
