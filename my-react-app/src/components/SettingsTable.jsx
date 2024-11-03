@@ -241,16 +241,7 @@ export default function SettingsTable() {
                                     </Dialog>
                                 </Fragment>
                             </TableCell>
-                        </TableRow>
-                    </TableHead>
-                <TableBody>
-                    {data?.map( (item, index) => (
-                    <TableRow key={index}>
-                        <TableCell>{item.device_name}</TableCell>
-                        <TableCell>{item.voltage}</TableCell>
-                        <TableCell>{item.device_type}</TableCell>
-                        <TableCell>{item.pin}</TableCell>
-                        <TableCell>
+                            <TableCell>
                             <Fragment>
                                 <Button variant="outlined" onClick={handleClickUpdateOpen}>
                                     <CreateIcon>
@@ -332,6 +323,15 @@ export default function SettingsTable() {
                                 </Dialog>
                             </Fragment>
                         </TableCell>
+                        </TableRow>
+                    </TableHead>
+                <TableBody>
+                    {data?.map( (item, index) => (
+                    <TableRow key={index}>
+                        <TableCell>{item.device_name}</TableCell>
+                        <TableCell>{item.voltage}</TableCell>
+                        <TableCell>{item.device_type}</TableCell>
+                        <TableCell>{item.pin}</TableCell>
                         <TableCell>
                             <Button onClick={() => handleDeleteDevice(item.device_name)}> 
                                 <DeleteIcon>

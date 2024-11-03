@@ -17,7 +17,11 @@ class Capture:
         if not self.cam.isOpened():
             self.cam = VideoCapture(1)
 
-        result, img = self.cam.read()
+        if self.cam.isOpened():
+            result, img = self.cam.read()
+        else:
+            result = False
+            t = False
 
         if result:
             uuid = uuid4()
@@ -27,6 +31,5 @@ class Capture:
             self.uuids.append(uuid)
             destroyAllWindows()
             self.cam.release()
-            return result and t
 
-        raise ValueError(self.error)
+        return result or t

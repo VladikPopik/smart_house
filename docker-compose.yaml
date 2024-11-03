@@ -40,6 +40,11 @@ services:
     build: ./raspberry_server
     ports:
       - "8080:8080"
+    devices:
+      - '/dev/video0:/dev/video0'
+    # volumes:
+    #   - data:/data
+
 
   # frontend:
   #   build:
