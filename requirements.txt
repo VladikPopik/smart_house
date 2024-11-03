@@ -37,8 +37,9 @@ jsonschema-specifications==2024.10.1
 jupyter_client==8.6.3
 jupyter_core==5.7.2
 jupyterlab_pygments==0.3.0
-kafka-python==2.0.2
-kafka-python-ng==2.2.2
+# kafka-python==2.0.2
+# kafka-python-ng==2.2.2
+aiokafka==0.12.0
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 matplotlib-inline==0.1.7
@@ -101,3 +102,6 @@ wcwidth==0.2.13
 webencodings==0.5.1
 websockets==12.0
 yarg==0.1.9
+dht11==0.1.0
+opencv-python==4.10.0.84
+RPi.GPIO==0.7.1

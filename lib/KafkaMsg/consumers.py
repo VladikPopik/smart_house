@@ -7,31 +7,34 @@ from .abstract_kafka import AbstractConsumer
 
 from contextlib import asynccontextmanager
 
-from kafka import KafkaConsumer
+from aiokafka import AIOKafkaConsumer
+
+from .configs import config_consumer
 
 
 class BaseConsumer[T, R](AbstractConsumer[T, R]):
     """Base consumer realization."""
 
     def __init__(
-        self, *topics: tuple[ty.Any, ...], **configs: dict[str, ty.Any]
+        self, *topics: tuple[ty.Any, ...], _configs: dict[str, ty.Any]=config_consumer
     ) -> None:
-        self._consumer = KafkaConsumer(*topics, **configs)
+        self._consumer = AIOKafkaConsumer(*topics, **_configs)
 
-    def recieve(self, _topic: str | None = None) -> dict[str, R]:
+    async def recieve(self, _topic: str | None = None) -> dict[str, R]:
         """Recieve message via kafka."""
+        data: dict[str, R] = {}
+        consumer = self._consumer
         try:
-            msg: T = next(self._consumer) # pyright: ignore[reportUnknownVariableType]
-            msg = self._cast_data(msg)
-
+            await self.subscribe()
+            msg = await consumer.getone()
+            data[msg.key] = self._cast_data(msg.value) # pyright: ignore[reportArgumentType]
         except Exception as e:
-            raise e
-        return msg
+            print(e)
+        return data
 
-    def subscribe(self, topics: tuple[str | None]) -> tuple[str | None]:
+    async def subscribe(self) -> None:
         """Subscribe to topics in kafka."""
-        self._consumer.subscribe(topics)
-        return topics
+        await self._consumer.start() # pyright: ignore[reportGeneralTypeIssues]
 
     def _cast_data(self, msg: T) -> R:
         """Cast data for receive method."""
@@ -40,16 +43,13 @@ class BaseConsumer[T, R](AbstractConsumer[T, R]):
     @asynccontextmanager
     async def get_consumer(self) -> AsyncGenerator[ty.Self | None, None]:
         """Base consumer async context manager."""
-        consumer = self._consumer
         try:
-            yield consumer if consumer.bootstrap_connected() else None
+            yield self
         except Exception as e:
-            consumer.close()
-            consumer.unsubscribe()
-            raise e
+            print(e)
         finally:
-            consumer.commit()
-
+            await self._consumer.commit()
+            await self._consumer.stop()
 
 json_type_alias: ty.TypeAlias = dict[str, ty.Any]
 json_return_type_alias: ty.TypeAlias = dict[str, ty.Any] | list[ty.Any]
@@ -61,7 +61,7 @@ class JSONConsumer[json_type_alias, json_return_type_alias](
     @ty.override
     def _cast_data(self, msg: json_type_alias) -> json_return_type_alias:
         try:
-            return json.load(msg)
+            return json.load(msg) # pyright: ignore[reportArgumentType]
         except json.JSONDecodeError as e:
             print(f"{e}")
             raise e
@@ -70,8 +70,9 @@ class JSONConsumer[json_type_alias, json_return_type_alias](
 class StrConsumer[bytes, str](BaseConsumer[bytes, str]):
     @ty.override
     def _cast_data(self, msg: bytes) -> str:
+        data: str = "" # pyright: ignore[reportAssignmentType]
         try:
-            return msg.decode("utf-8")
+            data = msg.decode("utf-8") # pyright: ignore[reportAttributeAccessIssue]
         except UnicodeDecodeError as e:
             print(f"{e}")
-            raise e
+        return data

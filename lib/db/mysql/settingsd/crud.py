@@ -9,7 +9,7 @@ from lib.db import db_instance
 
 async def create_device[T](params: dict[str, T]) -> None:
     """Create function for device table."""
-    with db_instance.session() as session:  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType, reportAttributeAccessIssue]
+    with db_instance.session() as session:
         session.execute(insert(settingsd_table).values(**params))
 
 
@@ -36,11 +36,11 @@ async def device_delete(device_name: str) -> None:
             delete(settingsd_table).where(
                 settingsd_table.c.device_name == device_name
             )
-        ).mappings().fetchone()
+        )
 
 
 async def device_update[T](device_name: str, params: dict[str, T]) -> str:
-    """Update row for deivce table."""
+    """Update row for device table."""
     with db_instance.session() as session:
         session.execute(
             update(settingsd_table)

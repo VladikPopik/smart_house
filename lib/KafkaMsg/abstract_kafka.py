@@ -8,12 +8,12 @@ class AbstractConsumer[T, R](ABC):
     """Absctract Factory for Kafka Consumers."""
 
     @abstractmethod
-    def recieve(self, _topic: str | None = None) -> dict[str, R]:
+    async def recieve(self, _topic: str | None = None) -> dict[str, R]:
         """Recieve message via kafka."""
         ...
 
     @abstractmethod
-    def subscribe(self, topics: tuple[str | None]) -> tuple[str | None]:
+    async def subscribe(self, topics: tuple[str | None]) -> tuple[str | None]:
         """Subscribe to topics in kafka."""
         ...
 
@@ -30,12 +30,12 @@ class AbstractConsumer[T, R](ABC):
 
 class AbstractProducer[T, R](ABC):
     @abstractmethod
-    def send(self, topic: tuple[str, ...], value: T, key: str) -> None:
+    async def send(self, topic: tuple[str, ...], value: T, key: str) -> None:
         """Method to send message via kafka."""
         ...
 
     @abstractmethod
-    def close(self, timeout: int) -> bool:
+    async def close(self, timeout: int) -> bool:
         """Close producer."""
         ...
 

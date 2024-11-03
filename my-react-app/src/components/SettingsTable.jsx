@@ -2,6 +2,7 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 import config from "../config";
 import { useEffect, useState, Fragment } from "react";
@@ -35,28 +36,65 @@ async function ReadAllDevices() {
 
 async function CreateDevice(props) {
     try {
-        const formDetails = new URLSearchParams();
-        
-        // {props.map( (item, index) => (
-        //     formDetails.append(item)    
-        // ))}
-        
-        formDetails.append("device_name", props.device_name)
-        formDetails.append("device_type", props.device_type)
-        formDetails.append("voltage", props.voltage)
-        formDetails.append("pin", props.pin)
-
         const response = await fetch(
             `${config.protocol}://${config.host}:${config.port}/settings/device`, {
                 method: "POST",
-                body: formDetails
-                // body: JSON.stringify({"device_name": props.device_name, "device_type": props.device_type, "voltage": props.voltage, "pin": props.pin})
+                // body: formDetails
+                body: JSON.stringify(
+                    {
+                        "device_name": props.device_name,
+                        "device_type": props.device_type,
+                        "voltage": props.voltage, 
+                        "pin": props.pin
+                    }
+                )
             }
         );
         if (!response.ok) {
           throw new Error('Cannot add devices to server');
         }
+        return response
 
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+async function UpdateDevice(props){
+    try {
+        const response = await fetch(
+            `${config.protocol}://${config.host}:${config.port}/settings/device`, {
+                method: "PATCH",
+                body: JSON.stringify(
+                    {
+                        "device_name": props.device_name,
+                        "device_type": props.device_type,
+                        "voltage": props.voltage, 
+                        "pin": props.pin
+                    }
+                )
+            }
+        );
+        if (!response.ok) {
+          throw new Error('Cannot add devices to server');
+        }
+        return response
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+async function DeleteDevice(device_name){
+    try {
+        const response = await fetch(
+            `${config.protocol}://${config.host}:${config.port}/settings/device?device_name=${device_name}`, {
+                method: "DELETE",
+            }
+        );
+        if (!response.ok) {
+          throw new Error('Cannot delete device from server');
+        }
         return response
 
     } catch (error) {
@@ -65,16 +103,29 @@ async function CreateDevice(props) {
 }
 
 export default function SettingsTable() {
-
+    const [toReload, setToReload] = useState(false);
     const [open, setOpen] = useState(false);
+    const [updateOpen, SetUpdateOpen] = useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);
     };
 
+    const handleDeleteDevice = async (device_name) => {
+        await DeleteDevice(device_name);
+    };
+
     const handleClose = () => {
         setOpen(false);
     };
+
+    const handleClickUpdateOpen = () => {
+        SetUpdateOpen(true);
+    };
+
+    const handleCloseUpdate = () => {
+        SetUpdateOpen(false);
+    }
 
     const [data, setData] = useState([]);
 
@@ -86,34 +137,29 @@ export default function SettingsTable() {
 
     useEffect(() => {
         fetchData();
-        // setInterval(() => {
-        //     fetchData()
-        // }, 5000)
-    }, [])
-
-    // useEffect(() => {
-            
-    //     }
-    // )
-
-
+    }, [toReload])
 
     return (
         <div>
             <TableContainer component={Paper}>
                 <Table>
-                    <TableHead>
-                        <TableRow sx={{display: "flex", alignContent: "center"}}>
+                    <TableHead sx={{}}>
+                        <TableRow sx={{display: "flex", alignContent: "center", justifyContent: "center"}}>
+                        </TableRow>
+                        <TableRow>
                             <TableCell>
-                                {/* <Button>
-                                    <AddIcon>
-                                    </AddIcon>
-                                </Button>
-                                <Button>
-                                    <CreateIcon>
-                                        
-                                    </CreateIcon>
-                                </Button> */}
+                                Device name
+                            </TableCell>
+                            <TableCell>
+                                Voltage (V)
+                            </TableCell>
+                            <TableCell>
+                                DeviceType
+                            </TableCell>
+                            <TableCell>
+                                Pin Number
+                            </TableCell>
+                            <TableCell sx={{position: "relative", top: 0, right: 5}}>
                                 <Fragment>
                                     <Button variant="outlined" onClick={handleClickOpen}>
                                         <AddIcon>
@@ -193,21 +239,7 @@ export default function SettingsTable() {
                                         <Button type="submit">Add</Button>
                                         </DialogActions>
                                     </Dialog>
-                                    </Fragment>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>
-                                Device name
-                            </TableCell>
-                            <TableCell>
-                                Voltage (V)
-                            </TableCell>
-                            <TableCell>
-                                DeviceType
-                            </TableCell>
-                            <TableCell>
-                                Pin Number
+                                </Fragment>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -215,9 +247,97 @@ export default function SettingsTable() {
                     {data?.map( (item, index) => (
                     <TableRow key={index}>
                         <TableCell>{item.device_name}</TableCell>
-                        <TableCell>{item.device_type}</TableCell>
                         <TableCell>{item.voltage}</TableCell>
+                        <TableCell>{item.device_type}</TableCell>
                         <TableCell>{item.pin}</TableCell>
+                        <TableCell>
+                            <Fragment>
+                                <Button variant="outlined" onClick={handleClickUpdateOpen}>
+                                    <CreateIcon>
+                                        Create device
+                                    </CreateIcon>
+                                </Button>
+                                <Dialog
+                                    open={updateOpen}
+                                    onClose={handleClose}
+                                    PaperProps={{
+                                    component: 'form',
+                                    onSubmit: (event) => {
+                                        event.preventDefault();
+                                        const formData = new FormData(event.currentTarget);
+                                        const formJson = Object.fromEntries(formData.entries());
+                                        const create_device_t = async (props) => {
+                                            const response = await UpdateDevice(props);
+                                        }
+                                        create_device_t(formJson);
+                                        handleCloseUpdate();
+                                    },
+                                    }}
+                                >
+                                    <DialogTitle>Create Device</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>
+                                        Please fill fields to add device to your system. 
+                                        Be aware that you have to check if pins are the same.
+                                        </DialogContentText>
+                                        <TextField
+                                            autoFocus
+                                            required
+                                            margin="dense"
+                                            id="device_name"
+                                            name="device_name"
+                                            label="Device Name (8 chars)"
+                                            type="string"
+                                            fullWidth
+                                            variant="standard"
+                                        />
+                                        <TextField
+                                            autoFocus
+                                            required
+                                            margin="dense"
+                                            id="device_type"
+                                            name="device_type"
+                                            label="Device Type"
+                                            type="string"
+                                            fullWidth
+                                            variant="standard"
+                                        />
+                                        <TextField
+                                            autoFocus
+                                            required
+                                            margin="dense"
+                                            id="voltage"
+                                            name="voltage"
+                                            label="Device Voltage"
+                                            type="float"
+                                            fullWidth
+                                            variant="standard"
+                                        />
+                                        <TextField
+                                            autoFocus
+                                            required
+                                            margin="dense"
+                                            id="pin"
+                                            name="pin"
+                                            label="Device PIN number"
+                                            type="number"
+                                            fullWidth
+                                            variant="standard"
+                                        />
+                                    </DialogContent>
+                                    <DialogActions>
+                                    <Button onClick={handleCloseUpdate}>Cancel</Button>
+                                    <Button type="submit">Add</Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </Fragment>
+                        </TableCell>
+                        <TableCell>
+                            <Button onClick={() => handleDeleteDevice(item.device_name)}> 
+                                <DeleteIcon>
+                                </DeleteIcon>
+                            </Button>
+                        </TableCell>
                     </TableRow>))}
                 </TableBody>
                 </Table>

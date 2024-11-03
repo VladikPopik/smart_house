@@ -1,1 +1,2 @@
-rasp-env/
+/rasp-env
+__pycache__

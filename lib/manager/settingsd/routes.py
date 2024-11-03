@@ -16,7 +16,7 @@ from fastapi.encoders import jsonable_encoder
 settings_router = APIRouter()
 
 
-@settings_router.get("/devices", response_class=JSONResponse)  # , response_class=GetDevices # pyright: ignore[reportArgumentType]
+@settings_router.get("/devices", response_class=JSONResponse)
 async def get_all_devices() -> JSONResponse:
     """API to get all devices from server."""
     try:
@@ -28,19 +28,19 @@ async def get_all_devices() -> JSONResponse:
             detail=e
         )
 
-@settings_router.get("/device")  # , response_class=GetDevice # pyright: ignore[reportArgumentType]
+@settings_router.get("/device")
 async def get_device(device_name: str) -> JSONResponse:
     """API to get all devices from server."""
     result = await cr.device_read(device_name)
     return JSONResponse(jsonable_encoder(result), 200)
 
-@settings_router.post("/device") # , response_class=CreateDevice
+@settings_router.post("/device")
 async def create_device(params: CreateDevice) -> JSONResponse:
     """API to create device."""
     await cr.create_device(params.model_dump())
     return JSONResponse(content="OK", status_code=200)
 
-@settings_router.delete("/device") #, response_class=DeleteDevice
+@settings_router.delete("/device")
 async def device_delete(device_name: str) -> JSONResponse:
     """API to delete device from server."""
     await cr.device_delete(device_name)
@@ -48,8 +48,8 @@ async def device_delete(device_name: str) -> JSONResponse:
 
 
 
-@settings_router.patch("/device") # , response_class=UpdateDevice
-async def device_update(device_name: str, params: UpdateDevice) -> JSONResponse:
+@settings_router.patch("/device")
+async def device_update(params: UpdateDevice) -> JSONResponse:
     """API to update device by name."""
-    result = await cr.device_update(device_name=device_name, params=params.model_dump())
+    result = await cr.device_update(device_name=params.device_name, params=params.model_dump(exclude={"device_name"}))
     return JSONResponse(jsonable_encoder(result), 200)
