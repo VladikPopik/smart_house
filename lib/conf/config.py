@@ -45,5 +45,10 @@ class JWT(Base):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
 
+class Origins(Base):
+    host: str = "localhost"
+    port: int = 5173
+
+
 class Kafka(Base):
     bootstrap_server: str = "kafka:9092"
