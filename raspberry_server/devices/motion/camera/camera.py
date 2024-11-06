@@ -1,22 +1,23 @@
 from uuid import UUID, uuid4
 from pathlib import Path
 from cv2 import VideoCapture, destroyAllWindows, imwrite
+from raspberry_server.utils import Singleton
 
-
-class Capture:
+class Capture(Singleton):
     error: str = "Couldnt open camera port"
 
     def __init__(self, camport: int = 0) -> None:
+        super()
         self.uuid: UUID = uuid4()
         self.camport = camport
         self.uuids: list[UUID] = []
 
-    def capture_camera(self) -> bool:
-        """Function to capture camera with opencv."""
         self.cam = VideoCapture(self.camport)
         if not self.cam.isOpened():
             self.cam = VideoCapture(1)
 
+    def capture_camera(self) -> bool:
+        """Function to capture camera with opencv."""
         if self.cam.isOpened():
             result, img = self.cam.read()
         else:
@@ -29,7 +30,7 @@ class Capture:
             t = imwrite(file_path, img)
             print(f"Is image saved? {t}, image uuid: {uuid}")
             self.uuids.append(uuid)
-            destroyAllWindows()
-            self.cam.release()
+        destroyAllWindows()
+        self.cam.release()
 
         return result or t

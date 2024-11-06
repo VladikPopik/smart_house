@@ -6,7 +6,7 @@ import { Box, Grid } from "@mui/material";
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { BarChart } from "@mui/x-charts";
 
-export default function MonitoringCharts (isControl, message) { 
+export default function MonitoringCharts () { 
     const [data, setData] = useState([0]);
     let newdt = (+new Date())/1000;
     const [timings, setTime] = useState([newdt]);
@@ -42,7 +42,7 @@ export default function MonitoringCharts (isControl, message) {
         return () => {
             websocket.close();
         }
-    }, [isControl, message]);
+    }, []);
     const t_result = timings.slice(timings.length - 30, -1)
     const result  = data.slice(data.length - 30, -1);
     let gauge_coefficient = result.slice(-2, -1);

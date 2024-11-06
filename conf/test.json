@@ -1,7 +1,29 @@
 {
-"engine": "mysql+pymysql",
-"user": "admin",
-"password": "Admin123!",
-"host": "db",
-"port": 3306,
-"db": "my_house"}
+    "SERVICE": {
+      "host": "127.0.0.1",
+      "port": 8001,
+      "log_level": "info"
+    },
+    "SSL": {
+      "PROTOCOL": "http",
+      "SSL_KEY": "/etc/ssl/private/ssl-cert-snakeoil.key",
+      "SSL_CERT": "/etc/ssl/certs/ssl-cert-snakeoil.pem"
+    },
+    "SQL": {
+      "engine": "mysql+pymysql",
+      "user": "root",
+      "password": "admin",
+      "host": "127.0.0.1",
+      "port": 3306,
+      "db": "my_house"
+    },
+    "JWT": {
+      "SECRET_KEY": "my_secret_key",
+      "ALGORITHM": "HS256",
+      "ACCESS_TOKEN_EXPIRE_MINUTES": 60
+    },
+    "Kafka": {
+      "bootstrap_servers": "kafka:9092"
+    }
+  }
+  
