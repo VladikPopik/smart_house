@@ -1,7 +1,14 @@
 import json
 from pathlib import Path
 
-from .config import JWT, SERVICE, SQL_CONNECTION, SSL, Kafka
+from .config import (
+    JWT, 
+    SERVICE, 
+    SQL_CONNECTION, 
+    SSL, 
+    Kafka,
+    Origins
+)
 from lib.utils import Singleton
 
 
@@ -21,7 +28,8 @@ class Config(metaclass=Singleton):
         self.service = SERVICE(**data.get("SERVICE"))
         self.JWT: JWT = JWT(**data.get("JWT"))
         self.Kafka = Kafka(**data.get("Kafka"))
-
+        self.origins = Origins(**data.get("Origins"))
+        
     @property
     def ssl_enabled(self) -> bool:
         """Property to verify about ssl certifications."""
