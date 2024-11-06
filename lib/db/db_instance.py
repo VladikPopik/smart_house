@@ -1,4 +1,3 @@
-import typing as ty
 from contextlib import contextmanager
 import sqlalchemy as sa
 
@@ -19,12 +18,12 @@ class DBInstance(metaclass=Singleton):
         self.engine: sa.Engine = sa.create_engine(url=url)
 
     @contextmanager
-    def session(self):
+    def session(self):  # noqa: ANN201
         """Context manager for db connection."""
         conn = self.engine.connect()
         try:
             yield conn
-        except:
+        except:  # noqa: E722
             # TODO <me>: Create logger system
             conn.rollback()
             raise Exception("Cannot connect to db")

@@ -18,8 +18,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 
 
-
-
 export default function DrawerComponent () {
 
     const navigate = useNavigate();

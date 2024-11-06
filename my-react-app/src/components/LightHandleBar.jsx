@@ -2,7 +2,6 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
 import { useState } from 'react';
-// import { color } from '@mui/system';
 import Slider from '@mui/material/Slider';
 
 export default function LightHandleBar() {
@@ -27,18 +26,9 @@ export default function LightHandleBar() {
                 'time': time 
             }), 
             }) 
-            
-            // if (response.ok){
-            //     // setError("An error occured while trying to use diodes")
-            // }
-
         } catch(error){
             setError('An error occured while trying to use diodes')
         }
-
-        // const timer = setTimeout(() => console.log('Initial timeout!'), time);
-        // clearTimeout(timer);
-
     }
 
 
@@ -53,8 +43,6 @@ export default function LightHandleBar() {
             display: "flex"
         }}
         >
-
-        {/* <ButtonGroup variant="outlined" aria-label="Basic button group" sx={{height: "100%", width: "100%"}}> */}
             <Button 
             sx={
                 {color: "white",
@@ -95,7 +83,6 @@ export default function LightHandleBar() {
             >
                 <EmojiObjectsIcon />
             </Button>
-        {/* </ButtonGroup> */}
         </Box>
         <Slider
                 size="small"

@@ -8,7 +8,7 @@ monitoring_router_ws = APIRouter()
 
 @monitoring_router_ws.websocket("/monitoring_ws")
 async def push_data_monitroing_ws(websocket: WebSocket) -> None:
-    """WebSocket for monitroing data."""
+    """WebSocket for monitoring data."""
     await websocket.accept()
     while True:
         try:

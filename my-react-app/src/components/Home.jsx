@@ -1,8 +1,6 @@
 import  { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import config from '../config';
-// import Logout from '../Logout';
-// import MyFunctions from '../components/MyFunctions';
 
 function Home() {
     const navigate = useNavigate();

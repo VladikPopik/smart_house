@@ -1,7 +1,4 @@
-// import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-// import MyFunctions from './MyFunctions';
-// import { Button } from '@mui/material';
 
 function Logout () {
   const navigate = useNavigate();

@@ -16,7 +16,6 @@ export default function MyFunctionsPage() {
         navigate("/calendarplan")
     };
 
-    // const handle
 
     return (
         <body>

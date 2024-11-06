@@ -2,7 +2,6 @@ import  { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import '../login.css';
 import config from '../config';
-// import Register from './Register';
 
 function Login() {
   const [username, setUsername] = useState('');

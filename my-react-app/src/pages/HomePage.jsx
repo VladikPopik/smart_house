@@ -2,8 +2,6 @@
 import '../fullscreen.css';
 import '../logout.css';
 import Home from '../components/Home';
-// import Logout from '../Logout';
-// import * as React from 'react';
 
 import CardHome from '../components/CardHome';
 import AppBarComponent from '../components/AppBarComponent';

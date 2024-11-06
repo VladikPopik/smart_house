@@ -35,7 +35,6 @@ export default function MotionPage() {
     return (
         <div>
             <AppBarComponent />
-            {/* <iframe src='${config.protocol}://127.0.0.1:8000/motion/' className='full_screen'></iframe> */}
             <Motion />
             <IconButton variant="contained" sx={{zIndex: 999999, position: 'absolute', top: 10, right: "95%", height: "300", color: "white"}} onClick={() => handleImitate()}>
                 <SendIcon/>

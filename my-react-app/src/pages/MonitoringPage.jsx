@@ -9,7 +9,6 @@ export default function MonitoringPage() {
             <AppBarComponent/>
             <Monitoring />
             <MonitoringCharts />
-            {/* <iframe src='${config.protocol}://127.0.0.1:8000/monitoring' className='full_screen'></iframe> */}
         </body>
     );
 }

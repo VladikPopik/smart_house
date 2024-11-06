@@ -21,6 +21,4 @@ export default function Help() {
         };
         verifyToken();
       }, [navigate]);
-
-      
 }

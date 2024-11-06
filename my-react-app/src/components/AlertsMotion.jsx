@@ -9,7 +9,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import InfoIcon from '@mui/icons-material/Info';
 import ImageListItem from '@mui/material/ImageListItem';
 
-export default function AlertStack () {
+export default function AlertStack (message="motion") {
     var stack_len = 0;
 
     const URL_WEB_LOGIN = `ws://${config.host}:${config.port}/motion_ws/motion_ws` 
@@ -38,10 +38,10 @@ export default function AlertStack () {
         }
 
         websocket.onopen = () => {
-            websocket.send("Handshake");
+            websocket.send(message);
         }
         return () => {
-            websocket.close();
+            websocket.close(1000, message+"over");
         }
     }, []);
 

@@ -7,7 +7,6 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
 import { Button } from '@mui/material';
 import DrawerComponent from "./DrawerComponent";
-// import AlertMotion from "./AlertMotion";
 
 export default function AppBarComponent(){
     return(
@@ -21,7 +20,6 @@ export default function AppBarComponent(){
                         <DrawerComponent />
                     </Toolbar>
                 </AppBar>
-                {/* <AlertMotion/> */}
             </Box>
         </div>
     )
