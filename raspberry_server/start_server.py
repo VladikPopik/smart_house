@@ -118,7 +118,7 @@ if __name__ == "__main__":
                     main(devices_, connected_devices, executor)
                 )
                 final_result.append(result)
-                time.sleep(5)
+                time.sleep(60)
                 print(final_result)  # noqa: T201
             except Exception as e:  # noqa: BLE001, PERF203
                 print(f"{e}") # noqa: T201

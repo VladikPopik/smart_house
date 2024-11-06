@@ -9,16 +9,16 @@ from contextlib import asynccontextmanager
 
 from aiokafka import AIOKafkaConsumer
 
-from .configs import config_consumer
+from lib.conf import config, Config
 
 
 class BaseConsumer[T, R](AbstractConsumer[T, R]):
     """Base consumer realization."""
 
     def __init__(
-        self, *topics: tuple[ty.Any, ...], _configs: dict[str, ty.Any]=config_consumer
+        self, *topics: tuple[ty.Any, ...], _configs: Config=config
     ) -> None:
-        self._consumer = AIOKafkaConsumer(*topics, **_configs)
+        self._consumer = AIOKafkaConsumer(*topics, **_configs.Kafka.model_dump())
 
     async def recieve(self, _topic: str | None = None) -> dict[str, R]:
         """Recieve message via kafka."""

@@ -42,9 +42,8 @@ services:
       - "8080:8080"
     devices:
       - '/dev/video0:/dev/video0'
-    # volumes:
-    #   - data:/data
-
+    volumes:
+      - /smart_house/data:/raspberry_server/data
 
   # frontend:
   #   build:
