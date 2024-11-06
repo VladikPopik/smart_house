@@ -18,3 +18,4 @@ async def push_data_monitroing_ws(websocket: WebSocket) -> None:
             await asyncio.sleep(2)
         except Exception as e:
             print("error:", e)
+            break

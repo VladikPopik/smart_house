@@ -12,7 +12,7 @@ from lib.manager.settingsd import settings_router
 app = FastAPI(openapi_url="/openapi.json", docs_url="/docs")
 
 origins = [
-    f"{config.ssl_conn.PROTOCOL}://localhost:5173",
+    f"{config.ssl_conn.PROTOCOL}://{config.origins.host}:{config.origins.port}",
 ]
 
 app.add_middleware(

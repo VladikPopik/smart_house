@@ -24,5 +24,9 @@
   },
   "Kafka": {
     "bootstrap_servers": "kafka:9092"
+  },
+  "Origins": {
+    "host": "loclahost",
+    "port": 5173
   }
 }
