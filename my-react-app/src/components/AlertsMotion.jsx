@@ -65,7 +65,7 @@ export default function AlertStack (message="motion") {
         var temp = alerts.reverse().map(
             (items, i) => (
                 <Alert icon={hash[items]} severity={items} sx={{width: "200px", height: "75px", display: "flex", alignContent: "center"}}>
-                    {items} at  {new Date(timings[i]*1000).toISOString().split("T")[1].slice(0, -5)}          
+                    {items} at  {new Date(timings.reverse()[i]*1000).toISOString().split("T")[1].slice(0, -5)}          
                 </Alert>
             )
         )
@@ -73,7 +73,7 @@ export default function AlertStack (message="motion") {
         var temp = alerts.slice(-6, -1).reverse().map(
             (items, i) => (
                 <Alert icon={hash[items]} severity={items} sx={{width: "200px", height: "75px", display: "flex", alignContent: "center"}}>
-                    {items} at  {new Date(timings[i]*1000).toISOString().split("T")[1].slice(0, -5)}          
+                    {items} at  {new Date(timings.reverse()[i]*1000).toISOString().split("T")[1].slice(0, -5)}          
                 </Alert>
             )
         )

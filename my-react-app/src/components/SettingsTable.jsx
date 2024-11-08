@@ -95,6 +95,7 @@ async function DeleteDevice(device_name){
         if (!response.ok) {
           throw new Error('Cannot delete device from server');
         }
+        
         return response
 
     } catch (error) {
@@ -140,8 +141,7 @@ export default function SettingsTable() {
     }, [toReload])
 
     return (
-        <div>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{position: "absolute", top: 150, left: 0, width: "75%", height: "75%"}}>
                 <Table>
                     <TableHead sx={{}}>
                         <TableRow sx={{display: "flex", alignContent: "center", justifyContent: "center"}}>
@@ -180,6 +180,7 @@ export default function SettingsTable() {
                                             }
                                             create_device_t(formJson);
                                             handleClose();
+                                            setToReload(!toReload);
                                         },
                                         }}
                                     >
@@ -262,6 +263,7 @@ export default function SettingsTable() {
                                         }
                                         create_device_t(formJson);
                                         handleCloseUpdate();
+                                        setToReload(!toReload);
                                     },
                                     }}
                                 >
@@ -333,7 +335,10 @@ export default function SettingsTable() {
                         <TableCell>{item.device_type}</TableCell>
                         <TableCell>{item.pin}</TableCell>
                         <TableCell>
-                            <Button onClick={() => handleDeleteDevice(item.device_name)}> 
+                            <Button onClick={() => {
+                                handleDeleteDevice(item.device_name)
+                                setToReload(!toReload)
+                            } }> 
                                 <DeleteIcon>
                                 </DeleteIcon>
                             </Button>
@@ -343,6 +348,5 @@ export default function SettingsTable() {
                 </Table>
             
             </TableContainer>
-        </div>
     )
 }

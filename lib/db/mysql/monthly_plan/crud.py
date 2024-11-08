@@ -2,7 +2,8 @@ import datetime
 import typing as ty
 import uuid
 
-from sqlalchemy import delete, insert, select, update
+from collections.abc import Sequence
+from sqlalchemy import delete, insert, select, update, RowMapping
 
 from lib.db import db_instance
 
@@ -27,48 +28,37 @@ async def create_budget(
             )
         )
 
-
-async def read_budget(uuid: uuid.UUID) -> tuple[ty.Any]:
+async def read_budget(uuid: uuid.UUID) -> RowMapping | None:
+    """Read all budgets from db."""
     with db_instance.session() as session:
-        budget = session.execute(
+        return session.execute(
             select(budget_table).where(budget_table.c.id == uuid)
-        )
+        ).mappings().fetchone()
 
-    return budget
-
-
-async def read_budget_by_start_time(ts_from) -> list[ty.Any]:
+async def read_budget_by_start_time(ts_from: float) -> RowMapping | None:
+    """Read one budget by time."""
     with db_instance.session() as session:
-        budgets = session.execute(
+        return session.execute(
             select(budget_table).where(budget_table.c.ts_from == ts_from)
-        )
-
-    return list(budgets)
-
+        ).mappings().fetchone()
 
 async def delete_budget(uuid: uuid.UUID) -> None:
     """CRUD delete for budget."""
     with db_instance.session() as session:
         session.execute(delete(budget_table).where(budget_table.c.id == uuid))
 
-
 async def update_budget(
     uuid: uuid.UUID, **budget_info: ty.Dict[str, ty.Any]
-) -> uuid.UUID:
+) -> RowMapping | None:
     """CRUD update for budget."""
     with db_instance.session() as session:
-        uuid = session.execute(
+        return session.execute(
             update(budget_table)
             .where(budget_table.c.id == uuid)
             .values(**budget_info)
-        )
-        session.commit()
+        ).fetchone() # pyright: ignore[reportReturnType]
 
-    return uuid
-
-
-async def get_budgets() -> ty.Any:
+async def get_budgets() -> Sequence[RowMapping]:
     """CRUD read for budget."""
     with db_instance.session() as session:
-        data = session.execute(select(budget_table))
-    return data
+        return session.execute(select(budget_table)).mappings().fetchall()
