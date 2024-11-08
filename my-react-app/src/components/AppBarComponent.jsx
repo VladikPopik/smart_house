@@ -11,7 +11,6 @@ import DrawerComponent from "./DrawerComponent";
 export default function AppBarComponent(){
     return(
         <div>
-            
             <Box sx={{flexGrow: 1, top: 0, left:0, position: 'fixed', width: "100%", height: "100%", justifyContent: "centre"}}>
                 
                 <AppBar position='static' sx={{width: "100%", height: "10%", backgroundColor: "#228BE6"}}>

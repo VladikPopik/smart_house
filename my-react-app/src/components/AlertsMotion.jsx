@@ -15,10 +15,13 @@ export default function AlertStack (message="motion") {
     const URL_WEB_LOGIN = `ws://${config.host}:${config.port}/motion_ws/motion_ws` 
     const URL_WEB_SOCKET = `ws://${config.host}:${config.port}/motion_ws/motions_ws` 
 
+    
 
-    var [alerts, setAlerts] = useState(["no data", "no data", "no data", "no data"]);
+    var [alerts, setAlerts] = useState(
+        []
+    );
     let newdt = (+new Date())/1000;
-    const [timings, setTime] = useState([newdt, newdt, newdt, newdt]);
+    const [timings, setTime] = useState([]);
 
     const addItem = (event) => {
         const dt = JSON.parse(event.data);
@@ -27,6 +30,8 @@ export default function AlertStack (message="motion") {
         
         setAlerts(prevItems => [...prevItems, status]);
         setTime(prevItems => [...prevItems, newt])
+        // localStorage.setItem("alerts", [alerts])
+        // localStorage.setItem("timings", [timings])
     };
 
     useEffect(() => {
@@ -52,6 +57,33 @@ export default function AlertStack (message="motion") {
     hash.set("info", <InfoIcon/>)
     hash.set("warning", <WarningIcon/>)
 
+    localStorage.setItem("alerts", alerts)
+    localStorage.setItem("timings", timings)
+    //TODO: Fix alerts
+    if (alerts.length <= 5)
+    {
+        var temp = alerts.reverse().map(
+            (items, i) => (
+                <Alert icon={hash[items]} severity={items} sx={{width: "200px", height: "75px", display: "flex", alignContent: "center"}}>
+                    {items} at  {new Date(timings[i]*1000).toISOString().split("T")[1].slice(0, -5)}          
+                </Alert>
+            )
+        )
+    }else{
+        var temp = alerts.slice(-6, -1).reverse().map(
+            (items, i) => (
+                <Alert icon={hash[items]} severity={items} sx={{width: "200px", height: "75px", display: "flex", alignContent: "center"}}>
+                    {items} at  {new Date(timings[i]*1000).toISOString().split("T")[1].slice(0, -5)}          
+                </Alert>
+            )
+        )
+        var temp_t = timings.slice(-6, -1)
+        var temp_a = alerts.slice(-6, -1);
+        // localStorage.removeItem("alerts")
+        // localStorage.removeItem("timings")
+        // localStorage.setItem("timings", temp_t)
+        // localStorage.setItem("alerts", temp_a)
+    }
 
     return (
         <Grid2 sx={{alignContent: "center", justifyContent: "center", display: "flex"}}>
@@ -72,13 +104,7 @@ export default function AlertStack (message="motion") {
                 width: "75%", 
             }}>
                 {
-                    alerts.slice(alerts.length-5, -1).map(
-                        (items, i) => (
-                            <Alert icon={hash[items]} severity={items} sx={{width: "200px", height: "75px", display: "flex", alignContent: "center"}}>
-                                {items} at  {new Date(timings[i]*1000).toISOString()}          
-                            </Alert>
-                        )
-                    )
+                    temp
                 }
             </Stack>
         </Grid2>

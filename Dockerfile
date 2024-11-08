@@ -2,6 +2,7 @@
 FROM python:3.12-slim
 WORKDIR /smart_house
 COPY requirements.txt requirements.txt
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 EXPOSE 8001
 COPY . .

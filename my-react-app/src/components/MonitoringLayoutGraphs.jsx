@@ -41,7 +41,7 @@ export default function MonitoringCharts (message="monitoring") {
     }, []);
     const t_result = timings.slice(timings.length - 30, -1)
     const result  = data.slice(data.length - 30, -1);
-    const latest_T = data.slice(-2, -1)
+    const latest_T = (data.at(-1) * 100).toFixed(1)
     let gauge_coefficient = result.slice(-2, -1);
 
     gauge_coefficient = Math.round(gauge_coefficient*100)/100;
@@ -52,7 +52,7 @@ export default function MonitoringCharts (message="monitoring") {
                 <Grid sx={{position: "absolute", alignContent: "left", justifyContent: "center", alignSelf: "start"}}>
                     <LineChart
                         skipAnimation
-                        xAxis={[{ data:  t_result, valueFormatter: (value) => {return new Date(value*1000).toISOString()}}]}
+                        xAxis={[{ data:  t_result, valueFormatter: (value) => {return new Date(value*1000).toISOString().split("T")[1].slice(0, -5)}}]}
                         series={[
                             {
                                 curve: "monotoneX",
@@ -67,7 +67,7 @@ export default function MonitoringCharts (message="monitoring") {
                     />
                     <LineChart
                         skipAnimation
-                        xAxis={[{ data:  t_result, valueFormatter: (value) => {return new Date(value*1000).toISOString()}}]}
+                        xAxis={[{ data:  t_result, valueFormatter: (value) => {return new Date(value*1000).toISOString().split("T")[1].slice(0, -5)}}]}
                         series={[
                             {
                                 curve: "monotoneX",
@@ -84,7 +84,7 @@ export default function MonitoringCharts (message="monitoring") {
                 <Grid sx={{position: "absolute", alignContent: "left", justifyContent: "center", alignSelf: "right", right: 350}}>
                     <LineChart
                         skipAnimation
-                        xAxis={[{ data:  t_result, valueFormatter: (value) => {return new Date(value*1000).toISOString()}}]}
+                        xAxis={[{ data:  t_result, valueFormatter: (value) => {return new Date(value*1000).toISOString().split("T")[1].slice(0, -5)}}]}
 
                         series={[
                             {
@@ -100,7 +100,7 @@ export default function MonitoringCharts (message="monitoring") {
                     />
                     <LineChart
                         skipAnimation
-                        xAxis={[{ data:  t_result, valueFormatter: (value) => {return new Date(value*1000).toISOString()}}]}
+                        xAxis={[{ data:  t_result, valueFormatter: (value) => {return new Date(value*1000).toISOString().split("T")[1].slice(0, -5)}}]}
 
                         series={[
                             {
@@ -143,7 +143,7 @@ export default function MonitoringCharts (message="monitoring") {
                         series={
                             [
                                 {
-                                    data: latest_T
+                                    data: [latest_T]
                                 }
                             ]
                         }

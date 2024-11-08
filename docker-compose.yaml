@@ -36,14 +36,14 @@ services:
     depends_on:
       - kafka
 
-  raspberry-server:
-    build: ./raspberry_server
-    ports:
-      - "8080:8080"
-    devices:
-      - '/dev/video0:/dev/video0'
-    volumes:
-      - /smart_house/data:/raspberry_server/data
+  # raspberry-server:
+  #   build: ./raspberry_server
+  #   ports:
+  #     - "8080:8080"
+  #   devices:
+  #     - '/dev/video0:/dev/video0'
+  #   volumes:
+  #     - /smart_house/data:/raspberry_server/data
 
   # frontend:
   #   build:
