@@ -3,11 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from lib.conf import config
 from lib.manager.auth import auth_router
-from lib.manager.monthly_plan import plan_router
 from lib.manager.monitoring import monitoring_router_ws
+from lib.manager.monthly_plan import plan_router
 from lib.manager.motion import motion_ws_router
 from lib.manager.settingsd import settings_router
-
 
 app = FastAPI(openapi_url="/openapi.json", docs_url="/docs")
 

@@ -1,5 +1,6 @@
 from lib.utils.basemodel import Base
 
+
 class CreateUser(Base):
     user_name: str = "Default"
     user_login: str

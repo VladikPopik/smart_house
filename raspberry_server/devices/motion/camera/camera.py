@@ -1,11 +1,16 @@
 from uuid import UUID, uuid4
+
 from cv2 import VideoCapture, destroyAllWindows, imwrite
 from devices.utils import Singleton
+
 
 class Capture(metaclass=Singleton):
     error: str = "Couldnt open camera port"
 
-    def __init__(self, camport: int = 0, number_of_shots: int=5) -> None:
+    def __init__(
+        self, name: str, camport: int = 0, number_of_shots: int = 5
+    ) -> None:
+        self.name = name
         self.uuid: UUID = uuid4()
         self.camport = camport
         self.uuids: list[UUID] = []

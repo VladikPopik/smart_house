@@ -1,5 +1,6 @@
 import uuid
 from datetime import time as d_time
+
 from lib.conf.config import Base
 
 

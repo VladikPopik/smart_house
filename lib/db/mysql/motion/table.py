@@ -1,4 +1,4 @@
-from sqlalchemy import Column, MetaData, CHAR, Table, TIMESTAMP
+from sqlalchemy import CHAR, TIMESTAMP, Column, MetaData, Table
 
 alerts_table = Table(
     "alerts",

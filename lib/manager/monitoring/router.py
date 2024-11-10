@@ -1,7 +1,8 @@
-import numpy as np
-import time
 import asyncio
-from fastapi import WebSocket, APIRouter
+import time
+
+import numpy as np
+from fastapi import APIRouter, WebSocket
 
 monitoring_router_ws = APIRouter()
 

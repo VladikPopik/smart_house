@@ -1,4 +1,5 @@
-from sqlalchemy import Column, MetaData, String, Table, FLOAT, CHAR, INTEGER
+from sqlalchemy import (BOOLEAN, CHAR, FLOAT, INTEGER, Column, MetaData,
+                        String, Table)
 
 settingsd_table = Table(
     "settingsd",
@@ -8,5 +9,6 @@ settingsd_table = Table(
     Column(
         "voltage", FLOAT, nullable=False
     ),  # pyright: ignore[reportUnknownArgumentType]
-    Column("pin", INTEGER, nullable=False)
+    Column("pin", INTEGER, nullable=False),
+    Column("on", BOOLEAN, nullable=False, default=False),
 )

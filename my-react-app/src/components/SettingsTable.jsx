@@ -1,8 +1,9 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
 import Button from '@mui/material/Button';
 import config from "../config";
 import { useEffect, useState, Fragment } from "react";
@@ -13,8 +14,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-
-
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 async function ReadAllDevices() {
     let values = [];
@@ -123,7 +123,6 @@ export default function SettingsTable() {
     const handleClickUpdateOpen = () => {
         SetUpdateOpen(true);
     };
-
     const handleCloseUpdate = () => {
         SetUpdateOpen(false);
     }
@@ -317,6 +316,17 @@ export default function SettingsTable() {
                                             fullWidth
                                             variant="standard"
                                         />
+                                        {/* <TextField
+                                            autoFocus
+                                            required
+                                            margin="dense"
+                                            id="on"
+                                            name="on"
+                                            label="ON / OFF"
+                                            type="bool"
+                                            fullWidth
+                                            variant="standard"
+                                        /> */}
                                     </DialogContent>
                                     <DialogActions>
                                     <Button onClick={handleCloseUpdate}>Cancel</Button>
@@ -334,6 +344,21 @@ export default function SettingsTable() {
                         <TableCell>{item.voltage}</TableCell>
                         <TableCell>{item.device_type}</TableCell>
                         <TableCell>{item.pin}</TableCell>
+                        <TableCell>
+                        <FormControlLabel
+                            value="end"
+                            control={
+                            <Switch color="primary"  onChange={async (item) => {
+                                item.on = !item.on
+                                    await UpdateDevice(item) //JSON.stringify(item)
+                                }}
+                            checked={item.on}
+                            // checkedIcon={<CheckIcon></CheckIcon>}
+                            />}
+                            label="Active"
+                            labelPlacement="end"
+                            />
+                        </TableCell>
                         <TableCell>
                             <Button onClick={() => {
                                 handleDeleteDevice(item.device_name)

@@ -1,9 +1,10 @@
 import typing as ty
 import uuid
 
-from sqlalchemy import insert, select, RowMapping
+from sqlalchemy import RowMapping, insert, select
 
 from lib.db import db_instance
+
 from .table import alerts_table
 
 

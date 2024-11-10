@@ -1,7 +1,10 @@
 import typing as ty
+
 from sqlalchemy import insert, select  # delete, update
-from .table import user_table, login_table
+
 from lib.db import db_instance
+
+from .table import login_table, user_table
 
 
 async def create_user(user_info: ty.Dict[str, ty.Any]) -> None:
@@ -14,7 +17,7 @@ async def get_user(user_login: str) -> dict[str, ty.Any]:
     """CRUD get user."""
     with db_instance.session() as session:
         user: ty.Dict[ty.Any, ty.Any] = session.execute(
-            select(user_table).where(user_table.c.user_login==user_login)
+            select(user_table).where(user_table.c.user_login == user_login)
         ).first()
 
         return user

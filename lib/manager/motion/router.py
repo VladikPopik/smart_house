@@ -1,7 +1,7 @@
-import time
 import asyncio
-from fastapi import WebSocket, APIRouter
+import time
 
+from fastapi import APIRouter, WebSocket
 
 motion_ws_router = APIRouter()
 

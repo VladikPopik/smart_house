@@ -1,5 +1,6 @@
-import typing as ty
 import json
+import typing as ty
+
 from pydantic import BaseModel, model_validator
 
 

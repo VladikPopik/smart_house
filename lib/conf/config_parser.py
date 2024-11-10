@@ -1,15 +1,9 @@
 import json
 from pathlib import Path
 
-from .config import (
-    JWT,
-    SERVICE,
-    SQL_CONNECTION,
-    SSL,
-    Kafka,
-    Origins
-)
 from lib.utils import Singleton
+
+from .config import JWT, SERVICE, SQL_CONNECTION, SSL, Kafka, Origins
 
 
 class Config(metaclass=Singleton):
@@ -22,7 +16,9 @@ class Config(metaclass=Singleton):
 
     def parse_config(self) -> None:
         """Parse config."""
-        with Path.open(self.config_file) as cfg: # pyright: ignore[reportArgumentType]
+        with Path.open(
+            self.config_file
+        ) as cfg:  # pyright: ignore[reportArgumentType]
             data = json.load(cfg)
 
         self.ssl_conn: SSL = SSL(**data.get("SSL"))

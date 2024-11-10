@@ -1,9 +1,9 @@
 import datetime
 import typing as ty
 import uuid
-
 from collections.abc import Sequence
-from sqlalchemy import delete, insert, select, update, RowMapping
+
+from sqlalchemy import RowMapping, delete, insert, select, update
 
 from lib.db import db_instance
 
@@ -28,24 +28,36 @@ async def create_budget(
             )
         )
 
+
 async def read_budget(uuid: uuid.UUID) -> RowMapping | None:
     """Read all budgets from db."""
     with db_instance.session() as session:
-        return session.execute(
-            select(budget_table).where(budget_table.c.id == uuid)
-        ).mappings().fetchone()
+        return (
+            session.execute(
+                select(budget_table).where(budget_table.c.id == uuid)
+            )
+            .mappings()
+            .fetchone()
+        )
+
 
 async def read_budget_by_start_time(ts_from: float) -> RowMapping | None:
     """Read one budget by time."""
     with db_instance.session() as session:
-        return session.execute(
-            select(budget_table).where(budget_table.c.ts_from == ts_from)
-        ).mappings().fetchone()
+        return (
+            session.execute(
+                select(budget_table).where(budget_table.c.ts_from == ts_from)
+            )
+            .mappings()
+            .fetchone()
+        )
+
 
 async def delete_budget(uuid: uuid.UUID) -> None:
     """CRUD delete for budget."""
     with db_instance.session() as session:
         session.execute(delete(budget_table).where(budget_table.c.id == uuid))
+
 
 async def update_budget(
     uuid: uuid.UUID, **budget_info: ty.Dict[str, ty.Any]
@@ -56,7 +68,8 @@ async def update_budget(
             update(budget_table)
             .where(budget_table.c.id == uuid)
             .values(**budget_info)
-        ).fetchone() # pyright: ignore[reportReturnType]
+        ).fetchone()  # pyright: ignore[reportReturnType]
+
 
 async def get_budgets() -> Sequence[RowMapping]:
     """CRUD read for budget."""

@@ -8,7 +8,8 @@ type DhtReturnType = dht11.DHT11Result | None
 class DhtSensor[T]:
     """Class to handle DHT11 sensor working."""
 
-    def __init__(self, pin: int) -> None:
+    def __init__(self, pin: int, name: str) -> None:
+        self.name = name
         self.uuid: UUID = uuid4()
         self.pin = pin
         self.instance = dht11.DHT11(pin=pin)

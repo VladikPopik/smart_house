@@ -1,14 +1,15 @@
+import json
 import typing as ty
 
-import json
+from aiokafka import AIOKafkaProducer
+
+from lib.conf import Config, config
 
 from .abstract_kafka import AbstractProducer
-from aiokafka import AIOKafkaProducer
-from lib.conf import config, Config
 
 
 class BaseProducer[T, R](AbstractProducer[T, R]):
-    def __init__(self, _configs: Config=config) -> None:
+    def __init__(self, _configs: Config = config) -> None:
         self._producer = AIOKafkaProducer(**_configs.Kafka.model_dump())
 
     async def send(
@@ -16,7 +17,9 @@ class BaseProducer[T, R](AbstractProducer[T, R]):
     ) -> None:
         """Method to send message via kafka."""
         try:
-            value = self._cast_data(value) # pyright: ignore[reportAssignmentType, reportArgumentType]
+            value = self._cast_data(
+                value
+            )  # pyright: ignore[reportAssignmentType, reportArgumentType]
             await self._producer.send(topic, value, key)
         except Exception as e:
             print(f"{e}")
@@ -43,7 +46,7 @@ class JSONProducer(BaseProducer[json_type_alias, json_return_type_alias]):
     @ty.override
     def _cast_data(self, data: json_type_alias) -> json_return_type_alias:
         try:
-            result = json.dump(data) # pyright: ignore[reportCallIssue]
+            result = json.dump(data)  # pyright: ignore[reportCallIssue]
         except json.JSONDecodeError as e:
             print(f"{e}")
         return result

@@ -1,7 +1,6 @@
 import typing as ty
-
-from collections.abc import AsyncGenerator
 from abc import ABC, abstractmethod
+from collections.abc import AsyncGenerator
 
 
 class AbstractConsumer[T, R](ABC):

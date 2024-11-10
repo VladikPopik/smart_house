@@ -1,5 +1,6 @@
 import uuid
-from sqlalchemy import MetaData, Table, Column, TIMESTAMP, FLOAT, CHAR, String
+
+from sqlalchemy import CHAR, FLOAT, TIMESTAMP, Column, MetaData, String, Table
 
 budget_table = Table(
     "budget",

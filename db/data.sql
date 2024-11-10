@@ -27,4 +27,9 @@ CREATE TABLE `budget` (    `budget_id` char(32) PRIMARY KEY,
     `budget_type` varchar(64) DEFAULT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
-CREATE TABLE `settingsd` ( `device_name` CHAR(8) PRIMARY KEY, `device_type` VARCHAR(100) NOT NULL, `voltage` FLOAT NOT NULL, `pin` INTEGER NOT NULL) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+CREATE TABLE `settingsd` ( `device_name` CHAR(8) PRIMARY KEY,
+    `device_type` VARCHAR(100) NOT NULL, 
+    `voltage` FLOAT NOT NULL,
+    `pin` INTEGER NOT NULL,
+    `on` BOOLEAN NOT NULL DEFAULT false  
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

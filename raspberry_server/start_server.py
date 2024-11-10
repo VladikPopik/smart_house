@@ -2,7 +2,7 @@ import asyncio
 import time
 import typing as ty
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from functools import singledispatch
+from functools import singledispatchmethod
 from uuid import UUID
 
 from devices.monitoring import DhtReturnType, DhtSensor
@@ -14,29 +14,40 @@ type DeviceReturnType = DhtReturnType | bool
 device_types = {"dht11": DhtSensor, "cam": Capture}
 
 
-@singledispatch
-def perform_device[
-    T
-](device: T) -> DeviceReturnType:  # pyright: ignore[reportInvalidTypeVarUse]
-    """Generic function that gets result from every device type."""
+class DevicePerformance:
+    _devices: ty.ClassVar[[str, DeviceType]] = {}
 
+    @singledispatchmethod
+    @classmethod
+    def perform_device[
+        T
+    ](
+        cls, device: T
+    ) -> DeviceReturnType:  # pyright: ignore[reportInvalidTypeVarUse]
+        """Generic function that gets result from every device type."""
+        raise NotImplementedError()
 
-@perform_device.register
-def _(device: DhtSensor) -> DhtReturnType:
-    try:
-        result = device.read()
-    except ValueError as e:
-        print(e)  # noqa: T201
-    return result
+    @perform_device.register
+    @classmethod
+    def _(cls, device: DhtSensor) -> DhtReturnType:
+        try:
+            if device.name not in cls._devices:
+                cls._devices[device.name] = device
+            result = device.read()
+        except ValueError as e:
+            print(e)  # noqa: T201
+        return result
 
-
-@perform_device.register
-def _(device: Capture) -> bool:
-    try:
-        result = device.capture_camera()
-    except ValueError as e:
-        print(e)  # noqa: T201
-    return result
+    @perform_device.register
+    @classmethod
+    def _(cls, device: Capture) -> bool:
+        try:
+            if device.name not in cls._devices:
+                cls._devices[device.name] = device
+            result = device.capture_camera()
+        except ValueError as e:
+            print(e)  # noqa: T201
+        return result
 
 
 def check_device(_device: DeviceType) -> bool:
@@ -56,7 +67,12 @@ async def wait_for_devices() -> dict[str, ty.Any] | None:
     """Function that gets device_data from kafka."""
     # TODO @<VladikPopik>: create consumer accepting data about devices  # noqa: TD003
     # device_data: dict[str, ty.Any] = await consumer()  # noqa: ERA001
-    device_data = {"camport": 0, "type": "cam", "number_of_shots": 2}
+    device_data = {
+        "name": "camera12",
+        "camport": 0,
+        "type": "cam",
+        "number_of_shots": 2,
+    }
     if device_data:
         return device_data
 
@@ -64,7 +80,9 @@ async def wait_for_devices() -> dict[str, ty.Any] | None:
 
 
 async def main(
-    devices_: list[DeviceType], connected_devices: dict[UUID, DeviceType], executor: ProcessPoolExecutor
+    devices_: list[DeviceType],
+    connected_devices: dict[UUID, DeviceType],
+    executor: ProcessPoolExecutor,
 ) -> tuple[list[DeviceReturnType], list[DeviceType], dict[UUID, DeviceType]]:
     """Service."""
     device_data = await wait_for_devices()
@@ -92,7 +110,7 @@ async def main(
     futures = []
     for c_device in connected_devices:
         device = connected_devices[c_device]
-        future = executor.submit(perform_device, device)
+        future = executor.submit(DevicePerformance.perform_device, device)
         futures.append(future)
 
     results = [f.result() for f in as_completed(futures)]
@@ -118,8 +136,8 @@ if __name__ == "__main__":
                     main(devices_, connected_devices, executor)
                 )
                 final_result.append(result)
-                time.sleep(60)
+                time.sleep(5)
                 print(final_result)  # noqa: T201
             except Exception as e:  # noqa: BLE001, PERF203
-                print(f"{e}") # noqa: T201
+                print(f"{e}")  # noqa: T201
                 break

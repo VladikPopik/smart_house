@@ -39,8 +39,13 @@ export default function MonitoringCharts (message="monitoring") {
             }
         }
     }, []);
-    const t_result = timings.slice(timings.length - 30, -1)
-    const result  = data.slice(data.length - 30, -1);
+    if (data.length > 30){
+        var t_result = timings.slice(timings.length - 30, -1);
+        var result  = data.slice(data.length - 30, -1);
+    }else{
+        var t_result = timings;
+        var result  = data;
+    }
     const latest_T = (data.at(-1) * 100).toFixed(1)
     let gauge_coefficient = result.slice(-2, -1);
 
@@ -58,7 +63,7 @@ export default function MonitoringCharts (message="monitoring") {
                                 curve: "monotoneX",
                                 data: result,
                                 area: true,
-                                color: '#76db91'
+                                color: '#00ff00'
                         },
                         ]}
                         width={700}
@@ -73,7 +78,7 @@ export default function MonitoringCharts (message="monitoring") {
                                 curve: "monotoneX",
                                 data: result,
                                 area: true,
-                                color: '#76db91'
+                                color: '#00ff00'
                         },
                         ]}
                         width={700}
@@ -91,7 +96,7 @@ export default function MonitoringCharts (message="monitoring") {
                                 curve: "monotoneX",
                                 data: result,
                                 area: true,
-                                color: '#76db91'
+                                color: '#00ff00'
                         },
                         ]}
                         width={700}
@@ -107,7 +112,7 @@ export default function MonitoringCharts (message="monitoring") {
                                 curve: "monotoneX",
                                 data: result,
                                 area: true,
-                                color: '#76db91'
+                                color: '#00ff00'
                         },
                         ]}
                         width={700}
