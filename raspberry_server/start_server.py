@@ -2,7 +2,7 @@ import asyncio
 import time
 import typing as ty
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from functools import singledispatchmethod
+from functools import singledispatch
 from uuid import UUID
 
 from devices.monitoring import DhtReturnType, DhtSensor
@@ -14,40 +14,29 @@ type DeviceReturnType = DhtReturnType | bool
 device_types = {"dht11": DhtSensor, "cam": Capture}
 
 
-class DevicePerformance:
-    _devices: ty.ClassVar[[str, DeviceType]] = {}
+@singledispatch
+def perform_device[
+    T
+](device: T) -> DeviceReturnType:  # pyright: ignore[reportInvalidTypeVarUse]
+    """Generic function that gets result from every device type."""
 
-    @singledispatchmethod
-    @classmethod
-    def perform_device[
-        T
-    ](
-        cls, device: T
-    ) -> DeviceReturnType:  # pyright: ignore[reportInvalidTypeVarUse]
-        """Generic function that gets result from every device type."""
-        raise NotImplementedError()
 
-    @perform_device.register
-    @classmethod
-    def _(cls, device: DhtSensor) -> DhtReturnType:
-        try:
-            if device.name not in cls._devices:
-                cls._devices[device.name] = device
-            result = device.read()
-        except ValueError as e:
-            print(e)  # noqa: T201
-        return result
+@perform_device.register
+def _(device: DhtSensor) -> DhtReturnType:
+    try:
+        result = device.read()
+    except ValueError as e:
+        print(e)  # noqa: T201
+    return result
 
-    @perform_device.register
-    @classmethod
-    def _(cls, device: Capture) -> bool:
-        try:
-            if device.name not in cls._devices:
-                cls._devices[device.name] = device
-            result = device.capture_camera()
-        except ValueError as e:
-            print(e)  # noqa: T201
-        return result
+
+@perform_device.register
+def _(device: Capture) -> bool:
+    try:
+        result = device.capture_camera()
+    except ValueError as e:
+        print(e)  # noqa: T201
+    return result
 
 
 def check_device(_device: DeviceType) -> bool:
@@ -110,7 +99,7 @@ async def main(
     futures = []
     for c_device in connected_devices:
         device = connected_devices[c_device]
-        future = executor.submit(DevicePerformance.perform_device, device)
+        future = executor.submit(perform_device, device)
         futures.append(future)
 
     results = [f.result() for f in as_completed(futures)]
