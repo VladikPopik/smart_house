@@ -8,11 +8,21 @@ class Capture(metaclass=Singleton):
     error: str = "Couldnt open camera port"
 
     def __init__(
-        self, name: str, camport: int = 0, number_of_shots: int = 5
+        self,
+        device_name: str,
+        voltage: float,
+        pin: int,
+        *,
+        on: bool = False,
+        camport: int = 0,
+        number_of_shots: int = 5,
     ) -> None:
-        self.name = name
+        self.device_name = device_name
         self.uuid: UUID = uuid4()
         self.camport = camport
+        self.pin = pin
+        self.voltage = voltage
+        self.on = on
         self.uuids: list[UUID] = []
         self.cam = None
         self.number_of_shots = number_of_shots

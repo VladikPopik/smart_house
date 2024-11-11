@@ -32,10 +32,12 @@ async def get_device(device_name: str) -> JSONResponse:
 @settings_router.post("/device")
 async def create_device(params: CreateDevice) -> JSONResponse:
     """API to create device."""
+    res = {}
     await cr.create_device(params.model_dump())
-    js_pr = JSONProducer()
-    res = await js_pr.send("test", f"{params.model_dump()}")
-    print("MESSAGE IS SENT @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    async with JSONProducer().get_producer() as producer:
+        v = params.model_dump()
+        v["action"] = "create"
+        res = await producer.send("test", f"{v}")
     return JSONResponse(content=f"{res}", status_code=200)
 
 

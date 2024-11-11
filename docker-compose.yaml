@@ -20,7 +20,7 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - 29092:29092
+      - 29092:9092
     environment:
       KAFKA_CLUSTER_ID: "ADMINCLUSTER123"
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
@@ -36,22 +36,24 @@ services:
     depends_on:
       - kafka
 
-  # raspberry-server:
-  #   build: ./raspberry_server
-  #   ports:
-  #     - "8080:8080"
-  #   devices:
-  #     - '/dev/video0:/dev/video0'
-  #   volumes:
-  #     - /smart_house/data:/raspberry_server/data
-
-  monitoring:
-    build: ./monitoring
+  raspberry-server:
+    build: ./raspberry_server
     ports:
-      - "9999:9999"
-    depends_on:
-      - backend
-      - kafka
+      - "8080:8080"
+    devices:
+      - '/dev/video0:/dev/video0'
+    volumes:
+      - /smart_house/data:/raspberry_server/data
+
+  # monitoring:
+  #   build: ./monitoring
+  #   ports:
+  #     - "9999:9999"
+  #   depends_on:
+  #     - backend
+  #     - kafka
+
+  
   # frontend:
   #   build:
   #     context: ./my-react-app

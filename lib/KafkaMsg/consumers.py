@@ -64,7 +64,7 @@ class JSONConsumer[json_type_alias, json_return_type_alias](
     @ty.override
     def _cast_data(self, msg: json_type_alias) -> json_return_type_alias:
         try:
-            return json.load(msg)  # pyright: ignore[reportArgumentType]
+            return json.load(msg.decode())  # pyright: ignore[reportAttributeAccessIssue, reportArgumentType]
         except json.JSONDecodeError as e:
             print(f"{e}")
             raise e

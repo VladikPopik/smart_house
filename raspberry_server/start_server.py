@@ -5,8 +5,18 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import singledispatch
 from uuid import UUID
 
+import json
+import ast
+from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
+
 from devices.monitoring import DhtReturnType, DhtSensor
 from devices.motion import Capture
+
+from logging import Logger
+
+logger = Logger(__name__)
+
+
 
 type DeviceType = Capture | DhtSensor
 type DeviceReturnType = DhtReturnType | bool
@@ -52,20 +62,31 @@ async def producer(data: dict[str, ty.Any]) -> None:
     """Create producer to send mesages to kafka."""
 
 
-async def wait_for_devices() -> dict[str, ty.Any] | None:
+async def wait_for_devices() -> list[dict[str, ty.Any] | None]:
     """Function that gets device_data from kafka."""
     # TODO @<VladikPopik>: create consumer accepting data about devices  # noqa: TD003
     # device_data: dict[str, ty.Any] = await consumer()  # noqa: ERA001
-    device_data = {
-        "name": "camera12",
-        "camport": 0,
-        "type": "cam",
-        "number_of_shots": 2,
-    }
-    if device_data:
-        return device_data
+    device_datas = []
+    try:
+        async with AIOKafkaConsumer(
+                "test", bootstrap_servers="kafka:9092",
+                auto_offset_reset="latest",
+                connections_max_idle_ms=1000,
+                session_timeout_ms=5000,
+                request_timeout_ms=5000
+        ) as consumer:
+            logger.info("I'm here")
+            device = await consumer.getone()
+            if device.value:
+                data = json.loads(device.value)
+                data = ast.literal_eval(data)
+            else:
+                data = None
+            device_datas.append(data)
+    except Exception as e:
+        logger.info(e)
 
-    return None
+    return device_datas
 
 
 async def main(
@@ -74,19 +95,18 @@ async def main(
     executor: ProcessPoolExecutor,
 ) -> tuple[list[DeviceReturnType], list[DeviceType], dict[UUID, DeviceType]]:
     """Service."""
-    device_data = await wait_for_devices()
-    if device_data:
-        device_type = device_data["type"]
-        device_data.pop("type", None)
-        if device_type in device_types:
-            device = device_types[device_type](**device_data)
-            devices_.append(device)
-        else:
-            print(f"No such device type as {device_data["type"]}")  # noqa: T201
-    else:
-        print(f"No devices connected {devices_}")  # noqa: T201
-        await wait_for_devices()
+    device_datas = await wait_for_devices()
+    for device_data in device_datas:
+        if device_data:
+            device_type = device_data["device_type"]
+            _ = device_data.pop("device_type", None)
+            if device_type in device_types:
+                device = device_types[device_type](**device_data)
+                devices_.append(device)
+            else:
+                logger.info(f"No such device type as {device_data["type"]}")  # noqa: T201
 
+    logger.info(f"All devices are {devices_}")
     for device in devices_:
         if device.uuid in connected_devices:
             continue
@@ -97,36 +117,45 @@ async def main(
 
     results = []
     futures = []
+    logger.info(f"Connected devices are: {connected_devices}")
     for c_device in connected_devices:
         device = connected_devices[c_device]
+        logger.info(device)
         future = executor.submit(perform_device, device)
         futures.append(future)
-
+        logger.info(f"Future {future}")
     results = [f.result() for f in as_completed(futures)]
     # TODO @<VladikPopik>: create producer to send messages to kafka by results  # noqa: TD003
     # if results:
     #     asyncio.run(producer(results))  # noqa: ERA001
 
-    print(results)  # noqa: T201
+    logger.info(results)  # noqa: T201
     return results, devices_, connected_devices
 
 
-if __name__ == "__main__":
-    loop = asyncio.new_event_loop()
-    devices_: list[DeviceType] = []
-    connected_devices = {}
+devices_: list[DeviceType] = []
+connected_devices = {}
 
-    final_result = []
+final_result = []
 
-    with ProcessPoolExecutor(4) as executor:
-        while True:
-            try:
-                result, _devices_, _connected_devices = loop.run_until_complete(
-                    main(devices_, connected_devices, executor)
-                )
-                final_result.append(result)
-                time.sleep(5)
-                print(final_result)  # noqa: T201
-            except Exception as e:  # noqa: BLE001, PERF203
-                print(f"{e}")  # noqa: T201
-                break
+logger.info("READY FOR START UP")
+
+with ProcessPoolExecutor(4) as executor:
+    logger.info("PROCESSES CREATED INITIALIZING")
+    while True:
+        try:
+            result, _devices_, _connected_devices = asyncio.run(
+                main(devices_, connected_devices, executor)
+            )
+            final_result.append(result)
+            final_result.pop(0)
+            if len(devices_):
+                devices_ = _devices_
+                connected_devices = dict(_connected_devices)
+            logger.info(connected_devices)
+            logger.info(devices_)
+            time.sleep(2)
+            logger.info(final_result)  # noqa: T201
+        except Exception as e:  # noqa: BLE001, PERF203
+            print(f"{e}")  # noqa: T201
+            break
