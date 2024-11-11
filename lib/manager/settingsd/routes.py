@@ -3,7 +3,7 @@ import typing as ty
 from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-
+from lib.KafkaMsg.producers import JSONProducer
 from lib.db.mysql.settingsd import crud as cr
 
 from .schemas import (CreateDevice, DeleteDevice, GetDevice, GetDevices,
@@ -33,7 +33,10 @@ async def get_device(device_name: str) -> JSONResponse:
 async def create_device(params: CreateDevice) -> JSONResponse:
     """API to create device."""
     await cr.create_device(params.model_dump())
-    return JSONResponse(content="OK", status_code=200)
+    js_pr = JSONProducer()
+    res = await js_pr.send("test", f"{params.model_dump()}")
+    print("MESSAGE IS SENT @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    return JSONResponse(content=f"{res}", status_code=200)
 
 
 @settings_router.delete("/device")

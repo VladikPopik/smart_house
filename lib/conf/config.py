@@ -36,4 +36,4 @@ class Origins(Base):
 
 
 class Kafka(Base):
-    bootstrap_server: str = "kafka:9092"
+    bootstrap_servers: str = "kafka:9092"

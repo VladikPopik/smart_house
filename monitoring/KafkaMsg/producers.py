@@ -20,7 +20,6 @@ class BaseProducer[T, R](AbstractProducer[T, R]):
             value = self._cast_data(
                 value
             )  # pyright: ignore[reportAssignmentType, reportArgumentType]
-            #TODO: fix inf
             await self._producer.send(topic, value, key)
         except Exception as e:
             print(f"{e}")
@@ -50,7 +49,7 @@ class JSONProducer(BaseProducer[json_type_alias, json_return_type_alias]):
             result = json.dumps(data)  # pyright: ignore[reportCallIssue]
         except json.JSONDecodeError as e:
             print(f"{e}")
-        return ty.cast(json_return_type_alias, result)
+        return result
 
 
 class StrProducer(BaseProducer[str, bytes]):
