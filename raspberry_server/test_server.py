@@ -78,7 +78,8 @@ async def fetch() -> dict[str, ty.Any] | None:
     except Exception as _e:  # noqa: BLE001
         logger.info("Cannot read from topic 'test'")
 
-    return data  # {"device_name": "camera12", "voltage": 14, "device_type": "cam", "pin": 14, "on": True} #data
+    print(data)
+    return data  # {"device_name": "camera12", "voltage": 14, "device_type": "cam", "pin": 14, "on": True, "action": "create"} #data
 
 
 def generator() -> Generator[None, None, None]:
@@ -97,16 +98,16 @@ async def main() -> None:
             task_fetch = asyncio.create_task(fetch())
             new_device_data_result = await asyncio.gather(task_fetch)
             new_device_data_result = new_device_data_result[0]
-
+            deleted_uuid = None
+            print(new_device_data_result)
             if new_device_data_result:
+                print(new_device_data_result)
                 device_type = new_device_data_result["device_type"]
                 _ = new_device_data_result.pop("device_type", None)
                 device_action = new_device_data_result["action"]
                 _ = new_device_data_result.pop("action", None)
-
-                deleted_uuid = None
                 if device_type in device_types:
-                    #TODO @<VladikPopik>: test feature
+                    #TODO @<VladikPopik>: test feature  # noqa: TD003
                     match device_action:
                         case "create":
                             device = device_types[device_type](**new_device_data_result)
@@ -115,15 +116,16 @@ async def main() -> None:
                             for dev in devices_:
                                 if dev.device_name == new_device_data_result["device_name"]:
                                     device = dev
-                                else:
-                                    device = device_types[device_type](**new_device_data_result)
-                                    devices_.append(device)
+                                # else:
+                                #     device = device_types[device_type](**new_device_data_result)
+                                #     devices_.append(device)
                         case "delete":
                             delete_idx = None
                             for idx, dev in enumerate(devices_):
                                 if dev.device_name == new_device_data_result["device_name"]:
                                     delete_idx = idx
                                     deleted_uuid = dev.uuid
+                                    break
                             if delete_idx is not None:
                                 devices_.pop(delete_idx)
                         case _:

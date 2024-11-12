@@ -44,8 +44,18 @@ async def create_device(params: CreateDevice) -> JSONResponse:
 @settings_router.delete("/device")
 async def device_delete(device_name: str) -> JSONResponse:
     """API to delete device from server."""
+    device = await cr.device_read(device_name=device_name)
     await cr.device_delete(device_name)
-    return JSONResponse(content="OK", status_code=200)
+    res = {}
+    async with JSONProducer().get_producer() as producer:
+        if device:
+            v = dict(device)
+            v["action"] = "delete"
+            res = await producer.send("test", f"{v}")
+        print(res)
+
+    print(device)
+    return JSONResponse(content=f"{res}", status_code=200)
 
 
 @settings_router.patch("/device")
@@ -55,4 +65,10 @@ async def device_update(params: UpdateDevice) -> JSONResponse:
         device_name=params.device_name,
         params=params.model_dump(exclude={"device_name"}),
     )
+    device = await cr.device_read(params.device_name)
+    async with JSONProducer().get_producer() as producer:
+        if device:
+            v = dict(device)
+            v["action"] = "update"
+            res = await producer.send("test", f"{v}")
     return JSONResponse(jsonable_encoder(result), 200)
