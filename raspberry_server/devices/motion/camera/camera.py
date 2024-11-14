@@ -18,7 +18,7 @@ class Capture(metaclass=Singleton):
         *,
         on: bool = False,
         camport: int = 0,
-        number_of_shots: int = 5,
+        number_of_shots: int = 1,
     ) -> None:
         self.device_name = device_name
         self.uuid: UUID = uuid4()
@@ -43,13 +43,14 @@ class Capture(metaclass=Singleton):
                 result = False
                 t = False
 
+            destroyAllWindows()
+            self.cam.release()
+
             if result:
                 uuid = uuid4()
                 file_path = f"data/test{uuid}.png"
                 t = imwrite(file_path, img)
                 logger.info(f"Is image saved? {t}, image uuid: {uuid}")  # noqa: T201
                 self.uuids.append(uuid)
-        destroyAllWindows()
-        self.cam.release()
 
         return result or t

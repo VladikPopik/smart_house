@@ -1,0 +1,32 @@
+INFO:__main__:@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@START UP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+INFO:aiokafka.consumer.subscription_state:Updating subscribed topics to: frozenset({'test'})
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -3] Temporary failure in name resolution
+INFO:__main__:Cannot read from topic 'test'
+INFO:__main__:@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@START UP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+INFO:aiokafka.consumer.subscription_state:Updating subscribed topics to: frozenset({'test'})
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -3] Temporary failure in name resolution
+INFO:__main__:Cannot read from topic 'test'
+INFO:__main__:<devices.motion.camera.camera.Capture object at 0x76912c0a62d0>, True
+INFO:__main__:<devices.motion.camera.camera.Capture object at 0x76912c0a62d0>
+INFO:root:Is image saved? True, image uuid: aaa42655-f7be-43a7-8abd-46ae3eda6ac5
+INFO:__main__:Capture result for <devices.motion.camera.camera.Capture object at 0x76912719d6a0>: True
+INFO:__main__:Results [True]
+INFO:__main__:@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@STEP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+INFO:aiokafka.consumer.subscription_state:Updating subscribed topics to: frozenset({'test'})
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -3] Temporary failure in name resolution
+INFO:__main__:Cannot read from topic 'test'
+ERROR:asyncio:Unclosed AIOKafkaConsumer
+consumer: <aiokafka.consumer.consumer.AIOKafkaConsumer object at 0x7691271d6db0>
+INFO:__main__:<devices.motion.camera.camera.Capture object at 0x76912c0a62d0>, True
+INFO:__main__:<devices.motion.camera.camera.Capture object at 0x76912c0a62d0>
+INFO:root:Is image saved? True, image uuid: aa6a3528-66eb-45fd-ae26-7524910dcd26
+INFO:__main__:Capture result for <devices.motion.camera.camera.Capture object at 0x76912c0a6060>: True
+INFO:__main__:Results [True]
+INFO:__main__:@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@STEP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+INFO:aiokafka.consumer.subscription_state:Updating subscribed topics to: frozenset({'test'})
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -3] Temporary failure in name resolution
+INFO:__main__:Cannot read from topic 'test'
+INFO:__main__:@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@START UP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+INFO:aiokafka.consumer.subscription_state:Updating subscribed topics to: frozenset({'test'})
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -3] Temporary failure in name resolution
+INFO:__main__:Cannot read from topic 'test'

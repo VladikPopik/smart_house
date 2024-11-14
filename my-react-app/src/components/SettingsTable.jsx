@@ -1,4 +1,4 @@
-import { Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { duration, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from '@mui/icons-material/Add';
@@ -15,6 +15,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -83,8 +85,6 @@ async function UpdateDevice(props){
           throw new Error('Cannot add devices to server');
         }
 
-        await sleep(2000);
-
         return response
 
     } catch (error) {
@@ -114,6 +114,7 @@ export default function SettingsTable() {
     const [toReload, setToReload] = useState(false);
     const [open, setOpen] = useState(false);
     const [updateOpen, SetUpdateOpen] = useState(false);
+    const [deviceType, SetDeviceType] = useState('cam');
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -136,15 +137,19 @@ export default function SettingsTable() {
 
     const handleOnClick = async (event, item) => {
         {
+            // TODO: Fix bug with async message in beetween camera capture
             item.on = !item.on
             await UpdateDevice(item) //JSON.stringify(item)
             setToReload(!toReload);
         }
     }
 
+    const handleChangeDeviceType = (event) => {
+        SetDeviceType(event.target.value);
+    }
+
     const [data, setData] = useState([]);
 
-    
     const fetchData = async () => {
         const t_data = await ReadAllDevices();
         setData(t_data);
@@ -153,6 +158,11 @@ export default function SettingsTable() {
     useEffect(() => {
         fetchData();
     }, [toReload])
+
+    let naming_type_hash = {
+        "cam": "Camera",
+        "dht11": "Climate"
+    }
 
     return (
             <TableContainer component={Paper} sx={{position: "absolute", top: 150, left: 0, width: "75%", height: "75%"}}>
@@ -188,6 +198,7 @@ export default function SettingsTable() {
                                         onSubmit: (event) => {
                                             event.preventDefault();
                                             const formData = new FormData(event.currentTarget);
+                                            formData.append("device_type", deviceType)
                                             const formJson = Object.fromEntries(formData.entries());
                                             const create_device_t = async (props) => {
                                                 const response = await CreateDevice(props);
@@ -219,17 +230,6 @@ export default function SettingsTable() {
                                                 autoFocus
                                                 required
                                                 margin="dense"
-                                                id="device_type"
-                                                name="device_type"
-                                                label="Device Type"
-                                                type="string"
-                                                fullWidth
-                                                variant="standard"
-                                            />
-                                            <TextField
-                                                autoFocus
-                                                required
-                                                margin="dense"
                                                 id="voltage"
                                                 name="voltage"
                                                 label="Device Voltage"
@@ -248,6 +248,17 @@ export default function SettingsTable() {
                                                 fullWidth
                                                 variant="standard"
                                             />
+                                            <Select
+                                                labelId="device_type"
+                                                id="device_type"
+                                                value={deviceType}
+                                                label="Device Type"
+                                                sx={{width: "50%", marginTop: 3}}
+                                                onChange={handleChangeDeviceType}
+                                            >
+                                                <MenuItem value={"cam"}>Camera</MenuItem>
+                                                <MenuItem value={"dht11"}>Climate</MenuItem>
+                                            </Select>
                                         </DialogContent>
                                         <DialogActions>
                                         <Button onClick={handleClose}>Cancel</Button>
@@ -264,14 +275,17 @@ export default function SettingsTable() {
                     <TableRow key={index}>
                         <TableCell>{item.device_name}</TableCell>
                         <TableCell>{item.voltage}</TableCell>
-                        <TableCell>{item.device_type}</TableCell>
+                        <TableCell>{naming_type_hash[item.device_type]}</TableCell>
                         <TableCell>{item.pin}</TableCell>
                         <TableCell>
                         <FormControlLabel
                             value="end"
                             control={
-                            <Switch color="primary"  onChange={async (event) => handleOnClick(event, item)}
+                            <Switch 
+                            color="primary"
+                            onChange={async (event) => handleOnClick(event, item)}
                             checked={item.on}
+                            // disabled={isDisabled(0, 2000)}
                             // checkedIcon={<CheckIcon></CheckIcon>}
                             />}
                             label="Active"
@@ -310,28 +324,6 @@ export default function SettingsTable() {
                                         Please fill fields to add device to your system. 
                                         Be aware that you have to check if pins are the same.
                                         </DialogContentText>
-                                        {/* <TextField
-                                            autoFocus
-                                            required
-                                            margin="dense"
-                                            id="device_name"
-                                            name="device_name"
-                                            label="Device Name (8 chars)"
-                                            type="string"
-                                            fullWidth
-                                            variant="standard"
-                                        /> */}
-                                        <TextField
-                                            autoFocus
-                                            required
-                                            margin="dense"
-                                            id="device_type"
-                                            name="device_type"
-                                            label="Device Type"
-                                            type="string"
-                                            fullWidth
-                                            variant="standard"
-                                        />
                                         <TextField
                                             autoFocus
                                             required
@@ -354,17 +346,17 @@ export default function SettingsTable() {
                                             fullWidth
                                             variant="standard"
                                         />
-                                        {/* <TextField
-                                            autoFocus
-                                            required
-                                            margin="dense"
-                                            id="on"
-                                            name="on"
-                                            label="ON / OFF"
-                                            type="bool"
-                                            fullWidth
-                                            variant="standard"
-                                        /> */}
+                                        <Select
+                                                labelId="device_type"
+                                                id="device_type"
+                                                value={deviceType}
+                                                label="Device Type"
+                                                sx={{width: "50%", marginTop: 3}}
+                                                onChange={handleChangeDeviceType}
+                                            >
+                                                <MenuItem value={"cam"}>Camera</MenuItem>
+                                                <MenuItem value={"dht11"}>Climate</MenuItem>
+                                            </Select>
                                     </DialogContent>
                                     <DialogActions>
                                     <Button onClick={handleCloseUpdate}>Cancel</Button>

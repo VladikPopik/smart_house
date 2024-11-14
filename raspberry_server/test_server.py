@@ -30,12 +30,14 @@ def perform_device[
 
 @perform_device.register
 def _(device: DhtSensor) -> DhtReturnType:
+    result = None
     try:
         result = device.read()
-    except ValueError as e:
-        print(e)  # noqa: T201
+    except Exception as e:
+        logger.error(f"{e}")
 
     logger.info(f"Dht11 result for {device}: {result}")
+
     return result
 
 
@@ -43,8 +45,9 @@ def _(device: DhtSensor) -> DhtReturnType:
 def _(device: Capture) -> bool:
     try:
         result = device.capture_camera()
-    except ValueError as e:
-        print(e)  # noqa: T201
+    except Exception as e:
+        logger.error(f"{e}")
+
     logger.info(f"Capture result for {device}: {result}")
     return result
 
@@ -79,7 +82,7 @@ async def fetch() -> dict[str, ty.Any] | None:
             await consumer.stop() # pyright: ignore[reportGeneralTypeIssues]
     except Exception as _e:  # noqa: BLE001
         logger.info("Cannot read from topic 'test'")
-    return data # {"device_name": "camera12", "voltage": 14, "device_type": "cam", "pin": 14, "on": True, "action": "update"} #data
+    return data #{"device_name": "camera12", "voltage": 14, "device_type": "cam", "pin": 14, "on": True, "action": "update"} #data
 
 
 async def main() -> None:
@@ -132,7 +135,7 @@ async def main() -> None:
                             raise ValueError(msg)
                 else:
                     logger.info(
-                        f"No such device type as {new_device_data_result["type"]}"  # noqa: G004
+                        f"No such device type as {device_type}"  # noqa: G004
                     )
 
             for device in devices_:
