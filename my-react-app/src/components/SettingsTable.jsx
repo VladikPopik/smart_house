@@ -16,6 +16,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+
 async function ReadAllDevices() {
     let values = [];
     try {
@@ -79,6 +82,9 @@ async function UpdateDevice(props){
         if (!response.ok) {
           throw new Error('Cannot add devices to server');
         }
+
+        await sleep(2000);
+
         return response
 
     } catch (error) {

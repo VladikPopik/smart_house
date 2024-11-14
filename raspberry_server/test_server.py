@@ -1,7 +1,6 @@
 import ast
 import asyncio
 import json
-import time
 import typing as ty
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import singledispatch
@@ -10,7 +9,6 @@ from logging import getLogger, basicConfig, INFO
 from aiokafka import AIOKafkaConsumer  # AIOKafkaProducer
 from devices.monitoring import DhtReturnType, DhtSensor
 from devices.motion import Capture
-from tqdm import tqdm
 
 
 basicConfig(filename="error.log", level=INFO)
@@ -36,6 +34,8 @@ def _(device: DhtSensor) -> DhtReturnType:
         result = device.read()
     except ValueError as e:
         print(e)  # noqa: T201
+
+    logger.info(f"Dht11 result for {device}: {result}")
     return result
 
 
@@ -45,6 +45,7 @@ def _(device: Capture) -> bool:
         result = device.capture_camera()
     except ValueError as e:
         print(e)  # noqa: T201
+    logger.info(f"Capture result for {device}: {result}")
     return result
 
 
@@ -66,9 +67,7 @@ async def fetch() -> dict[str, ty.Any] | None:
             session_timeout_ms=5000,
             request_timeout_ms=5000,
         ) as consumer:
-            logger.info("I'm here")
             device = await consumer.getmany(timeout_ms=5000)
-            print(device)
             first_device = next(iter(list(device.items())))
             el = first_device[1][0]
             if el.value:
@@ -80,7 +79,6 @@ async def fetch() -> dict[str, ty.Any] | None:
             await consumer.stop() # pyright: ignore[reportGeneralTypeIssues]
     except Exception as _e:  # noqa: BLE001
         logger.info("Cannot read from topic 'test'")
-    print(data)
     return data # {"device_name": "camera12", "voltage": 14, "device_type": "cam", "pin": 14, "on": True, "action": "update"} #data
 
 
@@ -137,7 +135,6 @@ async def main() -> None:
                         f"No such device type as {new_device_data_result["type"]}"  # noqa: G004
                     )
 
-            logger.info(f"All devices are {devices_}")  # noqa: G004
             for device in devices_:
                 _f = check_device(device)
                 if _f:
@@ -150,25 +147,20 @@ async def main() -> None:
                 _ = connected_devices.pop(deleted_name, None)
 
             futures = []
-            logger.info(
-                f"Connected devices are: {connected_devices}"  # noqa: G004
-            )
             for c_device in connected_devices:
                 device = connected_devices[c_device]
                 logger.info(device)
                 future = executor.submit(perform_device, device)
                 futures.append(future)
-                logger.info(f"Future {future}")  # noqa: G004
 
             results = [f.result() for f in as_completed(futures)]
             logger.info(f"Results {results}")
             logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@STEP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
 if __name__ == "__main__":
-    logger.info("START UP")
+    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@START UP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
-    for _i in tqdm(range(100)):
-        ...
+
     _loop = asyncio.new_event_loop()
 
     asyncio.get_event_loop().create_task(main())

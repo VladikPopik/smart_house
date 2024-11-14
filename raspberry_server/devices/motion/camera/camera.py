@@ -3,6 +3,9 @@ from uuid import UUID, uuid4
 from cv2 import VideoCapture, destroyAllWindows, imwrite
 from devices.utils import Singleton
 
+from logging import getLogger
+
+logger = getLogger()
 
 class Capture(metaclass=Singleton):
     error: str = "Couldnt open camera port"
@@ -44,7 +47,7 @@ class Capture(metaclass=Singleton):
                 uuid = uuid4()
                 file_path = f"data/test{uuid}.png"
                 t = imwrite(file_path, img)
-                print(f"Is image saved? {t}, image uuid: {uuid}")  # noqa: T201
+                logger.info(f"Is image saved? {t}, image uuid: {uuid}")  # noqa: T201
                 self.uuids.append(uuid)
         destroyAllWindows()
         self.cam.release()
