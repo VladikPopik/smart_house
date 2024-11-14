@@ -52,9 +52,6 @@ async def device_delete(device_name: str) -> JSONResponse:
             v = dict(device)
             v["action"] = "delete"
             res = await producer.send("test", f"{v}")
-        print(res)
-
-    print(device)
     return JSONResponse(content=f"{res}", status_code=200)
 
 
@@ -70,5 +67,12 @@ async def device_update(params: UpdateDevice) -> JSONResponse:
         if device:
             v = dict(device)
             v["action"] = "update"
+            # future: <Task finished name='Task-1' coro=<main() done, defined at /raspberry_server/test_server.py:92> exception=KeyError(UUID('8ba637a3-f0ad-4748-9538-800409c08639'))>
+            # Traceback (most recent call last):
+            # File "/raspberry_server/test_server.py", line 147, in main
+            #     del connected_devices[device.uuid]
+            #         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+            # KeyError: UUID('8ba637a3-f0ad-4748-9538-800409c08639')
+            print(f"{v}")
             res = await producer.send("test", f"{v}")
     return JSONResponse(jsonable_encoder(result), 200)

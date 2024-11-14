@@ -70,7 +70,8 @@ async function UpdateDevice(props){
                         "device_name": props.device_name,
                         "device_type": props.device_type,
                         "voltage": props.voltage, 
-                        "pin": props.pin
+                        "pin": props.pin,
+                        "on": props.on
                     }
                 )
             }
@@ -127,6 +128,14 @@ export default function SettingsTable() {
         SetUpdateOpen(false);
     }
 
+    const handleOnClick = async (event, item) => {
+        {
+            item.on = !item.on
+            await UpdateDevice(item) //JSON.stringify(item)
+            setToReload(!toReload);
+        }
+    }
+
     const [data, setData] = useState([]);
 
     
@@ -158,9 +167,9 @@ export default function SettingsTable() {
                             <TableCell>
                                 Pin Number
                             </TableCell>
-                            <TableCell sx={{position: "relative", top: 0, right: 5}}>
-                                <Fragment>
-                                    <Button variant="outlined" onClick={handleClickOpen}>
+                            <TableCell sx={{position: "relative", marginLeft: 150}}>
+                                <Fragment >
+                                    <Button variant="text" onClick={handleClickOpen}>
                                         <AddIcon>
                                             Create device
                                         </AddIcon>
@@ -241,9 +250,31 @@ export default function SettingsTable() {
                                     </Dialog>
                                 </Fragment>
                             </TableCell>
-                            <TableCell>
+                            
+                        </TableRow>
+                    </TableHead>
+                <TableBody>
+                    {data?.map( (item, index) => (
+                    <TableRow key={index}>
+                        <TableCell>{item.device_name}</TableCell>
+                        <TableCell>{item.voltage}</TableCell>
+                        <TableCell>{item.device_type}</TableCell>
+                        <TableCell>{item.pin}</TableCell>
+                        <TableCell>
+                        <FormControlLabel
+                            value="end"
+                            control={
+                            <Switch color="primary"  onChange={async (event) => handleOnClick(event, item)}
+                            checked={item.on}
+                            // checkedIcon={<CheckIcon></CheckIcon>}
+                            />}
+                            label="Active"
+                            labelPlacement="end"
+                            />
+                        </TableCell>
+                        <TableCell>
                             <Fragment>
-                                <Button variant="outlined" onClick={handleClickUpdateOpen}>
+                                <Button variant="text" onClick={handleClickUpdateOpen}>
                                     <CreateIcon>
                                         Create device
                                     </CreateIcon>
@@ -256,6 +287,7 @@ export default function SettingsTable() {
                                     onSubmit: (event) => {
                                         event.preventDefault();
                                         const formData = new FormData(event.currentTarget);
+                                        formData.append('device_name', item.device_name)
                                         const formJson = Object.fromEntries(formData.entries());
                                         const create_device_t = async (props) => {
                                             const response = await UpdateDevice(props);
@@ -272,7 +304,7 @@ export default function SettingsTable() {
                                         Please fill fields to add device to your system. 
                                         Be aware that you have to check if pins are the same.
                                         </DialogContentText>
-                                        <TextField
+                                        {/* <TextField
                                             autoFocus
                                             required
                                             margin="dense"
@@ -282,7 +314,7 @@ export default function SettingsTable() {
                                             type="string"
                                             fullWidth
                                             variant="standard"
-                                        />
+                                        /> */}
                                         <TextField
                                             autoFocus
                                             required
@@ -335,30 +367,6 @@ export default function SettingsTable() {
                                 </Dialog>
                             </Fragment>
                         </TableCell>
-                        </TableRow>
-                    </TableHead>
-                <TableBody>
-                    {data?.map( (item, index) => (
-                    <TableRow key={index}>
-                        <TableCell>{item.device_name}</TableCell>
-                        <TableCell>{item.voltage}</TableCell>
-                        <TableCell>{item.device_type}</TableCell>
-                        <TableCell>{item.pin}</TableCell>
-                        <TableCell>
-                        <FormControlLabel
-                            value="end"
-                            control={
-                            <Switch color="primary"  onChange={async (item) => {
-                                item.on = !item.on
-                                    await UpdateDevice(item) //JSON.stringify(item)
-                                }}
-                            checked={item.on}
-                            // checkedIcon={<CheckIcon></CheckIcon>}
-                            />}
-                            label="Active"
-                            labelPlacement="end"
-                            />
-                        </TableCell>
                         <TableCell>
                             <Button onClick={() => {
                                 handleDeleteDevice(item.device_name)
@@ -371,7 +379,6 @@ export default function SettingsTable() {
                     </TableRow>))}
                 </TableBody>
                 </Table>
-            
             </TableContainer>
     )
 }

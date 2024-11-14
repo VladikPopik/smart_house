@@ -16,8 +16,8 @@ class DeleteDevice(Base):
 class UpdateDevice(Base):
     device_name: str
     device_type: str | None
-    voltage: float | int
-    pin: int | None
+    voltage: float | int | None = None
+    pin: int | None = None
     on: bool | None = False
 
 
