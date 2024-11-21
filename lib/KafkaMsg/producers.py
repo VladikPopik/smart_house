@@ -1,12 +1,11 @@
 import json
 import typing as ty
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 
 from aiokafka import AIOKafkaProducer
 
 from lib.conf import Config, config
-
-from collections.abc import AsyncGenerator
-from contextlib import asynccontextmanager
 
 from .abstract_kafka import AbstractProducer
 
@@ -23,9 +22,11 @@ class BaseProducer[T, R](AbstractProducer[T, R]):
             value = self._cast_data(
                 value
             )  # pyright: ignore[reportAssignmentType, reportArgumentType]
-            #TODO: fix inf
+            # TODO: fix inf
             await self._producer.start()
-            await self._producer.send(topic, value.encode(), key) # pyright: ignore[reportOptionalMemberAccess, reportAttributeAccessIssue]
+            await self._producer.send(
+                topic, value.encode(), key
+            )  # pyright: ignore[reportOptionalMemberAccess, reportAttributeAccessIssue]
         except Exception as e:
             print(f"{e}")
             raise e
@@ -47,6 +48,7 @@ class BaseProducer[T, R](AbstractProducer[T, R]):
             print(f"{e}")
         finally:
             await self.close()
+
 
 json_type_alias: ty.TypeAlias = dict[str, ty.Any] | list[ty.Any]
 json_return_type_alias: ty.TypeAlias = dict[str, ty.Any]

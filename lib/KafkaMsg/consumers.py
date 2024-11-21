@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from aiokafka import AIOKafkaConsumer
 
 from lib.conf import Config, config
-
+import ast
 from .abstract_kafka import AbstractConsumer
 
 
@@ -17,22 +17,31 @@ class BaseConsumer[T, R](AbstractConsumer[T, R]):
         self, *topics: tuple[ty.Any, ...], _configs: Config = config
     ) -> None:
         self._consumer = AIOKafkaConsumer(
-            *topics, **_configs.Kafka.model_dump()
+            *topics,
+            bootstrap_servers="kafka:9092",
+            auto_offset_reset="latest",
+            connections_max_idle_ms=5000,
+            session_timeout_ms=5000,
+            request_timeout_ms=5000,
         )
 
     async def recieve(self, _topic: str | None = None) -> dict[str, R]:
         """Recieve message via kafka."""
-        data: dict[str, R] = {}
-        consumer = self._consumer
+        el_data: dict[str, R] = {}
         try:
-            await self.subscribe()
-            msg = await consumer.getone()
-            data[msg.key] = self._cast_data(
-                msg.value
-            )  # pyright: ignore[reportArgumentType]
+            async with self._consumer as consumer:  # pyright: ignore[reportGeneralTypeIssues]
+                msg = await consumer.getmany(timeout_ms=5000)
+                first_device = next(iter(list(msg.items())))
+                el = first_device[1][-1]
+                if el.value:
+                    el_data = json.loads(el.value)
+                    el_data = ast.literal_eval(el_data) # pyright: ignore[reportArgumentType]
+                else:
+                    el_data = {}
         except Exception as e:
             print(e)
-        return data
+
+        return el_data
 
     async def subscribe(self) -> None:
         """Subscribe to topics in kafka."""
@@ -43,14 +52,14 @@ class BaseConsumer[T, R](AbstractConsumer[T, R]):
         return ty.cast(R, msg)
 
     @asynccontextmanager
-    async def get_consumer(self) -> AsyncGenerator[ty.Self | None, None]:
+    async def get_consumer(self) -> AsyncGenerator[ty.Self, None]:
         """Base consumer async context manager."""
         try:
             yield self
         except Exception as e:
             print(e)
         finally:
-            await self._consumer.commit()
+            # await self._consumer.commit()
             await self._consumer.stop()
 
 
@@ -64,7 +73,9 @@ class JSONConsumer[json_type_alias, json_return_type_alias](
     @ty.override
     def _cast_data(self, msg: json_type_alias) -> json_return_type_alias:
         try:
-            return json.load(msg.decode())  # pyright: ignore[reportAttributeAccessIssue, reportArgumentType]
+            return json.load(
+                msg.decode()
+            )  # pyright: ignore[reportAttributeAccessIssue, reportArgumentType]
         except json.JSONDecodeError as e:
             print(f"{e}")
             raise e

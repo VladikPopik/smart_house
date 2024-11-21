@@ -3,8 +3,9 @@ import typing as ty
 from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from lib.KafkaMsg.producers import JSONProducer
+
 from lib.db.mysql.settingsd import crud as cr
+from lib.KafkaMsg.producers import JSONProducer
 
 from .schemas import (CreateDevice, DeleteDevice, GetDevice, GetDevices,
                       UpdateDevice)
@@ -67,12 +68,6 @@ async def device_update(params: UpdateDevice) -> JSONResponse:
         if device:
             v = dict(device)
             v["action"] = "update"
-            # future: <Task finished name='Task-1' coro=<main() done, defined at /raspberry_server/test_server.py:92> exception=KeyError(UUID('8ba637a3-f0ad-4748-9538-800409c08639'))>
-            # Traceback (most recent call last):
-            # File "/raspberry_server/test_server.py", line 147, in main
-            #     del connected_devices[device.uuid]
-            #         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-            # KeyError: UUID('8ba637a3-f0ad-4748-9538-800409c08639')
             print(f"{v}")
             res = await producer.send("test", f"{v}")
     return JSONResponse(jsonable_encoder(result), 200)

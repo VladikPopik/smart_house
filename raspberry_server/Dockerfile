@@ -7,4 +7,4 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 EXPOSE 8080
 COPY . .
-CMD [ "python3", "/raspberry_server/test_server.py" ]
+CMD [ "python3", "/raspberry_server/start_server.py" ]

@@ -5,8 +5,7 @@ services:
       MYSQL_ROOT_PASSWORD: admin
     ports:
       - "3307:3307"
-
-
+      
   zookeeper:
     image: zookeeper:latest
     environment:
@@ -42,8 +41,8 @@ services:
       - "8080:8080"
     devices:
       - '/dev/video0:/dev/video0'
-    volumes:
-      - /smart_house/data:/raspberry_server/data
+    # volumes:
+    #   - /smart_house/data:/raspberry_server/data
 
   # monitoring:
   #   build: ./monitoring

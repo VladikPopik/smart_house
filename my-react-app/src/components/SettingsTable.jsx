@@ -307,7 +307,8 @@ export default function SettingsTable() {
                                     onSubmit: (event) => {
                                         event.preventDefault();
                                         const formData = new FormData(event.currentTarget);
-                                        formData.append('device_name', item.device_name)
+                                        formData.append('device_name', item.device_name);
+                                        formData.append('device_type', deviceType)
                                         const formJson = Object.fromEntries(formData.entries());
                                         const create_device_t = async (props) => {
                                             const response = await UpdateDevice(props);

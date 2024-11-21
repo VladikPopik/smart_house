@@ -14,6 +14,21 @@ async def create_device[T](params: dict[str, T]) -> None:
         session.execute(insert(settingsd_table).values(**params))
 
 
+async def read_device_by_type(device_type: str) -> RowMapping | None:
+    """Read all devices with one type."""
+    with db_instance.session() as session:
+        return (
+            session.execute(
+                select(settingsd_table).where(
+                    (settingsd_table.c.device_type == device_type)
+                    & (settingsd_table.c.on == 1)
+                )
+            )
+            .mappings()
+            .fetchone()
+        )
+
+
 async def device_read(device_name: str) -> RowMapping | None:
     """Read function for device table."""
     with db_instance.session() as session:

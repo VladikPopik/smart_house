@@ -1,8 +1,15 @@
+import ast
 import asyncio
-import time
+import datetime
+import json
+from logging import getLogger
 
-import numpy as np
+from aiokafka import AIOKafkaConsumer
 from fastapi import APIRouter, WebSocket
+
+from lib.db.mysql.settingsd import crud as cr
+
+logger = getLogger()
 
 monitoring_router_ws = APIRouter()
 
@@ -11,12 +18,49 @@ monitoring_router_ws = APIRouter()
 async def push_data_monitroing_ws(websocket: WebSocket) -> None:
     """WebSocket for monitoring data."""
     await websocket.accept()
+    type_d = "dht11"
+    climates = await cr.read_device_by_type(type_d)
+    topic = f"{climates["device_name"]}-{type_d}" if climates else ""
+
+    prev_t = 0.0
+    prev_h = 0.0
+
     while True:
         try:
-            _ttx = await websocket.receive_text()
-            resp = {"value": np.random.random(), "time": time.time()}
-            await websocket.send_json(resp)
-            await asyncio.sleep(2)
-        except Exception as e:
-            print("error:", e)
+            el_data = None
+            if topic:
+                async with AIOKafkaConsumer(
+                    topic,
+                    bootstrap_servers="kafka:9092",
+                    auto_offset_reset="latest",
+                    connections_max_idle_ms=2500,
+                    session_timeout_ms=2500,
+                    request_timeout_ms=2500,
+                    auto_commit_interval_ms=2500,
+                ) as consumer:  # pyright: ignore[reportGeneralTypeIssues]
+                    msg = await consumer.getmany(timeout_ms=2500)
+                    first_device = next(iter(list(msg.items())))
+                    print(msg.items())
+                    el = first_device[1][-1]
+                    if el.value:
+                        el_data = json.loads(el.value)
+                        el_data = ast.literal_eval(el_data)
+                        prev_t = el_data["temperature"]
+                        prev_h = el_data["humidity"]
+            if el_data is None:
+                el_data = {
+                    "time": datetime.datetime.now().timestamp(),
+                    "temperature": prev_t,
+                    "humidity": prev_h
+                }
+        except Exception as e:  # noqa: BLE001
+            logger.info(e)
+
+        # logger.info(el_data)
+        print(el_data)
+        try:
+            _ = await websocket.receive_text()
+            await websocket.send_json(el_data)
+        except Exception as e:  # noqa: BLE001
+            logger.info(e)
             break
