@@ -3,3 +3,4 @@ CONFIG_HOST_ORIGIN = "localhost"
 CONFIG_HOST = "0.0.0.0"  # noqa: S104
 CONFIG_PORT = 9999
 CONFIG_LOG_LEVEL = "info"
+
