@@ -11,8 +11,7 @@ from library.conf.config_parser import Config
 #     'port': '3306',
 #     'database':'test'
 # }
-async def xui():
-    create_record()
+
 if __name__ == "__main__":
     # asyncio.get_event_loop().run_until_complete(create_record(datetime.datetime.now()))
     asyncio.run(create_record(datetime.datetime.now()))

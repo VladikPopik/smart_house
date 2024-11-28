@@ -19,3 +19,4 @@ async def create_record(
                 inserted_at=inserted_at
             )
         )
+        print("Запись успешно произведена!")      
