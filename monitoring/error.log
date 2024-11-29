@@ -1,0 +1,6 @@
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f0d3269dd00>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f0d3269f3b0>

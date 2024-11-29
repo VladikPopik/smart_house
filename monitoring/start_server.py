@@ -10,7 +10,7 @@ logger = getLogger(__name__)
 
 
 
-async def produce_message_kafka(topic:str, message:datetime) -> bool:
+async def produce_message_kafka(topic:str) -> bool:
     try:
         async with AIOKafkaProducer(
             bootstrap_servers="kafka:9092",
@@ -20,11 +20,11 @@ async def produce_message_kafka(topic:str, message:datetime) -> bool:
             #     "temperature": result[0],
             #     "humidity": result[1]
             # }
-            # value_to_send = {
-            #     "time" : message
-            # }
+            value_to_send = {
+                "time" : datetime.datetime.now().timestamp()
+            }
             _ = await producer.send(
-                topic, value=json.dumps(message).encode()
+                topic, value=json.dumps(value_to_send).encode()
             )
             logger.info(json.dumps(str+"Данные отправлены в кафку"))
             print("Данные отправлены!")
@@ -39,8 +39,8 @@ async def produce_message_kafka(topic:str, message:datetime) -> bool:
 
 async def main():
     while True:
-        print("Запущен процесс записи*****************")
-        time_data = datetime.datetime.now()
+        print("*****************ЦИКАЛ ЗАПУЩЕН*****************")
+        # time_data = datetime.datetime.now()
         # _futures = []
         # _futures.append(asyncio.create_task(create_record(time_data)))
         # print('asdasdad')
@@ -51,13 +51,10 @@ async def main():
         # _futures.clear()
         try:
             # asyncio.run(produce_message_kafka("test_topic_for_training", time_data))
-            await produce_message_kafka("test_topic_for_training", time_data)
+            await produce_message_kafka("test_topic_for_training")
         except Exception as e:
             print(e)
         time.sleep(5)
-        
-        
-    
 
 if __name__=="__main__":
     _loop = asyncio.new_event_loop()
