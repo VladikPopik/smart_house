@@ -2,7 +2,7 @@ from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from logging import getLogger, basicConfig, INFO
 import datetime, json
 
-basicConfig(filename="error.log", level=INFO)
+basicConfig(filename="monitoring.log", level=INFO)
 logger = getLogger(__name__)
 
 

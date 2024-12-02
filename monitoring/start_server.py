@@ -1,12 +1,13 @@
 from library.db.mysql.monit.crud import create_record
 import datetime, asyncio, time, json
 from kafka_functions import produce_message_kafka, consume_message
+from logging import getLogger
 
-
+log = getLogger()
 
 async def main():
     while True:
-        print("Start work")
+        log.info("Start work")
         # time_data = datetime.datetime.now()
         # _futures = []
         # _futures.append(asyncio.create_task(create_record(time_data)))
@@ -25,7 +26,7 @@ async def main():
 
             consume_task = asyncio.create_task(consume_message())
             data = await asyncio.gather(consume_task)
-            print(data)
+            log.info(data)
 
         except Exception as e:
             print(e)

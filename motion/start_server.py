@@ -1,11 +1,13 @@
 from src.db.mysql.motion_db.crud import create_record
 import datetime, asyncio, time, json
 from kafka_functions import produce_message_kafka, consume_message
+from logging import getLogger
 
+log = getLogger()
 
 async def main():
     while True:
-        print("Start cycle")
+        log.info("Start cycle")
         try:
             produce_task = asyncio.create_task(produce_message_kafka("training_motion_topic"))
             await asyncio.gather(produce_task)
@@ -13,7 +15,7 @@ async def main():
 
             consume_task = asyncio.create_task(consume_message())
             data = await asyncio.gather(consume_task)
-            print(data)
+            log.info(data)
 
         except Exception as e:
             print(e)
