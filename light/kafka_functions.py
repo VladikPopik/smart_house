@@ -1,19 +1,17 @@
-import typing as ty
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from logging import getLogger, basicConfig, INFO
 import datetime
 import json
 
-basicConfig(filename="motion.log", level=INFO)
+basicConfig(filename="monitoring.log", level=INFO)
 logger = getLogger(__name__)
 
 
-async def consume_message() -> dict[str, ty.Any]:
-    """Consumer function for service."""
+async def consume_message():
     data = {}
     try:
         async with AIOKafkaConsumer(
-            "training_motion_topic",
+            "test_topic_for_training",
             bootstrap_servers="kafka:9092",
             auto_offset_reset="latest",
             connections_max_idle_ms=5000,
@@ -32,7 +30,6 @@ async def consume_message() -> dict[str, ty.Any]:
 
 
 async def produce_message_kafka(topic:str) -> bool:
-    """Producer function for service."""
     try:
         async with AIOKafkaProducer(
             bootstrap_servers="kafka:9092",
@@ -43,9 +40,9 @@ async def produce_message_kafka(topic:str) -> bool:
             _ = await producer.send(
                 topic, value=json.dumps(value_to_send).encode()
             )
-            logger.info(json.dumps(str+"Данные отправлены в кафку"))
+            logger.info(json.dumps(f"{value_to_send} -> Данные отправлены в кафку"))
             print("Данные отправлены!")
-    except Exception as e: 
+    except Exception as e:
         print(e) # noqa: BLE001
         _ = await producer.stop()
         logger.info(e)

@@ -1,6 +1,6 @@
 import typing as ty
 
-from library.utils.basemodel import Base
+from src.utils.basemodel import Base
 
 
 class SSL(Base):

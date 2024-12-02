@@ -57,7 +57,6 @@ async def push_data_monitroing_ws(websocket: WebSocket) -> None:
             logger.info(e)
 
         # logger.info(el_data)
-        print(el_data)
         try:
             _ = await websocket.receive_text()
             await websocket.send_json(el_data)

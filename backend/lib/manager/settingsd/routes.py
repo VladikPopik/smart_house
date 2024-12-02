@@ -71,3 +71,13 @@ async def device_update(params: UpdateDevice) -> JSONResponse:
             print(f"{v}")
             res = await producer.send("test", f"{v}")
     return JSONResponse(jsonable_encoder(result), 200)
+
+
+@settings_router.get("/device/{type}")
+async def get_device_by_type(device_type: str) -> str | None:
+    result = await cr.read_device_by_type(device_type)
+
+    if result["device_type"] is not None:
+        return result["device_type"]
+    
+    return None

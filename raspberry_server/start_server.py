@@ -194,7 +194,7 @@ async def main() -> None:
 
             futures = []
             t_devices = []
-            for c_device in connected_devices:
+            for c_device in connected_devices:  # noqa: PLC0206
                 device = connected_devices[c_device]
                 logger.info(device)
                 future = executor.submit(perform_device, device)
@@ -209,7 +209,7 @@ async def main() -> None:
                     asyncio.create_task(
                         produce_device_result(
                             d,
-                            topic=f"{d.device_name}-dht11",
+                            topic=f"{d.device_name}-dht11-rasp",
                             result=results[idx],
                         )
                     )

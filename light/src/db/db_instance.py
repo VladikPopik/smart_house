@@ -2,8 +2,8 @@ from contextlib import contextmanager
 
 import sqlalchemy as sa
 
-from library.conf import config
-from library.utils import Singleton
+from src.conf import config
+from src.utils import Singleton
 
 
 class DBInstance(metaclass=Singleton):

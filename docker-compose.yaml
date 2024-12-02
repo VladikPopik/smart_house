@@ -29,7 +29,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   backend:
-    build: .
+    build: ./backend
     ports:
       - "8001:8001"
     depends_on:
@@ -60,6 +60,13 @@ services:
       - backend
       - kafka
 
+  light:
+    build: ./light
+    ports:
+      - "8888:8888"
+    depends_on:
+      - backend
+      - kafka
   
   # frontend:
   #   build:

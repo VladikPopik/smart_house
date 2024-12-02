@@ -6,7 +6,7 @@ from logging import getLogger
 
 from sqlalchemy import RowMapping, delete, insert, select, update
 
-from library.db import db_instance
+from src.db import db_instance
 from .table import monitoring_table
 
 log = getLogger()
@@ -22,4 +22,4 @@ async def create_record(
                 inserted_at=inserted_at
             )
         )
-        log.info("Запись успешно произведена!")      
+        log.info("Запись успешно произведена!")

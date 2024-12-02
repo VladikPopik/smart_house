@@ -1,4 +1,4 @@
-from library.db.mysql.monit.crud import create_record
+from src.db.mysql.monit.crud import create_record
 import datetime, asyncio, time, json
 from kafka_functions import produce_message_kafka, consume_message
 from logging import getLogger

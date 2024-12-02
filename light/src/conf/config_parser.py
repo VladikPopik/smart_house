@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from library.utils import Singleton
+from src.utils import Singleton
 
 from .config import JWT, SERVICE, SQL_CONNECTION, SSL, Kafka, Origins
 

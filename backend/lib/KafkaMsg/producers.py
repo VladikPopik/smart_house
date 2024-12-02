@@ -19,14 +19,14 @@ class BaseProducer[T, R](AbstractProducer[T, R]):
     ) -> None:
         """Method to send message via kafka."""
         try:
-            value = self._cast_data(
-                value
-            )  # pyright: ignore[reportAssignmentType, reportArgumentType]
+            value: R = self._cast_data(
+                ty.cast(value, T)
+            )
             # TODO: fix inf
             await self._producer.start()
             await self._producer.send(
                 topic, value.encode(), key
-            )  # pyright: ignore[reportOptionalMemberAccess, reportAttributeAccessIssue]
+            )
         except Exception as e:
             print(f"{e}")
             raise e
