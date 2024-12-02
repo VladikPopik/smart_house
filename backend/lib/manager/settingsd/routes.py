@@ -73,7 +73,7 @@ async def device_update(params: UpdateDevice) -> JSONResponse:
     return JSONResponse(jsonable_encoder(result), 200)
 
 
-@settings_router.get("/device/{type}")
+@settings_router.get("/device/type/{type}")
 async def get_device_by_type(device_type: str) -> str | None:
     result = await cr.read_device_by_type(device_type)
 

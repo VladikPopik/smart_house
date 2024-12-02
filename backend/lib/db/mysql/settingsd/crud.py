@@ -15,7 +15,7 @@ async def create_device[T](params: dict[str, T]) -> None:
 
 
 async def read_device_by_type(device_type: str) -> RowMapping | None:
-    """Read all devices with one type."""
+    """Read first device with specified type."""
     with db_instance.session() as session:
         return (
             session.execute(

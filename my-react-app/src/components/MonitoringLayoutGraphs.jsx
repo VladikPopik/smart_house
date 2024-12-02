@@ -72,14 +72,14 @@ export default function MonitoringCharts (message="monitoring") {
     return (
             <Stack 
                 direction="row"
-                sx={{width: 1920, height: 1000}}
+                sx={{width: 1800, height: 920}}
             >
                 <Grid
                 sx={
                     {
                         height: "50%",
                         position: "absolute",
-                        top: 125,
+                        top: 100,
                         left: 50
                     }
                 }>
@@ -123,7 +123,7 @@ export default function MonitoringCharts (message="monitoring") {
                             height: "25%",
                             position: "absolute",
                             right: 50,
-                            top: 125
+                            top: 150
                         }
                     }
                     direction={'row'}
@@ -159,10 +159,10 @@ export default function MonitoringCharts (message="monitoring") {
                                 }
                             ]
                         }
-                        height={600}
+                        height={500}
                         borderRadius={13}
                         sx={{color:"blue",
-                            height: "10%",
+                            height: "8%",
                             width: "10%"
                         }}
                     />

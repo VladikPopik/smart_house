@@ -19,8 +19,10 @@ class Capture(metaclass=Singleton):
         on: bool = False,
         camport: int = 0,
         number_of_shots: int = 1,
+        device_type: str="cam",
     ) -> None:
         self.device_name = device_name
+        self.device_type = device_type
         self.uuid: UUID = uuid4()
         self.camport = camport
         self.pin = pin

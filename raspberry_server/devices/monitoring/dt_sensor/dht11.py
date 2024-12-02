@@ -9,9 +9,10 @@ class DhtSensor[T]:
     """Class to handle DHT11 sensor working."""
 
     def __init__(
-        self, pin: int, device_name: str, voltage: float, *, on: bool = False
+        self, pin: int, device_name: str, voltage: float, *, on: bool = False, device_type: str="dht11"
     ) -> None:
         self.device_name = device_name
+        self.device_type = device_type
         self.uuid: UUID = uuid4()
         self.pin = pin
         self.voltage = voltage

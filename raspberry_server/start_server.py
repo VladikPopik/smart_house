@@ -1,4 +1,3 @@
-import ast
 import asyncio
 import json
 import typing as ty
@@ -6,10 +5,12 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import singledispatch
 from logging import getLogger, basicConfig, INFO
 import datetime
-from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
+from aiokafka import AIOKafkaProducer
 from devices.monitoring import DhtReturnType, DhtSensor
 from devices.motion import Capture
 import numpy as np
+
+import httpx
 
 basicConfig(filename="error.log", level=INFO)
 logger = getLogger(__name__)
@@ -28,7 +29,8 @@ async def produce_device_result(
     try:
         async with AIOKafkaProducer(
             bootstrap_servers="kafka:9092",
-        ) as producer:
+            request_timeout_ms=5000
+        ) as producer: # pyright: ignore[reportGeneralTypeIssues]
             value_to_send = {
                 "time": datetime.datetime.now().timestamp(),
                 "temperature": result[0],
@@ -38,6 +40,7 @@ async def produce_device_result(
                 topic, value=json.dumps(value_to_send).encode()
             )
             logger.info(json.dumps(value_to_send))
+            logger.info(topic)
     except Exception as e:  # noqa: BLE001
         _ = await producer.stop()
         logger.info(e)
@@ -84,138 +87,56 @@ def check_device(_device: DeviceType) -> bool:
     return _device.on
 
 
-async def fetch() -> dict[str, ty.Any] | None:
-    """Function that gets device_data from kafka."""
-    data = {}
-    try:
-        async with AIOKafkaConsumer(
-            "test",
-            bootstrap_servers="kafka:9092",
-            auto_offset_reset="latest",
-            connections_max_idle_ms=5000,
-            session_timeout_ms=5000,
-            request_timeout_ms=5000,
-        ) as consumer:  # pyright: ignore[reportGeneralTypeIssues]
-            device = await consumer.getmany(timeout_ms=5000)
-            first_device = next(iter(list(device.items())))
-            el = first_device[1][-1]
-            if el.value:
-                data = json.loads(el.value)
-                data = ast.literal_eval(data)
-            else:
-                data = None
-
-            await consumer.stop()  # pyright: ignore[reportGeneralTypeIssues]
-    except Exception as e:
-        logger.exception(e)
-    return data
-
-
-async def main() -> None:
+async def main(time_to_cycle: int = 1) -> None:
     """Start raspberry server."""
-    devices_: list[DeviceType] = []
-    connected_devices: dict[str, DeviceType] = {}
+    devices_: list[dict[str, ty.Any]] = []
 
     with ProcessPoolExecutor(4) as executor:
         while True:
-            task_fetch = asyncio.create_task(fetch())
-            new_device_data_result = await asyncio.gather(task_fetch)
-            new_device_data_result = new_device_data_result[0]
-            deleted_name = None
-            if new_device_data_result:
-                device_type = new_device_data_result["device_type"]
-                _ = new_device_data_result.pop("device_type", None)
-                device_action = new_device_data_result["action"]
-                _ = new_device_data_result.pop("action", None)
-                if device_type in device_types:
-                    match device_action:
-                        case "create":
-                            device = device_types[device_type](
-                                **new_device_data_result
-                            )
-                            devices_.append(device)
-                        case "update":
-                            is_in = False
-                            for idx, dev in enumerate(devices_):
-                                if (
-                                    dev.device_name
-                                    == new_device_data_result["device_name"]
-                                ):
-                                    if device_type == "cam":
-                                        devices_[idx].on = (
-                                            new_device_data_result["on"]
-                                        )
-                                        devices_[idx].voltage = (
-                                            new_device_data_result["voltage"]
-                                        )
-                                        devices_[idx].pin = (
-                                            new_device_data_result["pin"]
-                                        )
-                                    devices_[idx] = device_types[device_type](
-                                        **new_device_data_result
-                                    )
-                                    is_in = True
-                                    break
-                            if not is_in:
-                                device = device_types[device_type](
-                                    **new_device_data_result
-                                )
-                                devices_.append(device)
-                        case "delete":
-                            delete_idx = None
-                            for idx, dev in enumerate(devices_):
-                                if (
-                                    dev.device_name
-                                    == new_device_data_result["device_name"]
-                                ):
-                                    delete_idx = idx
-                                    deleted_name = dev.device_name
-                                    break
-                            if delete_idx is not None:
-                                devices_.pop(delete_idx)
-                        case _:
-                            msg = "Unreachable"
-                            raise ValueError(msg)
-                else:
-                    logger.info(
-                        f"No such device type as {device_type}"  # noqa: G004
+            start = datetime.datetime.now().timestamp()
+            connected_devices: dict[str, DeviceType] = {}
+            try:
+                async with httpx.AsyncClient(timeout=5000) as client:
+                    response = await client.get(
+                        "http://backend:8001/settings/devices"
                     )
+            except Exception as e:
+                logger.exception(e)
+
+            if response.is_success:
+                devices_ = response.json()
+
+            logger.info(devices_)
 
             for device in devices_:
-                _f = check_device(device)
-                if _f:
-                    connected_devices[device.device_name] = device
-
-                if device.device_name in connected_devices and not _f:
-                    del connected_devices[device.device_name]
-
-            if deleted_name is not None:
-                _ = connected_devices.pop(deleted_name, None)
+                device_type = device["device_type"]
+                if device["on"]:
+                    rasp_device = device_types[device_type](**device)
+                    connected_devices[rasp_device.device_name] = rasp_device
 
             futures = []
             t_devices = []
             for c_device in connected_devices:  # noqa: PLC0206
                 device = connected_devices[c_device]
-                logger.info(device)
                 future = executor.submit(perform_device, device)
                 futures.append(future)
                 t_devices.append(device)
 
             results = [f.result() for f in as_completed(futures)]
-            _f = []
             for idx, d in enumerate(t_devices):
-                logger.info(d.device_name)
-                _f.append(
-                    asyncio.create_task(
-                        produce_device_result(
-                            d,
-                            topic=f"{d.device_name}-dht11-rasp",
-                            result=results[idx],
-                        )
+                _ = await produce_device_result(
+                        d,
+                        topic=f"{d.device_name}-{d.device_type}",
+                        result=results[idx],
                     )
-                )
-            _f_send = await asyncio.gather(*_f)
-            logger.info(f"Produced {_f_send}")  # noqa: G004
+            end = datetime.datetime.now().timestamp()
+
+            if end - start <= time_to_cycle:
+                await asyncio.sleep(time_to_cycle - (end - start))
+            logger.info(f"This cycle has consumed {end - start} sec.")
+
+
+
             logger.info(f"Results {results}")  # noqa: G004
             logger.info(
                 "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@STEP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
@@ -229,6 +150,6 @@ if __name__ == "__main__":
 
     _loop = asyncio.new_event_loop()
 
-    asyncio.get_event_loop().create_task(main())
+    asyncio.get_event_loop().create_task(main(5))
 
     asyncio.get_event_loop().run_forever()
