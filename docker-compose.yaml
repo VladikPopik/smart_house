@@ -52,6 +52,14 @@ services:
       - backend
       - kafka
 
+  motion:
+    build: ./motion
+    ports: 
+      - "8881:8881"
+    depends_on:
+      - backend
+      - kafka
+
   
   # frontend:
   #   build:
