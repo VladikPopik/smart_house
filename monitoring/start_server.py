@@ -1,45 +1,12 @@
 from library.db.mysql.monit.crud import create_record
-from aiokafka import AIOKafkaProducer
 import datetime, asyncio, time, json
+from kafka_functions import produce_message_kafka, consume_message
 
-from logging import getLogger, basicConfig, INFO
-
-
-basicConfig(filename="error.log", level=INFO)
-logger = getLogger(__name__)
-
-
-
-async def produce_message_kafka(topic:str) -> bool:
-    try:
-        async with AIOKafkaProducer(
-            bootstrap_servers="kafka:9092",
-        ) as producer:
-            # value_to_send = {
-            #     "time": datetime.datetime.now().timestamp(),
-            #     "temperature": result[0],
-            #     "humidity": result[1]
-            # }
-            value_to_send = {
-                "time" : datetime.datetime.now().timestamp()
-            }
-            _ = await producer.send(
-                topic, value=json.dumps(value_to_send).encode()
-            )
-            logger.info(json.dumps(str+"Данные отправлены в кафку"))
-            print("Данные отправлены!")
-    except Exception as e: 
-        print(e) # noqa: BLE001
-        _ = await producer.stop()
-        logger.info(e)
-        return False
-
-    return True
 
 
 async def main():
     while True:
-        print("*****************ЦИКАЛ ЗАПУЩЕН*****************")
+        print("Start work")
         # time_data = datetime.datetime.now()
         # _futures = []
         # _futures.append(asyncio.create_task(create_record(time_data)))
@@ -51,7 +18,15 @@ async def main():
         # _futures.clear()
         try:
             # asyncio.run(produce_message_kafka("test_topic_for_training", time_data))
-            await produce_message_kafka("test_topic_for_training")
+            # await produce_message_kafka("test_topic_for_training")
+            produce_task = asyncio.create_task(produce_message_kafka("test_topic_for_training"))
+            await asyncio.gather(produce_task)
+        
+
+            consume_task = asyncio.create_task(consume_message())
+            data = await asyncio.gather(consume_task)
+            print(data)
+
         except Exception as e:
             print(e)
         time.sleep(5)
