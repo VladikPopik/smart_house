@@ -44,13 +44,21 @@ services:
     # volumes:
     #   - /smart_house/data:/raspberry_server/data
 
-  # monitoring:
-  #   build: ./monitoring
-  #   ports:
-  #     - "9999:9999"
-  #   depends_on:
-  #     - backend
-  #     - kafka
+  monitoring:
+    build: ./monitoring
+    ports:
+      - "9999:9999"
+    depends_on:
+      - backend
+      - kafka
+
+  motion:
+    build: ./motion
+    ports: 
+      - "8881:8881"
+    depends_on:
+      - backend
+      - kafka
 
   
   # frontend:

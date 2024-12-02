@@ -30,3 +30,138 @@ INFO:__main__:@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@START UP@@@@@@@@@@@@@@@@@
 INFO:aiokafka.consumer.subscription_state:Updating subscribed topics to: frozenset({'test'})
 ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -3] Temporary failure in name resolution
 INFO:__main__:Cannot read from topic 'test'
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f8c461676b0>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f8c4607e270>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f8c46e48650>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-1' coro=<main() done, defined at /home/makza/smart_house/smart_house/monitoring/start_server.py:40> exception=KeyboardInterrupt()>
+Traceback (most recent call last):
+  File "/home/makza/smart_house/smart_house/monitoring/start_server.py", line 67, in <module>
+    asyncio.get_event_loop().run_forever()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
+    self._run_once()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1986, in _run_once
+    handle._run()
+  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/makza/smart_house/smart_house/monitoring/start_server.py", line 57, in main
+    time.sleep(5)
+KeyboardInterrupt
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f8c4607e270>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-1' coro=<main() done, defined at /home/makza/smart_house/smart_house/monitoring/start_server.py:40> exception=KeyboardInterrupt()>
+Traceback (most recent call last):
+  File "/home/makza/smart_house/smart_house/monitoring/start_server.py", line 67, in <module>
+    asyncio.get_event_loop().run_forever()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
+    self._run_once()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1986, in _run_once
+    handle._run()
+  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/makza/smart_house/smart_house/monitoring/start_server.py", line 57, in main
+    time.sleep(5)
+KeyboardInterrupt
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f9f6cd9d940>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-1' coro=<main() done, defined at /home/makza/smart_house/smart_house/monitoring/start_servak.py:40> exception=KeyboardInterrupt()>
+Traceback (most recent call last):
+  File "/home/makza/smart_house/smart_house/monitoring/start_servak.py", line 67, in <module>
+    asyncio.get_event_loop().run_forever()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
+    self._run_once()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1986, in _run_once
+    handle._run()
+  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/makza/smart_house/smart_house/monitoring/start_servak.py", line 57, in main
+    time.sleep(5)
+KeyboardInterrupt
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f173be9dd30>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-1' coro=<main() done, defined at /home/makza/smart_house/smart_house/monitoring/start_server.py:40> exception=KeyboardInterrupt()>
+Traceback (most recent call last):
+  File "/home/makza/smart_house/smart_house/monitoring/start_server.py", line 67, in <module>
+    asyncio.get_event_loop().run_forever()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
+    self._run_once()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1986, in _run_once
+    handle._run()
+  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/makza/smart_house/smart_house/monitoring/start_server.py", line 57, in main
+    time.sleep(5)
+KeyboardInterrupt
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f9cdf861ca0>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-1' coro=<main() done, defined at /home/makza/smart_house/smart_house/monitoring/start_server.py:40> exception=KeyboardInterrupt()>
+Traceback (most recent call last):
+  File "/home/makza/smart_house/smart_house/monitoring/start_server.py", line 67, in <module>
+    asyncio.get_event_loop().run_forever()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
+    self._run_once()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1986, in _run_once
+    handle._run()
+  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/makza/smart_house/smart_house/monitoring/start_server.py", line 57, in main
+    time.sleep(5)
+KeyboardInterrupt
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7ff243319130>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f13e09aa090>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f13e09ab830>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f13e094c6e0>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f13e09aa210>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f13e094c6e0>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f13e07b7e90>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f13e07b5b80>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f13e07fa900>
+ERROR:aiokafka:Unable connect to "kafka:9092": [Errno -2] Name or service not known
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-1' coro=<main() done, defined at /home/makza/smart_house/smart_house/monitoring/start_server.py:40> exception=KeyboardInterrupt()>
+Traceback (most recent call last):
+  File "/home/makza/smart_house/smart_house/monitoring/start_server.py", line 67, in <module>
+    asyncio.get_event_loop().run_forever()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
+    self._run_once()
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1986, in _run_once
+    handle._run()
+  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/makza/smart_house/smart_house/monitoring/start_server.py", line 57, in main
+    time.sleep(5)
+KeyboardInterrupt
+ERROR:asyncio:Unclosed AIOKafkaProducer
+producer: <aiokafka.producer.producer.AIOKafkaProducer object at 0x7f13e094c6e0>
