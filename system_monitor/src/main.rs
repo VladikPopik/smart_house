@@ -2,6 +2,8 @@ use sysinfo::System;
 
 
 fn main() {
+    //TODO @<VladikPopik>: Add docker file and docker compose
+
     println!("Hello, world!");
     let mut sys = System::new_all();
 
