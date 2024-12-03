@@ -60,6 +60,7 @@ async def push_data_monitroing_ws(websocket: WebSocket) -> None:
         try:
             _ = await websocket.receive_text()
             await websocket.send_json(el_data)
+            await asyncio.sleep(1)
         except Exception as e:  # noqa: BLE001
             logger.info(e)
             break
