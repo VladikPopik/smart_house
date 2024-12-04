@@ -126,7 +126,7 @@ async def main(time_to_cycle: int = 1) -> None:
         for idx, d in enumerate(t_devices):
             _ = await produce_device_result(
                     d,
-                    topic=f"{d.device_name}-{d.device_type}",
+                    topic=f"{d.device_name}-{d.device_type}-rasp",
                     result=results[idx],
                 )
         end = datetime.datetime.now().timestamp()

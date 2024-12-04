@@ -1,40 +1,49 @@
 from src.db.mysql.monit.crud import create_record
-import datetime, asyncio, time, json
+import asyncio
+import json
 from kafka_functions import produce_message_kafka, consume_message
-from logging import getLogger
+from logging import getLogger, basicConfig, INFO
+import httpx
 
-log = getLogger()
+basicConfig(filename="monitoring.log", level=INFO)
+log = getLogger(__name__)
 
-async def main():
-    while True:
-        log.info("Start work")
-        # time_data = datetime.datetime.now()
-        # _futures = []
-        # _futures.append(asyncio.create_task(create_record(time_data)))
-        # print('asdasdad')
-        # _futures.append(asyncio.create_task(produce_message_kafka("test_topic_for_training", time_data)))
-        # print(_futures)
-        # _futures_send = await asyncio.gather(*_futures)
-        # logger.info(f"Produced {_futures_send}")
-        # _futures.clear()
-        try:
-            # asyncio.run(produce_message_kafka("test_topic_for_training", time_data))
-            # await produce_message_kafka("test_topic_for_training")
-            produce_task = asyncio.create_task(produce_message_kafka("test_topic_for_training"))
-            await asyncio.gather(produce_task)
-        
+async def main(time_to_cycle):
+    log.info("Start work")
 
-            consume_task = asyncio.create_task(consume_message())
-            data = await asyncio.gather(consume_task)
-            log.info(data)
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "http://backend:8001/settings/device/type/dht11",
+                params={"device_type": "dht11"}
+            )
+        if response.is_success:
+            r = response.json()
+            producer_topic = f"{r["device_name"]}-{r["device_type"]}"
+            consumer_topic = producer_topic + "-rasp"
+            log.info(f"{producer_topic}, {consumer_topic}")
+    except Exception as e:
+        log.error(e)
+        raise httpx.NetworkError(f"{e}")
 
-        except Exception as e:
-            print(e)
-        time.sleep(5)
+    try:
+        data = await consume_message(consumer_topic)
+
+        produce_task = await produce_message_kafka(producer_topic)
+        log.info(data)
+
+    except Exception as e:
+        log.error(e)
+    await asyncio.sleep(5)
+    asyncio.get_running_loop().create_task(main(time_to_cycle))
 
 if __name__=="__main__":
     _loop = asyncio.new_event_loop()
 
-    asyncio.get_event_loop().create_task(main())
+    log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@START UP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
-    asyncio.get_event_loop().run_forever()
+    time_to_cycle = 5
+
+    _loop.create_task(main(time_to_cycle))
+
+    _loop.run_forever()

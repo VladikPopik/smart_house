@@ -74,10 +74,7 @@ async def device_update(params: UpdateDevice) -> JSONResponse:
 
 
 @settings_router.get("/device/type/{type}")
-async def get_device_by_type(device_type: str) -> str | None:
+async def get_device_by_type(device_type: str) -> JSONResponse:
     result = await cr.read_device_by_type(device_type)
 
-    if result["device_type"] is not None:
-        return result["device_type"]
-    
-    return None
+    return JSONResponse(jsonable_encoder(result), 200)

@@ -1,23 +1,21 @@
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
-from logging import getLogger, basicConfig, INFO
+from logging import getLogger
 import datetime, json
 
-basicConfig(filename="monitoring.log", level=INFO)
-logger = getLogger(__name__)
+logger = getLogger()
 
-
-async def consume_message(): 
+async def consume_message(topic: str): 
     data = {}
     try:
         async with AIOKafkaConsumer(
-            "test_topic_for_training",
+            topic,
             bootstrap_servers="kafka:9092",
             auto_offset_reset="latest",
             connections_max_idle_ms=5000,
             session_timeout_ms=5000,
             request_timeout_ms=5000,
         ) as consumer:  # pyright: ignore[reportGeneralTypeIssues]
-            device = await consumer.getmany(timeout_ms=5000)
+            device = await consumer.getmany(timeout_ms=2500)
             first_device = next(iter(list(device.items())))
             el = first_device[1][-1]
             if el.value:
@@ -25,8 +23,6 @@ async def consume_message():
 
             else:
                 data = None
-
-            await consumer.stop()  # pyright: ignore[reportGeneralTypeIssues]
     except Exception as e:
         logger.exception(e)
     return data
@@ -48,7 +44,7 @@ async def produce_message_kafka(topic:str) -> bool:
             _ = await producer.send(
                 topic, value=json.dumps(value_to_send).encode()
             )
-            logger.info(json.dumps(str+"Данные отправлены в кафку"))
+            logger.info(json.dumps("str"+"Данные отправлены в кафку"))
             print("Данные отправлены!")
     except Exception as e: 
         print(e) # noqa: BLE001
