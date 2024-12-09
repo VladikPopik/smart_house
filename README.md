@@ -28,3 +28,9 @@ kafka-console-consumer --bootstrap-server localhost:9092 --topic {topic_name} - 
 )
 kafka-console-producer --bootstrap-server localhost:9092 --topic {topic_name} - Запустить процесс записи сообщений в выбранный топик
 ***
+***
+Чтобы зайти и мосмотреть логи сервисов нужно сделать
+sudo docker exec -it {service-name} /bin/sh
+ls |grep "log"
+tail -f {log-file}
+***
