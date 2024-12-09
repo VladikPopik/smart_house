@@ -39,9 +39,9 @@ services:
     build: ./raspberry_server
     ports:
       - "8080:8080"
-    devices:
+    # devices:
       # - '/dev/video0:/dev/video0'
-      - '/dev/gpiomem:/dev/gpiomem'
+      # - '/dev/gpiomem:/dev/gpiomem'
     privileged: true
     depends_on:
       - backend

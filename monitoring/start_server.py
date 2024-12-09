@@ -29,7 +29,7 @@ async def main(time_to_cycle):
     try:
         data = await consume_message(consumer_topic)
 
-        produce_task = await produce_message_kafka(producer_topic)
+        produce_task = await produce_message_kafka(producer_topic, data)
         log.info(data)
 
     except Exception as e:

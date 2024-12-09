@@ -1,9 +1,9 @@
 from uuid import UUID, uuid4
 
 # import .test_dht11 as test_dht11  # pyright: ignore[reportMissingTypeStubs]
-from .test_dht11 import DHT11Result, DHT11
+from dht11 import DHT11Result, DHT11
 from logging import getLogger
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 
 type DhtReturnType = DHT11Result | None
 
@@ -25,9 +25,9 @@ class DhtSensor[T]:
 
     def read(self) -> DhtReturnType:
         """Read data from dht11 sensor."""
-        GPIO.setmode(GPIO.BCM)
+        # GPIO.setmode(GPIO.BCM)
         result = self.instance.read()
-        GPIO.cleanup()
+        # GPIO.cleanup()
         if result.is_valid():
             return result
 
