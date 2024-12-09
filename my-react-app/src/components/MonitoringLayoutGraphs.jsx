@@ -71,7 +71,7 @@ export default function MonitoringCharts (message="monitoring") {
     }
     return (
             <Stack 
-                direction="row"
+                direction="column"
                 sx={{width: 1800, height: 920}}
             >
                 <Grid
@@ -88,10 +88,11 @@ export default function MonitoringCharts (message="monitoring") {
                         xAxis={[{ data:  timings, valueFormatter: (value) => {return new Date(value*1000).toISOString().split("T")[1].slice(0, -5)}}]}
                         series={[
                             {
-                                curve: "monotoneX",
+                                curve: "natural",
                                 data: humidity,
-                                area: false,
-                                color: '#00ff00'
+                                area: true,
+                                color: '#00ff00',
+                                baseline: 0,
                         },
                         ]}
                         width={1000}
@@ -100,14 +101,23 @@ export default function MonitoringCharts (message="monitoring") {
                     />
                     <LineChart
                         skipAnimation
-                        xAxis={[{ data:  timings, valueFormatter: (value) => {return new Date(value*1000).toISOString().split("T")[1].slice(0, -5)}}]}
+                        xAxis={
+                            [
+                                {
+                                     data:  timings,
+                                     valueFormatter: (value) => 
+                                        {return new Date(value*1000).toISOString().split("T")[1].slice(0, -5)}
+                                }
+                            ]
+                        }
 
                         series={[
                             {
-                                curve: "monotoneX",
+                                curve: "natural",
                                 data: temperature,
-                                area: false,
-                                color: '#00ff00'
+                                area: true,
+                                color: '#00ff00',
+                                baseline: -50
                         },
                         ]}
                         width={1000}
@@ -126,7 +136,6 @@ export default function MonitoringCharts (message="monitoring") {
                             top: 150
                         }
                     }
-                    direction={'row'}
                 >
                     <Gauge
                     value={gauge_coefficient}
@@ -140,7 +149,7 @@ export default function MonitoringCharts (message="monitoring") {
                         },
                     }}
                     text={
-                        ({ value, valueMax }) => `${ value }%` // / ${valueMax}
+                        ({ value, valueMax }) => value // / ${valueMax}
                     }
                     />
                     <BarChart

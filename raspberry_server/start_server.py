@@ -57,15 +57,15 @@ def perform_device[
 
 @perform_device.register
 def _(device: DhtSensor) -> DhtReturnType:
-    # result = None
-    # try:
-    #     result = device.read()
-    # except Exception as e:
-    #     err = f"{e}"
-    #     logger.exception(err)
+    result = (0.0, 0.0)
+    try:
+        result = device.read()
+    except Exception as e:
+        err = f"{e}"
+        logger.exception(err)
 
-    # logger.info(f"Dht11 result for {device}: {result}")  # noqa: G004
-    return np.random.randint(0, 100), np.random.random() # result
+    logger.info(f"Dht11 result for {device}: {result}")  # noqa: G004
+    return np.random.randint(0, 100), np.random.random() # result # # result
 
 
 @perform_device.register
@@ -126,7 +126,7 @@ async def main(time_to_cycle: int = 1) -> None:
         for idx, d in enumerate(t_devices):
             _ = await produce_device_result(
                     d,
-                    topic=f"{d.device_name}-{d.device_type}-rasp",
+                    topic=f"{d.device_name}-{d.device_type}",
                     result=results[idx],
                 )
         end = datetime.datetime.now().timestamp()

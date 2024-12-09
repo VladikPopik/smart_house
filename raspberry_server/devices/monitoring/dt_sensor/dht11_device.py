@@ -1,9 +1,13 @@
 from uuid import UUID, uuid4
 
-import dht11  # pyright: ignore[reportMissingTypeStubs]
+# import .test_dht11 as test_dht11  # pyright: ignore[reportMissingTypeStubs]
+from .test_dht11 import DHT11Result, DHT11
+from logging import getLogger
+import RPi.GPIO as GPIO
 
-type DhtReturnType = dht11.DHT11Result | None
+type DhtReturnType = DHT11Result | None
 
+logger = getLogger()
 
 class DhtSensor[T]:
     """Class to handle DHT11 sensor working."""
@@ -17,14 +21,17 @@ class DhtSensor[T]:
         self.pin = pin
         self.voltage = voltage
         self.on = on
-        self.instance = dht11.DHT11(pin=pin)
+        self.instance = DHT11(pin=pin)
 
     def read(self) -> DhtReturnType:
         """Read data from dht11 sensor."""
+        GPIO.setmode(GPIO.BCM)
         result = self.instance.read()
-
+        GPIO.cleanup()
         if result.is_valid():
             return result
 
         error = f"Cannot read from pin={self.pin} due to code number {result.error_code}"
-        raise ValueError(error)
+        
+        logger.error(error)
+        

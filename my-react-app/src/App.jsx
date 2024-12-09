@@ -15,7 +15,6 @@ import CalendarPlanPage from './pages/CalendarPlanPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 
 function App() {
-  
   return (
     <Router>
       <Routes>
