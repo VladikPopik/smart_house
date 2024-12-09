@@ -1,28 +1,26 @@
+use std::thread::sleep;
+use std::time;
+use reqwest::blocking::Client;
 use sysinfo::System;
 
+pub mod request;
+pub mod system;
 
-fn main() {
+
+fn main(){
     //TODO @<VladikPopik>: Add docker file and docker compose
-
-    println!("Hello, world!");
+    println!("@@@@@@@@@@@@@@@@@@@@ START UP @@@@@@@@@@@@@@@@@@@@");
+    
     let mut sys = System::new_all();
+    let client = Client::new();
 
-    sys.refresh_all();
-
-    println!("=> system:");
-    // RAM and swap information:
-    println!("total memory: {} bytes", sys.total_memory());
-    println!("used memory : {} bytes", sys.used_memory());
-    println!("total swap  : {} bytes", sys.total_swap());
-    println!("used swap   : {} bytes", sys.used_swap());
-
-    // Display system information:
-    println!("System name:             {:?}", System::name());
-    println!("System kernel version:   {:?}", System::kernel_version());
-    println!("System OS version:       {:?}", System::os_version());
-    println!("System host name:        {:?}", System::host_name());
-
-    // Number of CPUs:
-    println!("NB CPUs: {}", sys.cpus().len());
-
+    loop {
+        let pid = request::request_service(&client);
+        
+        system::system_read(&mut sys, pid);
+        // system::fetch_container_metrics();
+        println!("@@@@@@@@@@@@@@@@@@@@ STEP @@@@@@@@@@@@@@@@@@@@");
+        sleep(time::Duration::new(10, 0));
+    }
 }
+// 321652
