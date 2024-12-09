@@ -18,6 +18,7 @@ function App() {
   return (
     <Router>
       <Routes>
+      <Route path="/" element={<LoginPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="/home" element={<HomePage />} />
