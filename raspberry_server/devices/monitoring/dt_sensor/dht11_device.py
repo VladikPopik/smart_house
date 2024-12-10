@@ -1,9 +1,8 @@
 from uuid import UUID, uuid4
 
-# import .test_dht11 as test_dht11  # pyright: ignore[reportMissingTypeStubs]
-from dht11 import DHT11Result, DHT11
+import test_dht11 as test_dht11  # pyright: ignore[reportMissingTypeStubs]
 from logging import getLogger
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
 type DhtReturnType = DHT11Result | None
 

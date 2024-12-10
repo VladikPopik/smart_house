@@ -15,7 +15,7 @@ async def consume_message(topic: str):
             connections_max_idle_ms=5000,
             session_timeout_ms=5000,
             request_timeout_ms=5000,
-        ) as consumer:  # pyright: ignore[reportGeneralTypeIssues]
+        ) as consumer:
             device = await consumer.getone()
             if device:
                 data = json.loads(device.value)
@@ -32,14 +32,6 @@ async def produce_message_kafka(topic:str, data: dict[str, ty.Any]) -> bool:
         async with AIOKafkaProducer(
             bootstrap_servers="kafka:9092",
         ) as producer:
-            # value_to_send = {
-            #     "time": datetime.datetime.now().timestamp(),
-            #     "temperature": result[0],
-            #     "humidity": result[1]
-            # }
-            # value_to_send = {
-            #     "time" : datetime.datetime.now().timestamp()
-            # }
             _ = await producer.send(
                 topic, value=json.dumps(data).encode()
             )
