@@ -20,7 +20,7 @@ async def main(time_to_cycle=5):
             )
         if response.is_success:
             r = response.json()
-            producer_topic = f"{r["device_name"]}-{r["device_type"]}"
+            producer_topic = f"{r['device_name']}-{r['device_type']}"
             consumer_topic = producer_topic + "-rasp"
             log.info(f"{producer_topic}, {consumer_topic}")
     except Exception as e:

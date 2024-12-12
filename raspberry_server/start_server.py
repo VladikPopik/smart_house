@@ -78,28 +78,27 @@ def _(device: Capture) -> bool:
 
     return result
 
+async def get_registered_devices(timeout: int=5000) -> httpx.Response:
+    try:
+        async with httpx.AsyncClient(timeout=5000) as client:
+            response = await client.get(
+                "http://backend:8001/settings/devices"
+            )
+        return response
+    except Exception as e:
+        logger.exception(e)
+        await asyncio.sleep(1)
+        await get_registered_devices(timeout)
 
-def check_device(_device: DeviceType) -> bool:
-    """Check whether device is connected or not."""
-    return _device.on
-
-
-async def main(time_to_cycle: int = 1) -> None:
+async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
     """Start raspberry server."""
     devices_: list[dict[str, ty.Any]] = []
 
     with ProcessPoolExecutor(4) as executor:
         start = datetime.datetime.now().timestamp()
         connected_devices: dict[str, DeviceType] = {}
-        try:
-            async with httpx.AsyncClient(timeout=5000) as client:
-                response = await client.get(
-                    "http://backend:8001/settings/devices"
-                )
-        except Exception as e:
-            logger.exception(e)
-            # await asyncio.sleep(time_to_cycle)
-            # asyncio.get_running_loop().create_task(main(time_to_cycle))
+
+        response = await get_registered_devices(http_timeout)
 
         if response.is_success:
             devices_ = response.json()
@@ -145,8 +144,6 @@ if __name__ == "__main__":
     logger.info(
         "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@START UP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
     )
-
-    #TODO @<VladikPopik>: wait for back to startup
 
     _loop = asyncio.new_event_loop()
 

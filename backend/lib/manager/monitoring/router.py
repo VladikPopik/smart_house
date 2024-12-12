@@ -20,14 +20,14 @@ async def push_data_monitroing_ws(websocket: WebSocket) -> None:
     await websocket.accept()
     type_d = "dht11"
     climates = await cr.read_device_by_type(type_d)
-    topic = f"{climates["device_name"]}-{climates["device_type"]}" if climates else ""
+    topic = f"{climates['device_name']}-{climates['device_type']}" if climates else ""
 
     prev_t = 0.0
     prev_h = 0.0
 
     while True:
         try:
-            el_data = None
+            data = None
             if topic:
                 async with AIOKafkaConsumer(
                     topic,
@@ -37,18 +37,16 @@ async def push_data_monitroing_ws(websocket: WebSocket) -> None:
                     session_timeout_ms=2500,
                     request_timeout_ms=2500,
                     auto_commit_interval_ms=2500,
-                ) as consumer:  # pyright: ignore[reportGeneralTypeIssues]
-                    msg = await consumer.getmany(timeout_ms=2500)
-                    first_device = next(iter(list(msg.items())))
-                    print(msg.items())
-                    el = first_device[1][-1]
-                    if el.value:
-                        el_data = json.loads(el.value)
-                        el_data = ast.literal_eval(el_data)
-                        prev_t = el_data["temperature"] if el_data["temperature"] else prev_t
-                        prev_h = el_data["humidity"] if el_data["humidity"] else prev_h
-            if el_data is None:
-                el_data = {
+                ) as consumer:
+                    msg = await consumer.getone()
+                    if msg and msg.value:
+                        data = json.loads(msg.value)
+                        prev_t = data["temperature"] if data["temperature"] else prev_t
+                        prev_h = data["humidity"] if data["humidity"] else prev_h
+                    else:
+                        data = None
+            if data is None:
+                data = {
                     "time": datetime.datetime.now().timestamp(),
                     "temperature": prev_t,
                     "humidity": prev_h
@@ -56,10 +54,9 @@ async def push_data_monitroing_ws(websocket: WebSocket) -> None:
         except Exception as e:  # noqa: BLE001
             logger.info(e)
 
-        # logger.info(el_data)
         try:
             _ = await websocket.receive_text()
-            await websocket.send_json(el_data)
+            await websocket.send_json(data)
             await asyncio.sleep(1)
         except Exception as e:  # noqa: BLE001
             logger.info(e)

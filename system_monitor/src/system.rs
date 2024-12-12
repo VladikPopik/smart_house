@@ -19,23 +19,5 @@ pub fn system_read(sys: &mut System, pid: u32) {
     // Number of CPUs:
     println!("NB CPUs: {}", sys.cpus().len());
 
-    // println!("{:?}", sys.process(Pid::from_u32(pid))); // 321652 321629
     println!("{:?}", sys.process(Pid::from_u32(pid)));
 }
-
-// pub fn fetch_container_metrics() -> Result<(), Box<dyn std::error::Error>> {
-//     let containers = Docker::list_containers();
-   
-//     for container in containers {
-//         let container: Container = docker.inspect_container(&container.id);
-   
-//         // Fetch specific metrics from the 'container' object
-//         // and store them in variables
-   
-//         println!("Container ID: {}", container.id);
-//         println!("Metrics: {:?}", container.metrics());
-//         println!("--------------------------");
-//     }
-   
-//     Ok(())
-// }
