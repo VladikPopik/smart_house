@@ -4,6 +4,9 @@ import test_dht11 as test_dht11  # pyright: ignore[reportMissingTypeStubs]
 from logging import getLogger
 import RPi.GPIO as GPIO
 
+import time
+import datetime
+
 type DhtReturnType = DHT11Result | None
 
 logger = getLogger()
@@ -26,11 +29,10 @@ class DhtSensor[T]:
         """Read data from dht11 sensor."""
         # GPIO.setmode(GPIO.BCM)
         result = self.instance.read()
-        # GPIO.cleanup()
         if result.is_valid():
             return result
 
-        error = f"Cannot read from pin={self.pin} due to code number {result.error_code}"
+        error = f"Cannot read from pin={self.pin} due to code number {result.error_code}, {result}"
         
         logger.error(error)
         
