@@ -1,8 +1,6 @@
 import time
 import RPi.GPIO as GPIO
 
-GPIO.setmode(GPIO.BCM)
-
 class DHT11Result:
     'DHT11 sensor result returned by DHT11.read() method'
 
@@ -21,6 +19,9 @@ class DHT11Result:
 
     def is_valid(self):
         return self.error_code == DHT11Result.ERR_NO_ERROR
+    
+    def __repr__(self) -> str:
+        return f"t = {self.temperature}, h = {self.humidity}, err_code = {self.error_code}"
 
 
 class DHT11:
