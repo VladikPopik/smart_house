@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart } from '@mui/x-charts/LineChart';
 import config from "../config";
@@ -39,6 +39,33 @@ export default function MonitoringCharts (message="monitoring") {
             setTime(prevItems => [...prevItems, newt])
         }
     };
+
+    // const [isPaused, setPause] = useState(false);
+    // const ws = useRef(null);
+
+    // useEffect(() => {
+    //     ws.current = new WebSocket("URL_WEB_LOGIN");
+    //     ws.current.onopen = () => console.log("ws opened");
+    //     ws.current.onclose = () => console.log("ws closed");
+
+    //     const wsCurrent = ws.current;
+
+    //     return () => {
+    //         wsCurrent.close();
+    //     };
+    // }, []);
+
+    // useEffect(() => {
+    //     if (!ws.current) return;
+
+    //     ws.current.onmessage = e => {
+    //         if (isPaused) return;
+    //         const message = JSON.parse(e.data);
+    //         console.log("e", message);
+    //     };
+    // }, [isPaused]);
+
+
     useEffect(() => {
         const websocket = new WebSocket(URL_WEB_LOGIN);
 
@@ -56,6 +83,7 @@ export default function MonitoringCharts (message="monitoring") {
             }
         }
     }, []);
+
     if (temperature.length > 60){
         var t_result = timings.slice(timings.length - 60, -1);
         var result  = temperature.slice(temperature.length - 60, -1);
