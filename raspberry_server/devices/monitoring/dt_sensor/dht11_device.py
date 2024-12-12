@@ -45,9 +45,8 @@ class DhtSensor(metaclass=Singleton):
             end = datetime.datetime.now().timestamp()
             if end - start > 30:
                 GPIO.cleanup()
+                error = f"Cannot read from pin={self.pin} due to code number {result.error_code}, {result}"
+                logger.error(error)
                 return DHT11Result(0, self.prev_t, self.prev_h)
-            time.sleep(1)
-
-            error = f"Cannot read from pin={self.pin} due to code number {result.error_code}, {result}"
-            logger.error(error)
+            time.sleep(2)
 

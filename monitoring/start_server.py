@@ -4,13 +4,14 @@ import json
 from kafka_functions import produce_message_kafka, consume_message
 from logging import getLogger, basicConfig, INFO
 import httpx
+import datetime
 
 basicConfig(filename="monitoring.log", level=INFO)
 log = getLogger(__name__)
 
-async def main(time_to_cycle):
+async def main(time_to_cycle=5):
     log.info("Start work")
-
+    start = datetime.datetime.now().timestamp()
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(
@@ -34,7 +35,11 @@ async def main(time_to_cycle):
 
     except Exception as e:
         log.error(e)
-    await asyncio.sleep(5)
+
+    end = datetime.datetime.now().timestamp()
+    if end - start > time_to_cycle:
+        await asyncio.sleep(time_to_cycle - (end - start))
+
     asyncio.get_running_loop().create_task(main(time_to_cycle))
 
 if __name__=="__main__":

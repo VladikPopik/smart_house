@@ -65,7 +65,7 @@ export default function MonitoringCharts (message="monitoring") {
     }
     let gauge_coefficient = humidity.slice(-2, -1);
     if (gauge_coefficient){
-        gauge_coefficient = Math.round(gauge_coefficient*100).toFixed(1);
+        gauge_coefficient = Math.round(gauge_coefficient).toFixed(1);
     }else{
         gauge_coefficient = 0
     }
@@ -84,23 +84,21 @@ export default function MonitoringCharts (message="monitoring") {
                     }
                 }>
                     <LineChart
-                        skipAnimation
                         xAxis={[{ data:  timings, valueFormatter: (value) => {return new Date(value*1000).toISOString().split("T")[1].slice(0, -5)}}]}
                         series={[
                             {
-                                curve: "natural",
+                                curve: "monotoneX",
                                 data: humidity,
                                 area: true,
                                 color: '#00ff00',
                                 baseline: 0,
                         },
                         ]}
-                        width={1000}
-                        height={400}
+                        width={1300}
+                        height={450}
                         grid={{vertical: true, horizontal: true}}
                     />
                     <LineChart
-                        skipAnimation
                         xAxis={
                             [
                                 {
@@ -113,15 +111,15 @@ export default function MonitoringCharts (message="monitoring") {
 
                         series={[
                             {
-                                curve: "natural",
+                                curve: "monotoneX",
                                 data: temperature,
                                 area: true,
                                 color: '#00ff00',
                                 baseline: -50
                         },
                         ]}
-                        width={1000}
-                        height={400}
+                        width={1300}
+                        height={450}
                         grid={{vertical: true, horizontal: true}}
                     />
                 </Grid>

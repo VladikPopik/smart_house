@@ -62,13 +62,9 @@ def _(device: DhtSensor) -> DhtReturnType | tuple[float, float]:
     except Exception as e:
         err = f"{e}"
         logger.exception(err)
-        result = None
 
     logger.info(f"Dht11 result for {device}: {result}")  # noqa: G004
-    return (result.temperature, result.humidity) if result else (0.0, 0.0)
-
-#np.random.randint(0, 100), np.random.random() # result # # result
-
+    return (result.temperature, result.humidity)
 
 @perform_device.register
 def _(device: Capture) -> bool:
