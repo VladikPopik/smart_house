@@ -1,7 +1,6 @@
 from uuid import UUID, uuid4
 
-# import .test_dht11 as test_dht11  # pyright: ignore[reportMissingTypeStubs]
-from .test_dht11 import DHT11Result, DHT11
+import test_dht11 as test_dht11  # pyright: ignore[reportMissingTypeStubs]
 from logging import getLogger
 import RPi.GPIO as GPIO
 
@@ -28,20 +27,8 @@ class DhtSensor[T]:
 
     def read(self) -> DhtReturnType:
         """Read data from dht11 sensor."""
-        GPIO.setmode(GPIO.BCM)
+        # GPIO.setmode(GPIO.BCM)
         result = self.instance.read()
-        if result.error_code != 0:
-            error_code = 1
-            start = datetime.datetime.now().timestamp()
-            while error_code != 0:
-                result = self.instance.read()
-                error_code = result.error_code
-                end = datetime.datetime.now().timestamp()
-                if end - start > 60000.0:
-                    break
-                logger.info(f"{result}")
-                time.sleep(1)
-        GPIO.cleanup()
         if result.is_valid():
             return result
 
