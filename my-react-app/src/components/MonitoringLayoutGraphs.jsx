@@ -7,13 +7,26 @@ import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { BarChart } from "@mui/x-charts";
 
 export default function MonitoringCharts (message="monitoring") { 
-    var [temperature, setTemperature] = useState([0]);
-    var [humidity, setHumidity] = useState([0]);
-    let newdt = (+new Date())/1000;
-    var [timings, setTime] = useState([newdt]);
-    const URL_WEB_LOGIN = `ws://${config.host}:${config.port}/mon_ws/monitoring_ws` 
 
-    //TODO: remake component to use cached data from server
+    let newdt = (+new Date())/1000;
+
+    const localt = localStorage.getItem("temperature");
+    const localh = localStorage.getItem("humidity");
+    const localdt = localStorage.getItem("monitoring_time");
+
+    const localTemperature = (localt !== null && localt !== 'null') ? 
+        localt.split(',').map(x => parseFloat(x)): [0];
+
+    const localHumidity = (localh !== null && localh !== 'null') ? 
+        localh.split(',').map(x => parseFloat(x)): [0];
+    
+    const localTime = (localdt !== null && localdt !== 'null') ? 
+        localdt.split(',').map(x => parseFloat(x)): [newdt];
+
+    var [temperature, setTemperature] = useState(localTemperature);
+    var [humidity, setHumidity] = useState(localHumidity);
+    var [timings, setTime] = useState(localTime);
+    const URL_WEB_LOGIN = `ws://${config.host}:${config.port}/mon_ws/monitoring_ws` 
 
     const addItem = (event) => {
         const dt = JSON.parse(event.data);
@@ -69,6 +82,11 @@ export default function MonitoringCharts (message="monitoring") {
     }else{
         gauge_coefficient = 0
     }
+
+    localStorage.setItem("temperature", result);
+    localStorage.setItem("humidity", result_h);
+    localStorage.setItem("monitoring_time", t_result);
+
     return (
             <Stack 
                 direction="column"
@@ -147,7 +165,7 @@ export default function MonitoringCharts (message="monitoring") {
                         },
                     }}
                     text={
-                        ({ value, valueMax }) => value // / ${valueMax}
+                        ({ value, valueMax }) => value
                     }
                     />
                     <BarChart

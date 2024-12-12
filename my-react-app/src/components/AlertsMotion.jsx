@@ -15,13 +15,22 @@ export default function AlertStack (message="motion") {
     const URL_WEB_LOGIN = `ws://${config.host}:${config.port}/motion_ws/motion_ws` 
     const URL_WEB_SOCKET = `ws://${config.host}:${config.port}/motion_ws/motions_ws` 
 
-    
+
+    let newdt = (+new Date())/1000;
+
+    const localalerts = localStorage.getItem("alerts");
+    const localdt = localStorage.getItem("timings");
+
+    const localAlerts = (localalerts !== null && localalerts !== 'null') ? 
+        localalerts.split(','): [];
+
+    const localTime = (localdt !== null && localdt !== 'null') ? 
+        localdt.split(',').map(x => parseFloat(x)): [newdt];
 
     var [alerts, setAlerts] = useState(
-        []
+        localAlerts
     );
-    let newdt = (+new Date())/1000;
-    const [timings, setTime] = useState([]);
+    const [timings, setTime] = useState(localTime);
 
     const addItem = (event) => {
         const dt = JSON.parse(event.data);
