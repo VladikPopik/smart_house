@@ -1,3 +1,3 @@
-from .dt_sensor import DhtReturnType, DhtSensor, DHT11Result
+from .dt_sensor import DhtReturnType, DhtSensor
 
-__all__ = ["DhtSensor", "DhtReturnType", "DHT11Result"]
+__all__ = ["DhtSensor", "DhtReturnType"]

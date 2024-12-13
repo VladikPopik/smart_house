@@ -47,6 +47,6 @@ class DhtSensor(metaclass=Singleton):
                 GPIO.cleanup()
                 error = f"Cannot read from pin={self.pin} due to code number {result.error_code}, {result}"
                 logger.error(error)
-                return DHT11Result(0, self.prev_t, self.prev_h)
+                return DHT11Result(1, self.prev_t, self.prev_h)
             time.sleep(2)
 
