@@ -1,47 +1,38 @@
 use std::thread::sleep;
+use std::process::Command;
 use std::time;
-use reqwest::blocking::Client;
 use sysinfo::System;
-
-pub mod request;
+use clap::Parser;
 pub mod system;
 
-
-// fn main(){
-//     //TODO @<VladikPopik>: Add docker file and docker compose
-//     println!("@@@@@@@@@@@@@@@@@@@@ START UP @@@@@@@@@@@@@@@@@@@@");
-    
-//     let mut sys = System::new_all();
-//     let client = Client::new();
-
-//     loop {
-//         let pid = request::request_service(&client);
-        
-//         system::system_read(&mut sys, pid);
-//         // system::fetch_container_metrics();
-//         println!("@@@@@@@@@@@@@@@@@@@@ STEP @@@@@@@@@@@@@@@@@@@@");
-//         sleep(time::Duration::new(10, 0));
-//     }
-// }
-// 321652
-
-extern crate rs_docker;
-
-use rs_docker::Docker;
-
-fn main() {
-    let mut docker = match Docker::connect("unix:///var/run/docker.sock") {
-    	Ok(docker) => docker,
-        Err(e) => { panic!("{}", e); }
-    };
-
-    let containers = match docker.get_containers(false) {
-        Ok(containers) => containers,
-        Err(e) => { panic!("{}", e); }
-    };
-
-    let stats = match docker.get_stats(&containers[0]) {
-        Ok(stats) => stats,
-        Err(e) => { panic!("{}", e); }
-    };
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    #[arg(short, long)]
+    pid: u32,
 }
+
+fn main(){
+    //TODO @<VladikPopik>: Add docker file and docker compose
+    println!("@@@@@@@@@@@@@@@@@@@@ START UP @@@@@@@@@@@@@@@@@@@@");
+
+    let args = Args::parse();
+    let pid = args.pid;
+
+    let mut sys = System::new_all();
+    loop {
+        system::system_read(&mut sys, pid);
+        println!("@@@@@@@@@@@@@@@@@@@@ STEP @@@@@@@@@@@@@@@@@@@@");
+        sleep(time::Duration::new(10, 0));
+
+    }
+
+    // let output = Command::new("ps")
+    // .output()
+    // .expect("Failed to execute command");
+
+    // // assert_eq!(b"Hello world\n", output.stdout.as_slice());
+    // println!("{:?}", output.stdout.as_slice());
+
+}
+// 59656
