@@ -3,6 +3,7 @@ import json
 from kafka_functions import produce_message_kafka, consume_message
 from logging import getLogger
 import httpx
+from diod import Diod
 
 log = getLogger(__name__)
 

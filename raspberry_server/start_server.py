@@ -8,6 +8,7 @@ import datetime
 from aiokafka import AIOKafkaProducer
 from devices.monitoring import DhtReturnType, DhtSensor
 from devices.motion import Capture
+from devices.light import PhotoEl
 import numpy as np
 
 import httpx
@@ -16,8 +17,8 @@ basicConfig(filename="error.log", level=INFO)
 logger = getLogger(__name__)
 
 
-type DeviceType = Capture | DhtSensor
-type DeviceReturnType = DhtReturnType | bool
+type DeviceType = Capture | DhtSensor | PhotoEl
+type DeviceReturnType = DhtReturnType | bool | tuple[float, float]
 
 device_types = {"dht11": DhtSensor, "cam": Capture}
 
@@ -44,7 +45,29 @@ async def produce_device_result(
     except Exception as e:  # noqa: BLE001
         logger.info(e)
         return False
+    return True
 
+async def produce_photoel_result(
+        _device: DeviceType, topic: str, result: DeviceReturnType
+) -> bool:
+    """Send result of perform_device into kafka by topic."""
+    try:
+        async with AIOKafkaProducer(
+            bootstrap_servers="kafka:9092",
+            request_timeout_ms=1000
+        ) as producer: # pyright: ignore[reportGeneralTypeIssues]
+            value_to_send = {
+                "time": result[0],
+                "percent": result[1]
+            }
+            _ = await producer.send(
+                topic, value=json.dumps(value_to_send).encode()
+            )
+            logger.info(json.dumps(value_to_send))
+            logger.info(topic)
+    except Exception as e:  # noqa: BLE001
+        logger.info(e)
+        return False
     return True
 
 
@@ -75,6 +98,15 @@ def _(device: Capture) -> bool:
 
     log_msg = f"Capture result for {device}: {result}"
     logger.info(log_msg)
+
+    return result
+
+@perform_device.register
+def _(device: PhotoEl) -> tuple[float, float]:
+    try:
+        result = device.read()
+    except Exception as e:
+        logger.error(e)
 
     return result
 
@@ -121,11 +153,20 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
 
         results = [f.result() for f in as_completed(futures)]
         for idx, d in enumerate(t_devices):
-            _ = await produce_device_result(
-                    d,
-                    topic=f"{d.device_name}-{d.device_type}-rasp",
-                    result=results[idx],
-                )
+            #TODO: rework this cycle
+            match d.device_type:
+                case "dht11":
+                    _ = await produce_device_result(
+                            d,
+                            topic=f"{d.device_name}-{d.device_type}-rasp",
+                            result=results[idx],
+                        )
+                case "photoel":
+                    _ = await produce_photoel_result(
+                        d,
+                        topic=f"{d.device_name}-{d.device_type}-rasp",
+                        result=results[idx],
+                    )
         end = datetime.datetime.now().timestamp()
 
         if end - start <= time_to_cycle:
