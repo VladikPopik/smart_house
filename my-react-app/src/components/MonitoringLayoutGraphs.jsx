@@ -84,10 +84,10 @@ export default function MonitoringCharts (message="monitoring") {
         }
     }, []);
 
-    if (temperature.length > 60){
-        var t_result = timings.slice(timings.length - 60, -1);
-        var result  = temperature.slice(temperature.length - 60, -1);
-        var result_h = humidity.slice(humidity.length - 60, -1)
+    if (temperature.length > 30){
+        var t_result = timings.slice(timings.length - 30, -1);
+        var result  = temperature.slice(temperature.length - 30, -1);
+        var result_h = humidity.slice(humidity.length - 30, -1)
 
         setHumidity(prevItems => result_h)
         setTemperature(prevItems => result);
@@ -131,11 +131,12 @@ export default function MonitoringCharts (message="monitoring") {
                 }>
                     <LineChart
                         xAxis={[{ data:  timings, valueFormatter: (value) => {return new Date(value*1000).toISOString().split("T")[1].slice(0, -5)}}]}
+                        skipAnimation
                         series={[
                             {
                                 curve: "monotoneX",
                                 data: humidity,
-                                area: true,
+                                // area: true,
                                 color: '#00ff00',
                                 baseline: 0,
                         },
@@ -154,12 +155,12 @@ export default function MonitoringCharts (message="monitoring") {
                                 }
                             ]
                         }
-
+                        skipAnimation
                         series={[
                             {
                                 curve: "monotoneX",
                                 data: temperature,
-                                area: true,
+                                // area: true,
                                 color: '#00ff00',
                                 baseline: -50
                         },

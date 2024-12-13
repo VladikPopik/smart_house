@@ -73,7 +73,7 @@ export default function DrawerComponent () {
             
             }
             <Divider />
-          <ListItem key="MyFunctions" disablePadding>
+          {/* <ListItem key="MyFunctions" disablePadding>
               <ListItemButton onClick={() => handleFunctions()}>
                 <ListItemIcon>
                   <AnalyticsIcon />
@@ -97,7 +97,7 @@ export default function DrawerComponent () {
                 </ListItemIcon>
                 <ListItemText primary="Help" />
               </ListItemButton>
-            </ListItem>
+            </ListItem> */}
     
             <ListItem key="Settings" disablePadding>
               <ListItemButton onClick={() => handleSettings()}>

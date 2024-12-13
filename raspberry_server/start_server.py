@@ -6,7 +6,7 @@ from functools import singledispatch
 from logging import getLogger, basicConfig, INFO
 import datetime
 from aiokafka import AIOKafkaProducer
-from devices.monitoring import DhtReturnType, DhtSensor
+from devices.monitoring import DhtReturnType, DhtSensor, DHT11Result
 from devices.motion import Capture
 import numpy as np
 
@@ -62,6 +62,7 @@ def _(device: DhtSensor) -> DhtReturnType | tuple[float, float]:
     except Exception as e:
         err = f"{e}"
         logger.exception(err)
+        result = DHT11Result(0, 0.0, 0.0)
 
     logger.info(f"Dht11 result for {device}: {result}")  # noqa: G004
     return (result.temperature, result.humidity)

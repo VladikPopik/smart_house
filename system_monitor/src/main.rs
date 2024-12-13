@@ -1,5 +1,4 @@
 use std::thread::sleep;
-use std::process::Command;
 use std::time;
 use sysinfo::System;
 use clap::Parser;
@@ -12,27 +11,29 @@ struct Args {
     pid: u32,
 }
 
+#[derive(Debug)]
+struct ManagerLoad {
+    memory: u64,
+    cpu_usage: f32
+}
+
 fn main(){
     //TODO @<VladikPopik>: Add docker file and docker compose
-    println!("@@@@@@@@@@@@@@@@@@@@ START UP @@@@@@@@@@@@@@@@@@@@");
+    println!("Monitor Manager START UP");
 
     let args = Args::parse();
     let pid = args.pid;
 
     let mut sys = System::new_all();
     loop {
-        system::system_read(&mut sys, pid);
-        println!("@@@@@@@@@@@@@@@@@@@@ STEP @@@@@@@@@@@@@@@@@@@@");
+        println!("===================================================");
+        let params = system::system_read(&mut sys, pid);
+
+        let manager_load = ManagerLoad { memory: params.0, cpu_usage: params.1};
+
+        println!("  --  Memory of manager service is {:?} (MB)", (manager_load.memory / 1024 / 1024 / 8) as f64);
+        println!("  --  CPU USAGE of manager service is {:?} %", manager_load.cpu_usage);
+
         sleep(time::Duration::new(10, 0));
-
     }
-
-    // let output = Command::new("ps")
-    // .output()
-    // .expect("Failed to execute command");
-
-    // // assert_eq!(b"Hello world\n", output.stdout.as_slice());
-    // println!("{:?}", output.stdout.as_slice());
-
 }
-// 59656
