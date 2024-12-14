@@ -65,7 +65,10 @@ services:
   light:
     build: ./light
     ports:
-      - "8888:8888"
+      - "9999:9999"
+    devices:
+      - '/dev/gpiomem:/dev/gpiomem'
+    privileged: true
     depends_on:
       - backend
       - kafka
