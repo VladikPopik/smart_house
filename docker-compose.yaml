@@ -34,13 +34,16 @@ services:
       - "8001:8001"
     depends_on:
       - kafka
+      - db
 
   raspberry-server:
     build: ./raspberry_server
     ports:
       - "8080:8080"
+    volumes:
+      - '/data:/raspberry_server/data'
     devices:
-      # - '/dev/video0:/dev/video0'
+      - '/dev/video0:/dev/video0'
       - '/dev/gpiomem:/dev/gpiomem'
     privileged: true
     depends_on:
@@ -58,6 +61,8 @@ services:
     build: ./motion
     ports: 
       - "8881:8881"
+    volumes:
+      - '/smart_house/data:/raspberry_server/data'
     depends_on:
       - backend
       - kafka
@@ -65,7 +70,7 @@ services:
   light:
     build: ./light
     ports:
-      - "9999:9999"
+      - "8888:8888"
     devices:
       - '/dev/gpiomem:/dev/gpiomem'
     privileged: true
