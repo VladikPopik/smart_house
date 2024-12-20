@@ -1,4 +1,16 @@
 use kafka::consumer::{Consumer, FetchOffset};
+use image::RgbImage;
+use ndarray::Array3;
+
+fn array_to_image(arr: Array3<u8>) -> RgbImage {
+    assert!(arr.is_standard_layout());
+
+    let (height, width, _) = arr.dim();
+    let raw = arr.into_raw_vec();
+
+    RgbImage::from_raw(width as u32, height as u32, raw)
+        .expect("container should have the right size for the image dimensions")
+}
 
 fn consumer() {
     let hosts = vec!["kafka:9092".to_owned()];

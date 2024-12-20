@@ -18,10 +18,13 @@ pub fn system_read(sys: &mut System, pid: u32) -> (u64, f32){
     println!("  --  NB CPUs: {}", sys.cpus().len());
 
     println!("=> manager");
+    // Information about Manager:
     let manager_process =  sys.process(Pid::from_u32(pid));
 
-    let manager_memory = manager_process.expect("No process").memory();
-    let manager_cpu_usage = manager_process.expect("No process").cpu_usage()/(sys.cpus().len() as f32);
+    let manager_memory = manager_process.expect("No process")
+        .memory();
+    let manager_cpu_usage = manager_process.expect("No process")
+        .cpu_usage()/(sys.cpus().len() as f32);
 
     (manager_memory, manager_cpu_usage)
 }
