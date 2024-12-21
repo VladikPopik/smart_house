@@ -24,13 +24,18 @@ device_types = {"dht11": DhtSensor, "cam": Capture}
 
 
 async def produce_device_result(
-    _device: DeviceType, topic: str, value_to_send: dict[str, ty.Any]
+    _device: DeviceType,
+    topic: str,
+    value_to_send: dict[str, ty.Any],
+    compression_type: str | None = None
 ) -> bool:
     """Send result of perform_device into kafka by topic."""
     try:
         async with AIOKafkaProducer(
             bootstrap_servers="kafka:9092",
-            request_timeout_ms=1000
+            request_timeout_ms=1000,
+            max_request_size=2*75157290,
+            compression_type=compression_type
         ) as producer:
             _ = await producer.send(
                 topic, value=json.dumps(value_to_send).encode()
@@ -61,7 +66,7 @@ def _(device: DhtSensor) -> DhtReturnType | tuple[float, float]:
     return (result.temperature, result.humidity)
 
 @perform_device.register
-def _(device: Capture) -> dict[str, str]:
+def _(device: Capture) -> dict[str, ty.Any]:
     try:
         result = device.capture_camera()
     except Exception as e:
@@ -83,6 +88,7 @@ def _(device: PhotoEl) -> tuple[float, float]:
     return result
 
 async def get_registered_devices(timeout: int=5000) -> httpx.Response:
+    response: httpx.Response | None = None
     try:
         async with httpx.AsyncClient(timeout=5000) as client:
             response = await client.get(
@@ -90,10 +96,10 @@ async def get_registered_devices(timeout: int=5000) -> httpx.Response:
             )
     except Exception as e:
         logger.exception(e)
-        await asyncio.sleep(1)
+        await asyncio.sleep(5)
         await get_registered_devices(timeout)
 
-    if response.is_success:
+    if response and response.is_success:
         return response
     await get_registered_devices(timeout)
 
@@ -108,7 +114,7 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
 
         response = await get_registered_devices(http_timeout)
 
-        if response.is_success:
+        if response and response.is_success:
             devices_ = response.json()
 
         logger.info(devices_)
@@ -129,7 +135,6 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
 
         results = [f.result() for f in as_completed(futures)]
         for idx, d in enumerate(t_devices):
-            #TODO: rework this cycle
             try:
                 match d.device_type:
                     case "dht11":
@@ -161,7 +166,8 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
                             value_to_send = {
                                 "time": datetime.datetime.now().timestamp(),
                                 "photos": results[idx]
-                            }
+                            },
+                            compression_type='gzip'
                         )
                     case _:
                         raise ValueError("Unreachable!")

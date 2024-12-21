@@ -1,30 +1,54 @@
-from src.db.mysql.motion_db.crud import create_record
-import json
+from src.db.mysql.monit.crud import create_record
 import asyncio
+import json
 from kafka_functions import produce_message_kafka, consume_message
-from logging import getLogger
+from logging import getLogger, basicConfig, INFO
+import httpx
+import datetime
 
-log = getLogger()
+basicConfig(filename="motion.log", level=INFO)
+log = getLogger(__name__)
 
-async def main():
-    while True:
-        log.info("Start cycle")
-        try:
-            produce_task = asyncio.create_task(produce_message_kafka("training_motion_topic"))
-            await asyncio.gather(produce_task)
+async def main(time_to_cycle=5):
+    log.info("Start work")
+    start = datetime.datetime.now().timestamp()
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "http://backend:8001/settings/device/type/cam",
+                params={"device_type": "cam"}
+            )
+        if response.is_success:
+            r = response.json()
+            producer_topic = f"{r['device_name']}-{r['device_type']}"
+            consumer_topic = producer_topic + "-rasp"
+            log.info(f"{producer_topic}, {consumer_topic}")
+    except Exception as e:
+        log.error(e)
+        raise httpx.NetworkError(f"{e}")
 
+    try:
+        data = await consume_message(consumer_topic)
 
-            consume_task = asyncio.create_task(consume_message())
-            data = await asyncio.gather(consume_task)
-            log.info(data)
+        produce_task = await produce_message_kafka(producer_topic, data)
+        log.info(data)
 
-        except Exception as e:
-            print(e)
-        await asyncio.sleep(5)
+    except Exception as e:
+        log.error(e)
+
+    end = datetime.datetime.now().timestamp()
+    if end - start < time_to_cycle:
+        await asyncio.sleep(time_to_cycle - (end - start))
+
+    asyncio.get_running_loop().create_task(main(time_to_cycle))
 
 if __name__=="__main__":
     _loop = asyncio.new_event_loop()
 
-    asyncio.get_event_loop().create_task(main())
+    log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@START UP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
-    asyncio.get_event_loop().run_forever()
+    time_to_cycle = 5
+
+    _loop.create_task(main(time_to_cycle))
+
+    _loop.run_forever()
