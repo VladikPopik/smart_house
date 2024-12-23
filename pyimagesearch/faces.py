@@ -1,16 +1,13 @@
-# import the necessary packages
 from imutils import paths
 import numpy as np
 import cv2
 import os
 def detect_faces(net, image, minConfidence=0.5):
-	# grab the dimensions of the image and then construct a blob
-	# from it
+
 	(h, w) = image.shape[:2]
 	blob = cv2.dnn.blobFromImage(image, 1.0, (300, 300),
 		(104.0, 177.0, 123.0))
-	# pass the blob through the network to obtain the face detections,
-	# then initialize a list to store the predicted bounding boxes
+	
 	net.setInput(blob)
 	detections = net.forward()
 	boxes = []
@@ -69,5 +66,5 @@ def load_face_dataset(inputPath, net, minConfidence=0.5,
 	# convert our faces and labels lists to NumPy arrays
 	faces = np.array(faces)
 	labels = np.array(labels)
-	# return a 2-tuple of the faces and labels
+
 	return (faces, labels)

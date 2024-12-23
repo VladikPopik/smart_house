@@ -1,19 +1,19 @@
+import os
+import cv2
+import numpy as np
+import argparse
+from imutils import paths
 from sklearn.preprocessing import LabelEncoder
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from joblib import dump, load
-import numpy as np
-import argparse
-import cv2
-import os
-from imutils import paths
 
-# Функция для загрузки базы данных с подпапками для каждого человека
 def load_dataset_from_directory(base_path, net, min_confidence):
     faces = []
     labels = []
+    image_paths = []  # Добавляем список путей изображений для отслеживания изменений
 
     for person_name in os.listdir(base_path):
         person_path = os.path.join(base_path, person_name)
@@ -21,6 +21,7 @@ def load_dataset_from_directory(base_path, net, min_confidence):
             continue
 
         for image_path in paths.list_images(person_path):
+            image_paths.append(image_path)  # Добавляем путь изображения в список
             image = cv2.imread(image_path)
             h, w = image.shape[:2]
 
@@ -41,7 +42,8 @@ def load_dataset_from_directory(base_path, net, min_confidence):
                         faces.append(resized_face.flatten())
                         labels.append(person_name)
 
-    return np.array(faces), labels
+    return np.array(faces), labels, image_paths
+
 
 # Парсер аргументов
 ap = argparse.ArgumentParser()
@@ -60,28 +62,37 @@ ap.add_argument("-d", "--detected", type=str, default="detected",
 args = vars(ap.parse_args())
 
 pca_path = args["model"].replace(".joblib", "_pca.joblib")
+labels_path = args["model"].replace(".joblib", "_labels.joblib")
 model_path = args["model"]
 
+# Загружаем модель детектора лиц
 print("[INFO] Загрузка модели детектора лиц...")
 prototxtPath = os.path.sep.join([args["face"], "deploy.prototxt"])
 weightsPath = os.path.sep.join([args["face"], "res10_300x300_ssd_iter_140000.caffemodel"])
 net = cv2.dnn.readNet(prototxtPath, weightsPath)
 
-# Проверяем, существует ли модель и PCA
-if os.path.exists(model_path) and os.path.exists(pca_path):
-    print("[INFO] Загрузка обученной модели и PCA...")
+# Проверяем, существует ли модель, PCA и LabelEncoder
+if os.path.exists(model_path) and os.path.exists(pca_path) and os.path.exists(labels_path):
+    print("[INFO] Загрузка обученной модели, PCA и LabelEncoder...")
     model = load(model_path)
     pca = load(pca_path)
-    le = LabelEncoder()
+    le = load(labels_path)
     print("[INFO] Проверка новых данных...")
     
     # Загружаем старые данные и метки
-    (old_faces, old_labels) = load_dataset_from_directory(args["input"], net, min_confidence=args["confidence"])
-    old_labels_encoded = le.fit_transform(old_labels)
+    (old_faces, old_labels, old_image_paths) = load_dataset_from_directory(args["input"], net, min_confidence=args["confidence"])
+    old_labels_encoded = le.transform(old_labels)
     
     # Загружаем новые данные (если есть)
-    new_faces, new_labels = load_dataset_from_directory(args["input"], net, min_confidence=args["confidence"])
+    new_faces, new_labels, new_image_paths = load_dataset_from_directory(args["input"], net, min_confidence=args["confidence"])
     new_labels_encoded = le.transform(new_labels)  # Преобразуем метки для новых данных
+
+    # Проверка на удаление файлов
+    deleted_files = list(set(old_image_paths) - set(new_image_paths))
+    if deleted_files:
+        print(f"[INFO] Обнаружены удаленные файлы: {len(deleted_files)}")
+    else:
+        print("[INFO] Удаленных данных не найдено.")
 
     # Смотрим, если есть новые изображения, добавляем их
     if len(new_faces) > len(old_faces):
@@ -101,16 +112,17 @@ if os.path.exists(model_path) and os.path.exists(pca_path):
         model = SVC(kernel="rbf", C=10.0, gamma=0.001, random_state=42)
         model.fit(all_faces_pca, all_labels_encoded)
 
-        # Сохраняем обновленную модель и PCA
-        print("[INFO] Сохранение обновленных модели и PCA...")
+        # Сохраняем обновленную модель, PCA и LabelEncoder
+        print("[INFO] Сохранение обновленных модели, PCA и LabelEncoder...")
         dump(model, model_path)
         dump(pca, pca_path)
+        dump(le, labels_path)
     else:
         print("[INFO] Новых данных не найдено.")
 
 else:
     print("[INFO] Обучение новой модели...")
-    (faces, labels) = load_dataset_from_directory(args["input"], net, min_confidence=args["confidence"])
+    (faces, labels, image_paths) = load_dataset_from_directory(args["input"], net, min_confidence=args["confidence"])
 
     if len(faces) == 0 or len(labels) == 0:
         raise ValueError("[ERROR] Не удалось загрузить данные. Проверьте путь и содержимое папки.")
@@ -133,16 +145,17 @@ else:
     model = SVC(kernel="rbf", C=10.0, gamma=0.001, random_state=42)
     model.fit(trainX_pca, trainY)
 
-    print("[INFO] Сохранение модели и PCA...")
+    print("[INFO] Сохранение модели, PCA и LabelEncoder...")
     os.makedirs(os.path.dirname(model_path), exist_ok=True)
     dump(model, model_path)
     dump(pca, pca_path)
+    dump(le, labels_path)
 
 # Оценка модели
 print("[INFO] Оценка модели...")
 if 'testX' not in locals():  # Проверяем, определены ли переменные для тестирования
     print("[INFO] Разделение данных на обучающую и тестовую выборки...")
-    (faces, labels) = load_dataset_from_directory(args["input"], net, min_confidence=args["confidence"])
+    (faces, labels, _) = load_dataset_from_directory(args["input"], net, min_confidence=args["confidence"])
     labels_encoded = le.fit_transform(labels)
     trainX, testX, trainY, testY = train_test_split(faces, labels_encoded, test_size=0.25, stratify=labels_encoded, random_state=42)
 
