@@ -1,9 +1,9 @@
 import RPi.GPIO as GPIO
 from logging import getLogger
-
+from singletonmeta import Singleton
 logger = getLogger()
 
-class Diod:
+class Diod(metaclass=Singleton):
     def __init__(
         self, pin: int, device_name: str, *,
         on: bool = False,
@@ -15,12 +15,11 @@ class Diod:
         self.pin = pin
         self.on = on
         self.is_on = is_on
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.pin, GPIO.OUT)
 
     def switch_on(self) -> None:
-        """Read data from dht11 sensor."""
         try:
-            GPIO.setmode(GPIO.BOARD)
-            GPIO.setup(self.pin, GPIO.OUT)
             logger.info(f"{self.device_name}: led on")
             GPIO.output(self.pin, GPIO.HIGH)
             self.is_on = True
