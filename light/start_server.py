@@ -1,10 +1,11 @@
 import asyncio
 import json
 from kafka_functions import produce_message_kafka, consume_message
-from logging import getLogger
+from logging import getLogger, basicConfig, INFO
 import httpx
 from diod import Diod
 
+basicConfig(filename="monitoring.log", level=INFO)
 log = getLogger(__name__)
 
 async def get_photoel(timeout: int=5000) -> httpx.Response:
@@ -14,10 +15,14 @@ async def get_photoel(timeout: int=5000) -> httpx.Response:
                 "http://backend:8001/settings/device/type/photoel",
                 params={"device_type": "photoel"}
             )
-        return response
+        if response and response.is_success:
+            return response
+        else:
+            await asyncio.sleep(5)
+            await get_photoel(timeout)
     except Exception as e:
         log.exception(e)
-        await asyncio.sleep(1)
+        await asyncio.sleep(5)
         await get_photoel(timeout)
 
 async def main(time_to_cycle=5):
@@ -32,20 +37,21 @@ async def main(time_to_cycle=5):
             data = await consume_message(consumer_topic)
             time, percent = data.get("time"), data.get("percent")
             #Logic
+            diod = Diod(37, "diod1", on=True, is_on=False)
+            diod.perform(time, percent)
+
             await produce_message_kafka(producer_topic, data)
 
     except Exception as e:
         log.error(e)
     
-    await asyncio.sleep(time_to_cycle)
-
     asyncio.get_running_loop().create_task(main(time_to_cycle))
 
 if __name__=="__main__":
     _loop = asyncio.new_event_loop()
     log.info("Start work")
 
-    time_to_cycle = 5
+    time_to_cycle = 10
     asyncio.get_event_loop().create_task(main(time_to_cycle))
 
     asyncio.get_event_loop().run_forever()

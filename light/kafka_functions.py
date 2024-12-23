@@ -6,7 +6,7 @@ import typing as ty
 
 logger = getLogger()
 
-async def consume_message(topic: str): 
+async def consume_message(topic: str) -> dict[str, ty.Any]: 
     data = {}
     try:
         async with AIOKafkaConsumer(

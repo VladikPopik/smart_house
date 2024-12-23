@@ -161,7 +161,8 @@ export default function SettingsTable() {
 
     let naming_type_hash = {
         "cam": "Camera",
-        "dht11": "Climate"
+        "dht11": "Climate",
+        "photoel": "PhotoResistor"
     }
 
     return (
@@ -258,6 +259,7 @@ export default function SettingsTable() {
                                             >
                                                 <MenuItem value={"cam"}>Camera</MenuItem>
                                                 <MenuItem value={"dht11"}>Climate</MenuItem>
+                                                <MenuItem value={"photoel"}>PhotoResistor</MenuItem>
                                             </Select>
                                         </DialogContent>
                                         <DialogActions>
@@ -357,6 +359,8 @@ export default function SettingsTable() {
                                             >
                                                 <MenuItem value={"cam"}>Camera</MenuItem>
                                                 <MenuItem value={"dht11"}>Climate</MenuItem>
+                                                <MenuItem value={"photoel"}>PhotoResistor</MenuItem>
+
                                             </Select>
                                     </DialogContent>
                                     <DialogActions>

@@ -18,9 +18,9 @@ logger = getLogger(__name__)
 
 
 type DeviceType = Capture | DhtSensor | PhotoEl
-type DeviceReturnType = DhtReturnType | dict[str, str] | tuple[float, float]
+type DeviceReturnType = DhtReturnType | dict[str, str] | tuple[float, int]
 
-device_types = {"dht11": DhtSensor, "cam": Capture}
+device_types = {"dht11": DhtSensor, "cam": Capture, "photoel": PhotoEl}
 
 
 async def produce_device_result(
@@ -79,9 +79,9 @@ def _(device: Capture) -> dict[str, ty.Any]:
     return result
 
 @perform_device.register
-def _(device: PhotoEl) -> tuple[float, float]:
+def _(device: PhotoEl) -> tuple[float, int]:
     try:
-        result = device.read()
+        result = device.measure()
     except Exception as e:
         logger.error(e)
 

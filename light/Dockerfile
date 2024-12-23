@@ -1,6 +1,8 @@
 # syntax=docker/dockerfile:1
-FROM python:3.12-slim
+FROM python:3.12.3
 WORKDIR /light
+RUN apt-get update 
+RUN pip install --upgrade pip setuptools wheel
 COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
