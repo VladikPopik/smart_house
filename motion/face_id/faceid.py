@@ -14,7 +14,7 @@ MODEL_PATH = "output/model.joblib"
 PCA_PATH = "output/model_pca.joblib"
 LABELS_PATH = "output/model_labels.joblib"
 PREDICTED_FOLDER = "predicted"
-KAFKA_BROKER = "localhost:9092"
+KAFKA_BROKER = "kafka:9092"
 INPUT_TOPIC = "input_images"
 OUTPUT_TOPIC = "predicted_images"
 
@@ -37,8 +37,10 @@ net = cv2.dnn.readNet(prototxtPath, weightsPath)
 async def process_message(message):
     try:
         # Декодирование изображения из Base64
-        image_data = base64.b64decode(message.value)
-        image_array = np.frombuffer(image_data, dtype=np.uint8)
+        # image_data = base64.b64decode(message.value)
+        # image_array = np.frombuffer(image_data, dtype=np.uint8)
+        
+        image_array = np.array(message, dtype=np.uint8)
         image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
         h, w = image.shape[:2]
 

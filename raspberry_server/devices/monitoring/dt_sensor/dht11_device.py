@@ -30,7 +30,6 @@ class DhtSensor(metaclass=Singleton):
 
     def read(self) -> DhtReturnType:
         """Read data from dht11 sensor."""
-        # GPIO.setmode(GPIO.BCM)
         GPIO.setmode(GPIO.BOARD)
         start = datetime.datetime.now().timestamp()
         while True:
@@ -39,12 +38,12 @@ class DhtSensor(metaclass=Singleton):
             if result.error_code == 0:
                 self.prev_h = result.humidity
                 self.prev_t = result.temperature
-                GPIO.cleanup()
+                GPIO.cleanup(self.pin)
                 return result
 
             end = datetime.datetime.now().timestamp()
             if end - start > 30:
-                GPIO.cleanup()
+                GPIO.cleanup(self.pin)
                 error = f"Cannot read from pin={self.pin} due to code number {result.error_code}, {result}"
                 logger.error(error)
                 return DHT11Result(1, self.prev_t, self.prev_h)

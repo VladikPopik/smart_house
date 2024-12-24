@@ -40,6 +40,6 @@ class PhotoEl(metaclass=Singleton):
             duty_cycle = int(pulse_duration / total_duration * 100)
         finally:
             duty_cycle = -1
-            GPIO.cleanup()
+            GPIO.cleanup(self.pin)
 
         return time.time(), duty_cycle

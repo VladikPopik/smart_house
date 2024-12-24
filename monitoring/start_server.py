@@ -10,7 +10,6 @@ basicConfig(filename="monitoring.log", level=INFO)
 log = getLogger(__name__)
 
 async def main(time_to_cycle=5):
-    log.info("Start work")
     start = datetime.datetime.now().timestamp()
     try:
         async with httpx.AsyncClient() as client:

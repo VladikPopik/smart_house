@@ -1,6 +1,6 @@
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from logging import getLogger
-import datetime, json
+import json
 import typing as ty
 
 logger = getLogger()
@@ -26,20 +26,25 @@ async def consume_message(topic: str):
     return data
 
 
-async def produce_message_kafka(topic:str, data: dict[str, ty.Any]) -> bool:
+async def produce_result(
+    topic: str,
+    value_to_send: dict[str, ty.Any],
+    compression_type: str | None = None,
+) -> bool:
+    """Send result of perform_device into kafka by topic."""
     try:
         async with AIOKafkaProducer(
             bootstrap_servers="kafka:9092",
+            request_timeout_ms=1000,
+            max_request_size=2*75157290,
+            compression_type=compression_type
         ) as producer:
             _ = await producer.send(
-                topic, value=json.dumps(data).encode()
+                topic, value=json.dumps(value_to_send).encode()
             )
-            logger.info(json.dumps("Данные отправлены в кафку"))
-            print("Данные отправлены!")
-    except Exception as e: 
-        print(e) # noqa: BLE001
-        _ = await producer.stop()
-        logger.info(e)
+            logger.info(topic)
+            await producer.flush()
+    except Exception as e:  # noqa: BLE001
+        logger.error(e)
         return False
-
     return True

@@ -21,7 +21,6 @@ async def read_device_by_type(device_type: str) -> RowMapping | None:
             session.execute(
                 select(settingsd_table).where(
                     (settingsd_table.c.device_type == device_type)
-                    & (settingsd_table.c.on == 1)
                 )
             )
             .mappings()
