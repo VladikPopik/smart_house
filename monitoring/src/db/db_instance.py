@@ -9,18 +9,12 @@ from src.utils import Singleton
 class DBInstance(metaclass=Singleton):
     def __init__(self) -> None:
         url = sa.URL.create(
-            # config.sql_conn.engine,
-            # username=config.sql_conn.user,
-            # password=config.sql_conn.password,
-            # host=config.sql_conn.host,
-            # database=config.sql_conn.db,
-            # port=config.sql_conn.port,
-            drivername="mysql+pymysql",
-            username="root",
-            password="admin",
-            host="0.0.0.0",
-            database="test",
-            port=3306
+            config.sql_conn.engine,
+            username=config.sql_conn.user,
+            password=config.sql_conn.password,
+            host=config.sql_conn.host,
+            database=config.sql_conn.db,
+            port=config.sql_conn.port,
         )
         self.engine: sa.Engine = sa.create_engine(url=url)
 
