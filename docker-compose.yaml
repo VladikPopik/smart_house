@@ -35,65 +35,54 @@ services:
     depends_on:
       - kafka
       - db
-
-  raspberry-server:
-    build: ./raspberry_server
+    
+  budget:
+    build: ./budget_back
     ports:
-      - "8080:8080"
-    volumes:
-      - '/data:/raspberry_server/data'
-    devices:
-      - '/dev/video0:/dev/video0'
-      - '/dev/gpiomem:/dev/gpiomem'
-    privileged: true
-    depends_on:
-      - backend
-
-  monitoring:
-    build: ./monitoring
-    ports:
-      - "9999:9999"
+      - "80:8889"
     depends_on:
       - backend
       - kafka
+      - db
 
-  motion:
-    build: ./motion
-    ports: 
-      - "8881:8881"
-    volumes:
-      - '/smart_house/data:/raspberry_server/data'
-    depends_on:
-      - backend
-      - kafka
-
-  light:
-    build: ./light
-    ports:
-      - "8888:8888"
-    devices:
-      - '/dev/gpiomem:/dev/gpiomem'
-    privileged: true
-    depends_on:
-      - backend
-      - kafka
-  
-  # frontend:
-  #   build:
-  #     context: ./my-react-app
+  # raspberry-server:
+  #   build: ./raspberry_server
   #   ports:
-  #     - "5173:5173"
-  #   # networks:
-  #   #   - dev
-
-  # nginx:
-  #   image: nginx:stable-alpine
-  #   ports:
-  #     - "80:80"
+  #     - "8080:8080"
   #   volumes:
-  #     - './my-react-app/nginx.conf:/etc/nginx/nginx.conf'
+  #     - '/data:/raspberry_server/data'
+  #   # devices:
+  #   #   - '/dev/video0:/dev/video0'
+  #   #   - '/dev/gpiomem:/dev/gpiomem'
+  #   privileged: true
   #   depends_on:
   #     - backend
-  #     - frontend
-  #   # networks:
-  #   #   - dev
+
+  # monitoring:
+  #   build: ./monitoring
+  #   ports:
+  #     - "9999:9999"
+  #   depends_on:
+  #     - backend
+  #     - kafka
+
+  # motion:
+  #   build: ./motion
+  #   ports: 
+  #     - "8881:8881"
+  #   volumes:
+  #     - '/smart_house/data:/raspberry_server/data'
+  #   depends_on:
+  #     - backend
+  #     - kafka
+
+  # light:
+  #   build: ./light
+  #   ports:
+  #     - "8888:8888"
+  #   # devices:
+  #   #   - '/dev/gpiomem:/dev/gpiomem'
+  #   privileged: true
+  #   depends_on:
+  #     - backend
+  #     - kafka

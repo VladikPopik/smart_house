@@ -16,7 +16,7 @@ import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
-
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 export default function DrawerComponent () {
 
@@ -45,6 +45,10 @@ export default function DrawerComponent () {
       const handleSettings = () => {
         navigate('/settings');
       };
+
+      const handleBudget = () => {
+        navigate('/budget')
+      }
     
       const handleTelegram = () => {
         navigate('/telegram');
@@ -105,6 +109,15 @@ export default function DrawerComponent () {
                   <SettingsIcon />
                 </ListItemIcon>
                 <ListItemText primary="Settings" />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem key="Budget" disablePadding>
+              <ListItemButton onClick={() => handleBudget()}>
+                <ListItemIcon>
+                  <AttachMoneyIcon />
+                </ListItemIcon>
+                <ListItemText primary="Budget" />
               </ListItemButton>
             </ListItem>
           </List>

@@ -13,6 +13,7 @@ import HelpPage from './pages/HelpPage.jsx';
 import TelegramPage from './pages/TelegramPage.jsx';
 import CalendarPlanPage from './pages/CalendarPlanPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
+import BudgetPage from './pages/BudgetPage.jsx';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
       <Route path='/telegram' element={<TelegramPage />} />
       <Route path="/calendarplan" element={<CalendarPlanPage />} />
       <Route path='/settings' element={<SettingsPage />} />
+      <Route path='/budget' element={<BudgetPage />} />
       </Routes>
     </Router>
   );
