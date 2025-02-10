@@ -26,8 +26,8 @@ async def process_message(message):
         # Декодирование изображения из Base64
         # image_data = base64.b64decode(message.value)
         # image_array = np.frombuffer(image_data, dtype=np.uint8)
-        message_key = next(iter(message))
-        message = message[message_key]
+        time, photos = message.get("time"), message.get("photos")
+        message = photos[-1]
         image_array = np.array(message, dtype=np.uint8)
         image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
         h, w = image.shape[:2]
@@ -66,15 +66,15 @@ async def process_message(message):
             cv2.putText(image, label, (startX, startY - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
         # Сохранение предсказанного изображения
-        os.makedirs(PREDICTED_FOLDER, exist_ok=True)
-        output_path = os.path.join(PREDICTED_FOLDER, f"predicted_{message.offset}.jpg")
-        cv2.imwrite(output_path, image)
+        # os.makedirs(PREDICTED_FOLDER, exist_ok=True)
+        # output_path = os.path.join(PREDICTED_FOLDER, f"predicted_{message.offset}.jpg")
+        # cv2.imwrite(output_path, image)
 
         return {"image": image.tolist()}
 
     except Exception as e:
-        print(f"[ERROR] Ошибка обработки сообщения: {e}")
-        return None
+        log.info(f"[ERROR] Ошибка обработки сообщения: {e}")
+        return {"image": []}
 
 
 async def get_cam(timeout: int=5000) -> httpx.Response:
@@ -115,6 +115,7 @@ async def main(time_to_cycle=5):
             data = await consume_message(consumer_topic)
             predicted = await process_message(data)
             log.info("Predicted is ok")
+            log.info(f"{predicted["image"][-1]}")
             if predicted:
                 await produce_result(producer_topic, predicted, compression_type="gzip")
     except Exception as e:
@@ -140,7 +141,7 @@ if __name__=="__main__":
     if os.path.exists(LABELS_PATH):
         le = load(LABELS_PATH)
     else:
-        print("[WARNING] Файл меток не найден. LabelEncoder будет инициализирован пустым.")
+        log.info("[WARNING] Файл меток не найден. LabelEncoder будет инициализирован пустым.")
         le = LabelEncoder()
 
     prototxtPath = os.path.sep.join(["face_id", "face_detector", "deploy.prototxt"])

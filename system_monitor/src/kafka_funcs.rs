@@ -6,17 +6,18 @@ fn array_to_image(arr: Array3<u8>) -> RgbImage {
     assert!(arr.is_standard_layout());
 
     let (height, width, _) = arr.dim();
-    let raw = arr.into_raw_vec();
+    let t_raw= arr.into_raw_vec_and_offset();
+    let raw = t_raw.0;
 
     RgbImage::from_raw(width as u32, height as u32, raw)
         .expect("container should have the right size for the image dimensions")
 }
 
-fn consumer() {
-    let hosts = vec!["kafka:9092".to_owned()];
+fn consumer(topic: String, hosts: String) {
+    let hosts = vec![hosts];
  
     let mut consumer = Consumer::from_hosts(hosts)
-        .with_topic("topic-name".to_owned())
+        .with_topic(topic)
         .with_fallback_offset(FetchOffset::Latest)
         .create()
         .unwrap();
@@ -25,7 +26,7 @@ fn consumer() {
         for ms in consumer.poll().unwrap().iter() {
             for m in ms.messages() {
             // If the consumer receives an event, this block is executed
-                println!("{:?}", str::from_utf8(m.value).unwrap());
+                println!("{:?}", m.value);
             }
 
             consumer.consume_messageset(ms).unwrap();
@@ -34,3 +35,4 @@ fn consumer() {
         consumer.commit_consumed().unwrap();
     }
 }
+

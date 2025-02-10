@@ -2,7 +2,9 @@ from uuid import UUID, uuid4
 import RPi.GPIO as GPIO
 import time
 from devices.utils import Singleton
+from logging import getLogger
 
+log = getLogger()
 
 class PhotoEl(metaclass=Singleton):
     def __init__(
@@ -37,9 +39,15 @@ class PhotoEl(metaclass=Singleton):
             pulse_duration = pulse_end - pulse_start
             total_duration = pulse_end - cycle_time
             
+            log.info(pulse_duration)
+            log.info(total_duration)
+            print(pulse_duration, total_duration)
+
             duty_cycle = int(pulse_duration / total_duration * 100)
-        finally:
+        except Exception as e:
             duty_cycle = -1
+            log.exception(f"{e}")
+        finally: 
             GPIO.cleanup(self.pin)
 
         return time.time(), duty_cycle

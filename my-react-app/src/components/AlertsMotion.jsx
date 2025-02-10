@@ -52,10 +52,10 @@ export default function AlertStack (message="motion") {
         }
 
         websocket.onopen = () => {
-            websocket.send(message);
+            websocket.send("motion");
         }
         return () => {
-            websocket.close(1000, message+"over");
+            websocket.close(1000, "motion over");
         }
     }, []);
 

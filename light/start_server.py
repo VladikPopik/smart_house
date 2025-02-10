@@ -6,7 +6,7 @@ import httpx
 import datetime
 from diod import Diod
 
-basicConfig(filename="monitoring.log", level=INFO)
+basicConfig(filename="light.log", level=INFO)
 log = getLogger(__name__)
 
 async def get_photoel(timeout: int=5000) -> httpx.Response:

@@ -34,13 +34,13 @@ class Capture(metaclass=Singleton):
         self.cam = None
         self.number_of_shots = number_of_shots
 
-    def capture_camera(self) -> dict[str, ty.Any]:
+    def capture_camera(self) -> list[list[int]]:
         """Function to capture camera with opencv."""
         self.cam = VideoCapture(self.camport) if not self.cam else self.cam
         if not self.cam.isOpened():
             self.cam = VideoCapture(1)
 
-        images = {}
+        images = []
 
         for _idx in range(self.number_of_shots):
             if self.cam.isOpened():
@@ -55,8 +55,8 @@ class Capture(metaclass=Singleton):
                 # t = imwrite(file_path, img)
                 t = True
                 logger.info(f"Is image saved? {t}, image uuid: {uuid}")  # noqa: T201
-                images.update({f"{uuid}": img.tolist()})
+                images.append(img.tolist())
         destroyAllWindows()
         self.cam.release()
 
-        return images if result or t else {}
+        return images if result or t else []
