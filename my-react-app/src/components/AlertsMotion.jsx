@@ -31,14 +31,37 @@ export default function AlertStack (message="motion") {
         localAlerts
     );
     const [timings, setTime] = useState(localTime);
+    const [img, setImage] = useState([]);
+
+    var width = 640,
+    height = 480,
+    buffer = new Uint8ClampedArray(width * height * 3);
+
+    var canvas = document.createElement('canvas'),
+    ctx = canvas.getContext('2d');
+    canvas.width = width;
+    canvas.height = height;
+    // create imageData object
+    var idata = ctx.createImageData(width, height);
+    // set our buffer as source
+    idata.data.set(img);
+    // update canvas with new data
+    ctx.putImageData(idata, width, height);
+
+    var image=new Image();
+
+    var dataUri = canvas.toDataURL();
+    image.src = dataUri
 
     const addItem = (event) => {
         const dt = JSON.parse(event.data);
         const status = dt.status;
         let newt = dt.time
+        let img = dt.image
         
         setAlerts(prevItems => [...prevItems, status]);
-        setTime(prevItems => [...prevItems, newt])
+        setTime(prevItems => [...prevItems, newt]);
+        setImage(dt.image);
         // localStorage.setItem("alerts", [alerts])
         // localStorage.setItem("timings", [timings])
     };
@@ -55,7 +78,7 @@ export default function AlertStack (message="motion") {
             websocket.send("motion");
         }
         return () => {
-            websocket.close(1000, "motion over");
+            websocket.close(1000, "motion" + "over");
         }
     }, []);
 
@@ -96,7 +119,7 @@ export default function AlertStack (message="motion") {
 
     return (
         <Grid2 sx={{alignContent: "center", justifyContent: "center", display: "flex"}}>
-            <ImageList sx={{width: "75%", height: "75%", justifyContent: "center", alignContent: "center", display: "flex"}}>
+            {/* <ImageList sx={{width: "75%", height: "75%", justifyContent: "center", alignContent: "center", display: "flex"}}>
                 <ImageListItem sx={{height: "75%", width: "75%", alignContent: "center", justifyContent: "center"}}>
                     <img
                         src={"./src/assets/3.jpg"}
@@ -104,7 +127,8 @@ export default function AlertStack (message="motion") {
                         loading="eager"
                     />
                     </ImageListItem>
-            </ImageList>
+            </ImageList> */}
+            <img src={image.src}/>
             <Stack sx={{
                 display: "grid",
                 alignContent: "center",

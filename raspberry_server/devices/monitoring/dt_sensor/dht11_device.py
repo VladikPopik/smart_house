@@ -15,6 +15,9 @@ logger = getLogger()
 prev_h = 0.0
 prev_t = 0.0
 
+GPIO.setmode(GPIO.BOARD)
+
+
 class DhtSensor(metaclass=Singleton):
     """Class to handle DHT11 sensor working."""
     def __init__(
@@ -30,11 +33,10 @@ class DhtSensor(metaclass=Singleton):
 
     def read(self) -> DhtReturnType:
         """Read data from dht11 sensor."""
-        GPIO.setmode(GPIO.BOARD)
         start = datetime.datetime.now().timestamp()
-        time.sleep(0.5)
         while True:
             result = self.instance.read()
+            time.sleep(0.001)
 
             if result.error_code == 0:
                 global prev_h

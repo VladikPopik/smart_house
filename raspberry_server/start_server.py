@@ -1,7 +1,7 @@
 import asyncio
 import json
 import typing as ty
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed, wait
 from functools import singledispatch
 from logging import getLogger, basicConfig, INFO
 import datetime
@@ -40,7 +40,6 @@ async def produce_device_result(
             _ = await producer.send(
                 topic, value=json.dumps(value_to_send).encode()
             )
-            # logger.info(json.dumps(value_to_send))
             logger.info(topic)
             await producer.flush()
     except Exception as e:  # noqa: BLE001
@@ -125,15 +124,17 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
                 rasp_device = device_types[device_type](**device)
                 connected_devices[rasp_device.device_name] = rasp_device
 
-        futures = []
         t_devices = []
+        results = []
+        loop = asyncio.get_event_loop()
         for c_device in connected_devices:  # noqa: PLC0206
             device = connected_devices[c_device]
-            future = executor.submit(perform_device, device)
-            futures.append(future)
+            result = await loop.run_in_executor(executor, perform_device, device)
+            results.append(result)
+            # future = executor.submit(perform_device, device)
+            # futures.append(future)
             t_devices.append(device)
 
-        results = [f.result() for f in as_completed(futures)]
         for idx, d in enumerate(t_devices):
             try:
                 match d.device_type:
@@ -147,7 +148,7 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
                                     "humidity": results[idx][1]
                                 }
                             )
-                        logger.info(f"Results {results}")  # noqa: G004
+                        logger.info(f"Results {results[idx]}")  # noqa: G004
                     case "photoel":
                         _ = await produce_device_result(
                             d,
@@ -157,9 +158,8 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
                                 "percent": results[idx][1]
                             }
                         )
-                        logger.info(f"Results {results}")
+                        logger.info(f"Results {results[idx]}")
                     case "cam":
-                        logger.info(type(results[idx]))
                         _ = await produce_device_result(
                             d,
                             topic=f"{d.device_name}-{d.device_type}-rasp",

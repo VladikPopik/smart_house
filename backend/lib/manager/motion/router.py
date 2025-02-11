@@ -1,6 +1,4 @@
-import ast
 import asyncio
-import datetime
 import json
 from logging import getLogger
 
@@ -45,7 +43,7 @@ async def push_data_motion_ws(websocket: WebSocket) -> None:
                         for idx, val in enumerate(np_data):
                             np_data[idx] = np.array(val, dtype=np.uint8)
                         data = {
-                            "image": np_data.tobytes(),
+                            "image": np_data.tolist(),
                             "status": "success", 
                             "time": consumed_data["time"]
                         }
@@ -57,7 +55,7 @@ async def push_data_motion_ws(websocket: WebSocket) -> None:
         try:
             _ = await websocket.receive_text()
             await websocket.send_json(data)
-            await asyncio.sleep(1)
+            await asyncio.sleep(60)
         except Exception as e:  # noqa: BLE001
             print(e)
             break
