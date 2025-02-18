@@ -51,8 +51,8 @@ class Capture(metaclass=Singleton):
 
             if result:
                 uuid = uuid4()
-                # file_path = f"data/test{uuid}.jpg"
-                # t = imwrite(file_path, img)
+                file_path = f"data/test{uuid}.jpg"
+                t = imwrite(file_path, img)
                 t = True
                 logger.info(f"Is image saved? {t}, image uuid: {uuid}")  # noqa: T201
                 images.append(img.tolist())

@@ -41,7 +41,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - '/data:/raspberry_server/data'
+      - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
     devices:
       - '/dev/video0:/dev/video0'
       - '/dev/gpiomem:/dev/gpiomem'
