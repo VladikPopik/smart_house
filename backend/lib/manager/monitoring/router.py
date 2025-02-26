@@ -22,9 +22,6 @@ async def push_data_monitroing_ws(websocket: WebSocket) -> None:
     climates = await cr.read_device_by_type(type_d)
     topic = f"{climates['device_name']}-{climates['device_type']}" if climates else ""
 
-    prev_t = 0.0
-    prev_h = 0.0
-
     while True:
         try:
             data = None
@@ -41,8 +38,8 @@ async def push_data_monitroing_ws(websocket: WebSocket) -> None:
                     msg = await consumer.getone()
                     if msg and msg.value:
                         data = json.loads(msg.value)
-                        prev_t = data["temperature"] if data["temperature"] else prev_t
-                        prev_h = data["humidity"] if data["humidity"] else prev_h
+                        prev_t = data["temperature"]
+                        prev_h = data["humidity"]
                     else:
                         data = None
             if data is None:

@@ -1,7 +1,7 @@
 import asyncio
 import json
 import typing as ty
-from concurrent.futures import ProcessPoolExecutor, as_completed, wait
+from concurrent.futures import ProcessPoolExecutor
 from functools import singledispatch
 from logging import getLogger, basicConfig, INFO
 import datetime
@@ -9,7 +9,8 @@ from aiokafka import AIOKafkaProducer
 from devices.monitoring import DhtReturnType, DhtSensor
 from devices.motion import Capture
 from devices.light import PhotoEl
-import numpy as np
+
+from enum import Enum
 
 import httpx
 
@@ -22,6 +23,13 @@ type DeviceReturnType = DhtReturnType | dict[str, str] | tuple[float, int]
 
 device_types = {"dht11": DhtSensor, "cam": Capture, "photoel": PhotoEl}
 
+global_dht_temp = 0.0
+global_dht_hum = 20.0
+
+class Err(Enum):
+    OK = 0
+    ERROR_DEVICE = 1
+    ERROR_SYSTEM = 2
 
 async def produce_device_result(
     _device: DeviceType,
@@ -50,9 +58,10 @@ async def produce_device_result(
 @singledispatch
 def perform_device[
     T
-](device: T) -> DeviceReturnType:  # pyright: ignore[reportInvalidTypeVarUse]
+](device: T) -> tuple[Err, DeviceReturnType]:  # pyright: ignore[reportInvalidTypeVarUse]
     """Generic function that gets result from every device type."""
 
+#TODO: ADD PREV VALUES OUT OF EXECUTOR
 @perform_device.register
 def _(device: DhtSensor) -> DhtReturnType | tuple[float, float]:
     try:
@@ -60,14 +69,20 @@ def _(device: DhtSensor) -> DhtReturnType | tuple[float, float]:
     except Exception as e:
         err = f"{e}"
         logger.error(err)
-
-    logger.info(f"Dht11 result for {device}: {result}")  # noqa: G004
-    return (result.temperature, result.humidity)
+    if result and result.error_code == 0 and result.temperature > float("-inf") and result.humidity > float("-inf"):
+        global global_dht_hum
+        global global_dht_temp
+        global_dht_temp = result.temperature
+        global_dht_hum = result.humidity
+        logger.info(f"Dht11 result for {device}: {result}")  # noqa: G004
+        return  (result.error_code, result.temperature, result.humidity)
+    
+    return (1, global_dht_temp, global_dht_hum)
 
 @perform_device.register
-def _(device: Capture) -> dict[str, ty.Any]:
+def _(device: Capture) -> tuple[Err, dict[str, ty.Any]]:
     try:
-        result = device.capture_camera()
+        err, result = device.capture_camera()
     except Exception as e:
         logger.exception(e)
         result = []
@@ -75,16 +90,16 @@ def _(device: Capture) -> dict[str, ty.Any]:
     log_msg = f"Capture result for {device}: {True if result else False}"
     logger.info(log_msg)
 
-    return result
+    return err, result
 
 @perform_device.register
-def _(device: PhotoEl) -> tuple[float, int]:
+def _(device: PhotoEl) -> tuple[Err, float, int]:
     try:
-        result = device.measure()
+        err, result = device.measure()
     except Exception as e:
         logger.error(e)
 
-    return result
+    return err, result
 
 async def get_registered_devices(timeout: int=5000) -> httpx.Response:
     response: httpx.Response | None = None
@@ -127,13 +142,15 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
         t_devices = []
         results = []
         loop = asyncio.get_event_loop()
+        errors = []
         for c_device in connected_devices:  # noqa: PLC0206
             device = connected_devices[c_device]
-            result = await loop.run_in_executor(executor, perform_device, device)
+            err, *result = await loop.run_in_executor(executor, perform_device, device)
             results.append(result)
             # future = executor.submit(perform_device, device)
             # futures.append(future)
             t_devices.append(device)
+            errors.append(err)
 
         for idx, d in enumerate(t_devices):
             try:
@@ -145,7 +162,8 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
                                 value_to_send = {
                                     "time": datetime.datetime.now().timestamp(),
                                     "temperature": results[idx][0],
-                                    "humidity": results[idx][1]
+                                    "humidity": results[idx][1],
+                                    "error": errors[idx]
                                 }
                             )
                         logger.info(f"Results {results[idx]}")  # noqa: G004
@@ -155,7 +173,8 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
                             topic=f"{d.device_name}-{d.device_type}-rasp",
                             value_to_send = {
                                 "time": results[idx][0],
-                                "percent": results[idx][1]
+                                "percent": results[idx][1],
+                                "error": errors[idx]
                             }
                         )
                         logger.info(f"Results {results[idx]}")
@@ -165,7 +184,8 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
                             topic=f"{d.device_name}-{d.device_type}-rasp",
                             value_to_send = {
                                 "time": datetime.datetime.now().timestamp(),
-                                "photos": results[idx]
+                                "photos": results[idx],
+                                "error": errors[idx]
                             },
                             compression_type='gzip'
                         )

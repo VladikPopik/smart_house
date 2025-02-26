@@ -18,7 +18,7 @@ class PhotoEl(metaclass=Singleton):
         self.on = on
         self.time_to_cycle = 1
 
-    def measure(self) -> tuple[float, int]:
+    def measure(self) -> tuple[int, float, int]:
         try:
             GPIO.setmode(GPIO.BOARD)
             GPIO.setup(self.pin, GPIO.IN)
@@ -44,10 +44,12 @@ class PhotoEl(metaclass=Singleton):
             print(pulse_duration, total_duration)
 
             duty_cycle = int(pulse_duration / total_duration * 100)
+            err = 0
         except Exception as e:
             duty_cycle = -1
+            err = 1
             log.exception(f"{e}")
         finally: 
             GPIO.cleanup(self.pin)
 
-        return time.time(), duty_cycle
+        return err, time.time(), duty_cycle

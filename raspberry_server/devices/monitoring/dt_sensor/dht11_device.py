@@ -1,5 +1,7 @@
 from uuid import UUID, uuid4
 
+import asyncio
+
 from .test_dht11 import DHT11, DHT11Result  # pyright: ignore[reportMissingTypeStubs]
 from logging import getLogger
 import RPi.GPIO as GPIO
@@ -12,8 +14,7 @@ type DhtReturnType = DHT11Result | None
 
 logger = getLogger()
 
-prev_h = 0.0
-prev_t = 0.0
+
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -30,26 +31,26 @@ class DhtSensor(metaclass=Singleton):
         self.voltage = voltage
         self.on = on
         self.instance = DHT11(pin=pin)
+        self.prev_h = 0.0
+        self.prev_t = 0.0
 
     def read(self) -> DhtReturnType:
         """Read data from dht11 sensor."""
+        logger.info("Try to read instance")
         start = datetime.datetime.now().timestamp()
+        time.sleep(0.5)
         while True:
+            time.sleep(1)
             result = self.instance.read()
-            time.sleep(0.001)
-
             if result.error_code == 0:
-                global prev_h
-                global prev_t
-                prev_h = result.humidity
-                prev_t = result.temperature
+                self.prev_h = result.humidity
+                self.prev_t = result.temperature
                 GPIO.cleanup(self.pin)
                 return result
 
             end = datetime.datetime.now().timestamp()
-            if end - start > 60:
+            if end - start > 10:
                 GPIO.cleanup(self.pin)
                 error = f"Cannot read from pin={self.pin} due to code number {result.error_code}, {result}"
                 logger.error(error)
-                return DHT11Result(1, prev_t, prev_h)
-
+                return DHT11Result(1, float("-inf"), float("-inf"))

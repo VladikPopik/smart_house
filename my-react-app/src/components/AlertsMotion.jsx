@@ -106,12 +106,13 @@ export default function AlertStack (message="motion") {
     // const img = new Image();
     // img.src = imageUrl;
     // document.body.appendChild(img);
+    var url =  "./src/assets/test2e3ef4f2-0c44-4cea-b2cc-02b27693e92d.jpg";
     return (
         <Grid2 sx={{alignContent: "center", justifyContent: "center", display: "flex"}}>
-            <ImageList sx={{width: "75%", height: "75%", justifyContent: "center", alignContent: "center", display: "flex"}}>
-                <ImageListItem sx={{height: "75%", width: "75%", alignContent: "center", justifyContent: "center"}}>
+            <ImageList sx={{width: "1000%", height: "1000%", justifyContent: "center", alignContent: "center"}}>
+                <ImageListItem sx={{height: "100%", width: "100%", alignContent: "center", justifyContent: "center"}}>
                     <img
-                        src={"./src/assets/3.jpg"}
+                        src={url}
                         alt={"Detected something"}
                         loading="eager"
                     />
@@ -122,8 +123,8 @@ export default function AlertStack (message="motion") {
                 display: "grid",
                 alignContent: "center",
                 justifyContent: "center",
-                height: "75%",
-                width: "75%", 
+                height: "100%",
+                width: "100%", 
             }}>
                 {
                     temp
