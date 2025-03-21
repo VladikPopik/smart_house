@@ -5,6 +5,7 @@ import config from "../config";
 import { Box, Grid, Stack } from "@mui/material";
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { BarChart } from "@mui/x-charts";
+import ws_monitoring from "../websockets";
 
 export default function MonitoringCharts (message="monitoring") { 
 
@@ -26,7 +27,6 @@ export default function MonitoringCharts (message="monitoring") {
     var [temperature, setTemperature] = useState(localTemperature);
     var [humidity, setHumidity] = useState(localHumidity);
     var [timings, setTime] = useState(localTime);
-    const URL_WEB_LOGIN = `ws://${config.host}:${config.port}/mon_ws/monitoring_ws` 
 
     const addItem = (event) => {
         const dt = JSON.parse(event.data);
@@ -41,7 +41,7 @@ export default function MonitoringCharts (message="monitoring") {
     };
 
     useEffect(() => {
-        const websocket = new WebSocket(URL_WEB_LOGIN);
+        const websocket = ws_monitoring();
 
         websocket.onmessage = function(event) {
             addItem(event)
@@ -56,7 +56,7 @@ export default function MonitoringCharts (message="monitoring") {
                 websocket.close(1000, "monitoring"+" over");
             }
         }
-    }, []);
+    });
 
     if (temperature.length > 30){
         var t_result = timings.slice(timings.length - 30, -1);

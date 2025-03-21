@@ -19,6 +19,8 @@ async def main(time_to_cycle=5):
             )
         if response.is_success:
             r = response.json()
+            if not (r and r['device_name'] and r['device_type']):
+                asyncio.get_running_loop().create_task(main(time_to_cycle))
             producer_topic = f"{r['device_name']}-{r['device_type']}"
             consumer_topic = producer_topic + "-rasp"
             log.info(f"{producer_topic}, {consumer_topic}")

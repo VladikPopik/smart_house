@@ -8,7 +8,7 @@ import datetime
 from aiokafka import AIOKafkaProducer
 from devices.monitoring import DhtReturnType, DhtSensor
 from devices.motion import Capture
-from devices.light import PhotoEl
+# from devices.light import PhotoEl
 
 from enum import Enum
 
@@ -18,10 +18,10 @@ basicConfig(filename="error.log", level=INFO)
 logger = getLogger(__name__)
 
 
-type DeviceType = Capture | DhtSensor | PhotoEl
+type DeviceType = Capture | DhtSensor # | PhotoEl
 type DeviceReturnType = DhtReturnType | dict[str, str] | tuple[float, int]
 
-device_types = {"dht11": DhtSensor, "cam": Capture, "photoel": PhotoEl}
+device_types = {"dht11": DhtSensor, "cam": Capture} #, "photoel": PhotoEl
 
 global_dht_temp = 0.0
 global_dht_hum = 20.0
@@ -92,14 +92,14 @@ def _(device: Capture) -> tuple[Err, dict[str, ty.Any]]:
 
     return err, result
 
-@perform_device.register
-def _(device: PhotoEl) -> tuple[Err, float, int]:
-    try:
-        err, result = device.measure()
-    except Exception as e:
-        logger.error(e)
+# @perform_device.register
+# def _(device: PhotoEl) -> tuple[Err, float, int]:
+#     try:
+#         err, result = device.measure()
+#     except Exception as e:
+#         logger.error(e)
 
-    return err, result
+#     return err, result
 
 async def get_registered_devices(timeout: int=5000) -> httpx.Response:
     response: httpx.Response | None = None
@@ -147,8 +147,6 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
             device = connected_devices[c_device]
             err, *result = await loop.run_in_executor(executor, perform_device, device)
             results.append(result)
-            # future = executor.submit(perform_device, device)
-            # futures.append(future)
             t_devices.append(device)
             errors.append(err)
 
