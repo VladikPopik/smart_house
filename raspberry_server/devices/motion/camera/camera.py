@@ -1,3 +1,5 @@
+import typing as ty
+
 from uuid import UUID, uuid4
 
 from cv2 import VideoCapture, destroyAllWindows, imwrite, imencode
@@ -18,7 +20,7 @@ class Capture(metaclass=Singleton):
         *,
         on: bool = False,
         camport: int = 0,
-        number_of_shots: int = 2,
+        number_of_shots: int = 1,
         device_type: str="cam",
     ) -> None:
         self.device_name = device_name
@@ -32,13 +34,13 @@ class Capture(metaclass=Singleton):
         self.cam = None
         self.number_of_shots = number_of_shots
 
-    def capture_camera(self) -> dict[str, str]:
+    def capture_camera(self) -> tuple[int, list[list[int]]]:
         """Function to capture camera with opencv."""
         self.cam = VideoCapture(self.camport) if not self.cam else self.cam
         if not self.cam.isOpened():
             self.cam = VideoCapture(1)
 
-        images = {}
+        images = []
 
         for _idx in range(self.number_of_shots):
             if self.cam.isOpened():
@@ -49,12 +51,12 @@ class Capture(metaclass=Singleton):
 
             if result:
                 uuid = uuid4()
-                file_path = f"data/test{uuid}.png"
+                file_path = f"data/test{uuid}.jpg"
                 t = imwrite(file_path, img)
+                t = True
                 logger.info(f"Is image saved? {t}, image uuid: {uuid}")  # noqa: T201
-                img_str = imencode('.png', img)[1].tostring()
-                images.update({f"{uuid}": img_str})
+                images.append(uuid)
         destroyAllWindows()
         self.cam.release()
 
-        return images if result or t else {}
+        return (1, images) if result or t else (1, [])

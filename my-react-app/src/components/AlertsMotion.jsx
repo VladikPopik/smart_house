@@ -1,7 +1,7 @@
 import { Box, Grid, ImageList, Stack } from "@mui/material";
 import { Alert } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import config from "../config";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import ErrorIcon from '@mui/icons-material/Error';
@@ -31,17 +31,25 @@ export default function AlertStack (message="motion") {
         localAlerts
     );
     const [timings, setTime] = useState(localTime);
+    const [pixelArray, setImage] = useState(new Uint8ClampedArray(480 * 600 * 4).fill(255));
 
     const addItem = (event) => {
         const dt = JSON.parse(event.data);
         const status = dt.status;
         let newt = dt.time
+        let img = dt.image
         
         setAlerts(prevItems => [...prevItems, status]);
-        setTime(prevItems => [...prevItems, newt])
+        setTime(prevItems => [...prevItems, newt]);
+        setImage(dt.image.flat().flat());
         // localStorage.setItem("alerts", [alerts])
         // localStorage.setItem("timings", [timings])
     };
+
+    const canvasRef = useRef(null);
+
+    const [imageUrl, setImageUrl] = useState('');
+  
 
     useEffect(() => {
         const websocket = new WebSocket(URL_WEB_LOGIN);
@@ -52,10 +60,10 @@ export default function AlertStack (message="motion") {
         }
 
         websocket.onopen = () => {
-            websocket.send(message);
+            websocket.send("motion");
         }
         return () => {
-            websocket.close(1000, message+"over");
+            websocket.close(1000, "motion" + "over");
         }
     }, []);
 
@@ -88,29 +96,35 @@ export default function AlertStack (message="motion") {
         )
         var temp_t = timings.slice(-6, -1)
         var temp_a = alerts.slice(-6, -1);
-        // localStorage.removeItem("alerts")
-        // localStorage.removeItem("timings")
-        // localStorage.setItem("timings", temp_t)
-        // localStorage.setItem("alerts", temp_a)
     }
 
+    // const canvas = document.getElementById('myCanvas');
+    // const ctx = canvas.getContext('2d');
+    // var imageDataObj = new ImageData(pixelArray, 480, 640);
+    // ctx.putImageData(imageDataObj, 0, 0);
+    // const imageUrl = canvas.toDataURL('image/png');
+    // const img = new Image();
+    // img.src = imageUrl;
+    // document.body.appendChild(img);
+    var url =  "./src/assets/test2e3ef4f2-0c44-4cea-b2cc-02b27693e92d.jpg";
     return (
         <Grid2 sx={{alignContent: "center", justifyContent: "center", display: "flex"}}>
-            <ImageList sx={{width: "75%", height: "75%", justifyContent: "center", alignContent: "center", display: "flex"}}>
-                <ImageListItem sx={{height: "75%", width: "75%", alignContent: "center", justifyContent: "center"}}>
+            <ImageList sx={{width: "1000%", height: "1000%", justifyContent: "center", alignContent: "center"}}>
+                <ImageListItem sx={{height: "100%", width: "100%", alignContent: "center", justifyContent: "center"}}>
                     <img
-                        src={"./src/assets/3.jpg"}
+                        src={url}
                         alt={"Detected something"}
                         loading="eager"
                     />
                     </ImageListItem>
             </ImageList>
+            {/* <img src={pixelsToCanvas(img, 480, 640).src}/> */}
             <Stack sx={{
                 display: "grid",
                 alignContent: "center",
                 justifyContent: "center",
-                height: "75%",
-                width: "75%", 
+                height: "100%",
+                width: "100%", 
             }}>
                 {
                     temp

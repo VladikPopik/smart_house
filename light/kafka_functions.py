@@ -1,12 +1,11 @@
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from logging import getLogger
-import datetime
 import json
 import typing as ty
 
 logger = getLogger()
 
-async def consume_message(topic: str): 
+async def consume_message(topic: str) -> dict[str, ty.Any]: 
     data = {}
     try:
         async with AIOKafkaConsumer(
@@ -36,8 +35,6 @@ async def produce_message_kafka(topic:str, data: dict[str, ty.Any]) -> bool:
             _ = await producer.send(
                 topic, value=json.dumps(data).encode()
             )
-            logger.info(json.dumps("Данные отправлены в кафку"))
-            print("Данные отправлены!")
     except Exception as e: 
         print(e) # noqa: BLE001
         _ = await producer.stop()

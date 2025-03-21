@@ -39,14 +39,46 @@ services:
   budget:
     build: ./budget_back
     ports:
-      - "80:8889"
+      - "8080:8080"
+    volumes:
+      - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
+    devices:
+      - '/dev/video0:/dev/video0'
+      - '/dev/gpiomem:/dev/gpiomem'
+    privileged: true
+    depends_on:
+      - backend
+
+  monitoring:
+    build: ./monitoring
+    ports:
+      - "9999:9999"
     depends_on:
       - backend
       - kafka
-      - db
 
-  # raspberry-server:
-  #   build: ./raspberry_server
+  motion:
+    build: ./motion
+    ports: 
+      - "8881:8881"
+    depends_on:
+      - backend
+      - kafka
+
+  light:
+    build: ./light
+    ports:
+      - "8888:8888"
+    devices:
+      - '/dev/gpiomem:/dev/gpiomem'
+    privileged: true
+    depends_on:
+      - backend
+      - kafka
+  
+  # frontend:
+  #   build:
+  #     context: ./my-react-app
   #   ports:
   #     - "8080:8080"
   #   volumes:
