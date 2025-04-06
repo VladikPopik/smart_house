@@ -15,6 +15,13 @@ pub struct DhtDevice {
     device: Dht11,
 }
 
+#[derive(Clone, Copy)]
+pub struct CameraResult;
+
+pub union DevicesResults<T: Copy> {
+    pub result: T
+}
+
 impl DhtDevice {
     pub fn new(info: DeviceInfo) -> DhtDevice {
         let device = Dht11::new(info.pin.try_into().unwrap());

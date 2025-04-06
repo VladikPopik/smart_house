@@ -7,7 +7,7 @@ use reqwest::{Response, StatusCode};
 use tokio::time::{sleep, Duration};
 pub mod devices;
 use devices::{
-    device::{DeviceInfo, DhtDevice},
+    device::{DeviceInfo, DevicesResults, DhtDevice},
     dht::DhtResult,
 };
 use rdkafka;
@@ -43,20 +43,13 @@ fn curr_time() -> Duration {
         .unwrap()
 }
 
-async fn perform_device(device_type: Devices, info: DeviceInfo) -> bool {
-    // let (send, recv) = tokio::sync::<DhtResult>::oneshot::channel();
+fn perform_device(device_type: Devices, info: DeviceInfo) -> DevicesResults {
     let mut device;
     match device_type {
         Devices::dht => device = DhtDevice::new(info),
         _ => todo!("NOT IMPLEMENTED YET"),
     }
-
-    rayon::spawn(move || {
-        let result;
-        result = device.read();
-    });
-
-    true
+    devices::device::DevicesResults { result: device.read() }
 }
 
 pub async fn cycle() {
@@ -80,7 +73,20 @@ pub async fn cycle() {
         }
         println!("Got {:#?}", connected_devices);
 
+        let mut results: Vec<DevicesResults> = vec![];
         for (key, item) in connected_devices.clone().into_iter() {
+            rayon::scope(|s| {
+                s.spawn(|_| {
+                    let device_enum_type;
+
+                    match item.device_type.as_str() {
+                        "dht" => device_enum_type = Devices::dht,
+                        _ => todo!(),
+                    }
+                    let result = perform_device(device_enum_type, item);
+                    results.push(result);
+                });
+            });
         }
         //...
 
