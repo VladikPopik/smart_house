@@ -5,7 +5,7 @@ import config from "../config";
 import { Box, Grid, Stack } from "@mui/material";
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { BarChart } from "@mui/x-charts";
-import ws_monitoring from "../websockets";
+import ws_monitoring from "../websocket_monitoring";
 
 export default function MonitoringCharts (message="monitoring") { 
 
