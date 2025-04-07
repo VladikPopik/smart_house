@@ -15,11 +15,12 @@ pub struct DhtDevice {
     device: Dht11,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub struct CameraResult;
 
-pub union DevicesResults<T: Copy> {
-    pub result: T
+#[derive(Clone)]
+pub enum DevicesResults {
+    DhtResult(f32, f32, DeviceInfo),
 }
 
 impl DhtDevice {
@@ -32,7 +33,12 @@ impl DhtDevice {
     }
 
     pub fn read(&mut self) -> DhtResult {
-        self.device.get_reading()
+        //TODO: for PC!
+        // self.device.get_reading()
+        DhtResult {
+            temperature: 5.0,
+            humidity: 5.0,
+        }
     }
 
     pub fn get_info(&self) -> DeviceInfo {
