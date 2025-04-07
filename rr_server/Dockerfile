@@ -1,9 +1,21 @@
-FROM rust:1.85.0-alpine
+FROM rust:1.85.0-alpine AS builder
 
-RUN apk add --no-cache musl-dev
+# install crates.io index and cache it in the docker layer
+RUN cargo new --bin build-index \
+  && cd build-index \
+  && cargo add rand_core \
+  && cd .. \
+  && rm -rf build-index
+
 WORKDIR /rr_server
-COPY . ./
-RUN cargo build --release
 
-EXPOSE 5000
-CMD ["cargo run"]
+RUN rustup target add x86_64-unknown-linux-musl
+
+COPY . ./
+RUN cargo build --target x86_64-unknown-linux-musl
+
+FROM scratch
+
+COPY --from=builder /rr_server/target/x86_64-unknown-linux-musl/release/test /usr/local/bin/test
+
+CMD ["test"]

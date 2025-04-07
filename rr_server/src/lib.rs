@@ -1,4 +1,4 @@
-use std::{collections::HashMap, str::Bytes};
+use std::collections::HashMap;
 use std::env;
 use std::time::SystemTime;
 
@@ -6,15 +6,22 @@ use log::{info, warn};
 use reqwest::StatusCode;
 use tokio::time::{sleep, Duration};
 pub mod devices;
-use devices::{device::{DeviceInfo, DevicesResults, DhtDevice}, dht::DhtResult};
-use rdkafka::{self, producer::{FutureProducer, FutureRecord}, ClientConfig};
+use devices::{
+    device::{DeviceInfo, DevicesResults, DhtDevice},
+    dht::DhtResult,
+};
+use rdkafka::{
+    self,
+    producer::{FutureProducer, FutureRecord},
+    ClientConfig,
+};
 
 enum Devices {
-    dht = 1,
+    DHT = 1,
 }
 
 struct EnvParams {
-    time_to_cycle: u8,
+    _time_to_cycle: u8,
     http_timeout: u8,
 }
 
@@ -54,19 +61,22 @@ fn curr_time() -> Duration {
 fn perform_device(device_type: Devices, info: DeviceInfo) -> DevicesResults {
     let mut device;
     match device_type {
-        Devices::dht => device = DhtDevice::new(info),
+        Devices::DHT => device = DhtDevice::new(info),
         _ => todo!("NOT IMPLEMENTED YET"),
     }
 
     let device_result;
     match device_type {
-        Devices::dht => device_result = device.read() ,
+        Devices::DHT => device_result = device.read(),
         _ => todo!("NOT IMPLEMENTED YET"),
     }
 
     match device_result {
-        DhtResult { temperature: temp, humidity: hum } => DevicesResults::DhtResult(temp, hum, device.get_info()),
-        _ => todo!("NOT IMPLEMENTED YET")
+        DhtResult {
+            temperature: temp,
+            humidity: hum,
+        } => DevicesResults::DhtResult(temp, hum, device.get_info()),
+        _ => todo!("NOT IMPLEMENTED YET"),
     }
 }
 
@@ -90,7 +100,7 @@ async fn tick(
                 let device_enum_type;
 
                 match item.device_type.as_str() {
-                    "dht" => device_enum_type = Devices::dht,
+                    "dht" => device_enum_type = Devices::DHT,
                     _ => todo!(),
                 }
                 let result = perform_device(device_enum_type, item);
@@ -100,55 +110,55 @@ async fn tick(
     }
     let end = curr_time();
     let tick_rate = end - start;
-    info!("Tick elapsed with {:?}", tick_rate);
     (results, tick_rate)
 }
 
 fn read_env(path: String) -> EnvParams {
     dotenv::from_path(path).expect("Error loading env, please check if it is okay");
-    let time_to_cycle: u8 = env::var("TIME_TO_CYCLE").unwrap().as_str().parse().unwrap();
+    let _time_to_cycle: u8 = env::var("TIME_TO_CYCLE").unwrap().as_str().parse().unwrap();
     let http_timeout: u8 = env::var("HTTP_TIMEOUT").unwrap().as_str().parse().unwrap();
 
     info!(
         "TIME TO CYCLE = {}, HTTP TIMEOUT = {}",
-        time_to_cycle, http_timeout
+        _time_to_cycle, http_timeout
     );
 
     EnvParams {
-        time_to_cycle,
+        _time_to_cycle,
         http_timeout,
     }
 }
 
-async fn produce(topic: String, results: HashMap<String, DevicesResults>) {
-    let producer: FutureProducer = ClientConfig::new().set("bootstrap.servers", "kafka:9092").create().unwrap();
+async fn produce(results: HashMap<String, DevicesResults>) {
+    let producer: FutureProducer = ClientConfig::new()
+        .set("bootstrap.servers", "kafka:9092")
+        .create()
+        .unwrap();
 
-    let mut topic: &str;
-    for (k, v) in results.into_iter() {
+    for (_k, v) in results.into_iter() {
         match v {
             DevicesResults::DhtResult(temp, hum, info) => {
-                topic = &(info.device_name.to_owned() + &info.device_type.to_owned() + "-rasp");
-                let mut payload: Bytes;
-                
-                // producer.send(
-                //     FutureRecord::to(topic).payload(
-                        
-                //     )
-                // );
+                let topic = &(info.device_name.to_owned() + &info.device_type.to_owned() + "-rasp");
+                let payload: Vec<u8> = vec![temp as u8, hum as u8, 1.0 as u8];
+                let _ = producer
+                    .send(
+                        FutureRecord::to(topic).payload(&payload).key("result"),
+                        Duration::new(0, 0),
+                    )
+                    .await;
             }
+            _ => todo!(""),
         }
-        
     }
-    
-
 }
 
 pub async fn cycle() {
-    //Cycle start
     let env_params = read_env("./.env".to_string());
 
     let mut connected_devices: HashMap<String, DeviceInfo> = HashMap::new();
     loop {
         let (results, tick_rate) = tick(&mut connected_devices, &env_params).await;
+        produce(results).await;
+        info!("Tick elapsed with {:?}", tick_rate);
     }
 }

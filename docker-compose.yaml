@@ -49,21 +49,21 @@ services:
   #   depends_on:
   #     - backend
 
-  server:
-    build: ./raspberry_server
-    ports:
-      - "8080:8080"
-    volumes:
-      - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
-    # devices:
-    #   - '/dev/video0:/dev/video0'
-    #   - '/dev/gpiomem:/dev/gpiomem'
-    # privileged: true
-    depends_on:
-      - backend
+  # server:
+  #   build: ./raspberry_server
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
+  #   # devices:
+  #   #   - '/dev/video0:/dev/video0'
+  #   #   - '/dev/gpiomem:/dev/gpiomem'
+  #   # privileged: true
+  #   depends_on:
+  #     - backend
 
   r_server:
-    build: ./raspberry_server
+    build: ./rr_server
     ports:
       - "5000:5000"
     volumes:
