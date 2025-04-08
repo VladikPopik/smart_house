@@ -1,21 +1,26 @@
-FROM rust:1.85.0-alpine AS builder
+# Use the official Rust image as a build stage
+FROM rust:1.85 AS builder
 
-# install crates.io index and cache it in the docker layer
-RUN cargo new --bin build-index \
-  && cd build-index \
-  && cargo add rand_core \
-  && cd .. \
-  && rm -rf build-index
+# Set the working directory
+WORKDIR /
 
-WORKDIR /rr_server
+# Copy the Cargo toml files first to cache dependencies
+# COPY Cargo.toml Cargo.lock ./
+COPY . .
 
-RUN rustup target add x86_64-unknown-linux-musl
+RUN rustup update
+RUN cargo build
 
-COPY . ./
-RUN cargo build --target x86_64-unknown-linux-musl
+# Copy the source code
 
-FROM scratch
+# # Build the application
+# RUN cargo build
 
-COPY --from=builder /rr_server/target/x86_64-unknown-linux-musl/release/test /usr/local/bin/test
+# # Use a small image for the final build
+# FROM debian:buster-slim
 
-CMD ["test"]
+# # Copy the application binary from the builder stage
+# COPY --from=builder rr_server/target/debug/rr_server .
+
+# Specify the command to run the application
+CMD ["cd src ; cargo run"]

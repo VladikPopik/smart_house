@@ -26,10 +26,7 @@ pub enum DevicesResults {
 impl DhtDevice {
     pub fn new(info: DeviceInfo) -> DhtDevice {
         let device = Dht11::new(info.pin.try_into().unwrap());
-        DhtDevice {
-            info: info,
-            device: device,
-        }
+        DhtDevice { info, device }
     }
 
     pub fn read(&mut self) -> DhtResult {

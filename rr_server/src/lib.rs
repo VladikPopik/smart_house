@@ -29,17 +29,16 @@ async fn get_registered_device(timeout: u8) -> Vec<DeviceInfo> {
     let client = reqwest::Client::new();
 
     loop {
-        sleep(Duration::from_secs(timeout.try_into().unwrap())).await;
+        sleep(Duration::from_secs(timeout.into())).await;
         let response = client
             .get("http://backend:8001/settings/devices")
             .send()
             .await;
 
-        let parsed_response;
-        match response {
-            Ok(_) => parsed_response = response.unwrap(),
+        let parsed_response = match response {
+            Ok(_) => response.unwrap(),
             Err(_) => panic!("CANNOT FETCH URL"),
-        }
+        };
 
         let devices;
         if parsed_response.status() == StatusCode::OK {
@@ -47,7 +46,7 @@ async fn get_registered_device(timeout: u8) -> Vec<DeviceInfo> {
             info!("Devices read ===== {:?}", devices);
             return devices;
         }
-        sleep(Duration::from_secs(timeout.try_into().unwrap())).await;
+        sleep(Duration::from_secs(timeout.into())).await;
         warn!("Error while get request");
     }
 }
@@ -59,17 +58,15 @@ fn curr_time() -> Duration {
 }
 
 fn perform_device(device_type: Devices, info: DeviceInfo) -> DevicesResults {
-    let mut device;
-    match device_type {
-        Devices::DHT => device = DhtDevice::new(info),
+    let mut device = match device_type {
+        Devices::DHT => DhtDevice::new(info),
         _ => todo!("NOT IMPLEMENTED YET"),
-    }
+    };
 
-    let device_result;
-    match device_type {
-        Devices::DHT => device_result = device.read(),
+    let device_result = match device_type {
+        Devices::DHT => device.read(),
         _ => todo!("NOT IMPLEMENTED YET"),
-    }
+    };
 
     match device_result {
         DhtResult {
@@ -87,7 +84,7 @@ async fn tick(
     let start = curr_time();
     for device in get_registered_device(env_params.http_timeout).await.iter() {
         let parse_device = device.to_owned();
-        if parse_device.on == true {
+        if parse_device.on {
             connected_devices.insert(parse_device.device_name.clone(), parse_device);
         }
     }
@@ -97,12 +94,10 @@ async fn tick(
     for (_key, item) in connected_devices.clone().into_iter() {
         rayon::scope(|s| {
             s.spawn(|_| {
-                let device_enum_type;
-
-                match item.device_type.as_str() {
-                    "dht" => device_enum_type = Devices::DHT,
+                let device_enum_type = match item.device_type.as_str() {
+                    "dht" => Devices::DHT,
                     _ => todo!(),
-                }
+                };
                 let result = perform_device(device_enum_type, item);
                 results.insert(_key, result);
             });
@@ -157,7 +152,10 @@ pub async fn cycle() {
 
     let mut connected_devices: HashMap<String, DeviceInfo> = HashMap::new();
     loop {
-        let (results, tick_rate) = tick(&mut connected_devices, &env_params).await;
+        let (
+            results,
+            tick_rate
+        ) = tick(&mut connected_devices, &env_params).await;
         produce(results).await;
         info!("Tick elapsed with {:?}", tick_rate);
     }
