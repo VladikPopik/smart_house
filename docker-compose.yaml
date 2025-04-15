@@ -36,23 +36,10 @@ services:
       - kafka
       - db
 
-  # server:
-  #   build: ./raspberry_server
-  #   ports:
-  #     - "8080:8080"
-  #   volumes:
-  #     - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
-  #   # devices:
-  #   #   - '/dev/video0:/dev/video0'
-  #   #   - '/dev/gpiomem:/dev/gpiomem'
-  #   # privileged: true
-  #   depends_on:
-  #     - backend
-
-  r_server:
-    build: ./rr_server
+  server:
+    build: ./raspberry_server
     ports:
-      - "5000:5000"
+      - "8080:8080"
     volumes:
       - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
     # devices:
@@ -61,7 +48,20 @@ services:
     # privileged: true
     depends_on:
       - backend
-      - kafka
+
+  # rr_server:
+  #   build: ./rr_server
+  #   ports:
+  #     - "5000:5000"
+  #   volumes:
+  #     - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
+  #   # devices:
+  #   #   - '/dev/video0:/dev/video0'
+  #   #   - '/dev/gpiomem:/dev/gpiomem'
+  #   # privileged: true
+  #   depends_on:
+  #     - backend
+  #     - kafka
 
   monitoring:
     build: ./monitoring

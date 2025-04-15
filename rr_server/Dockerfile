@@ -9,7 +9,7 @@ WORKDIR /
 COPY . .
 
 RUN rustup update
-RUN cargo build
+RUN cargo build --release
 
 # Copy the source code
 
@@ -23,4 +23,4 @@ RUN cargo build
 # COPY --from=builder rr_server/target/debug/rr_server .
 
 # Specify the command to run the application
-CMD ["cd src ; cargo run"]
+CMD ["./rr_server"]

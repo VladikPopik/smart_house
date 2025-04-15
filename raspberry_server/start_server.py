@@ -139,7 +139,7 @@ async def main(time_to_cycle: int = 1, http_timeout: int=5000) -> None:
                 rasp_device = device_types[device_type](**device)
                 connected_devices[rasp_device.device_name] = rasp_device
 
-        t_devices = []
+        t_devices: DeviceType = []
         results = []
         loop = asyncio.get_event_loop()
         errors = []

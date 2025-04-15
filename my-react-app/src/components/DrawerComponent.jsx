@@ -112,14 +112,14 @@ export default function DrawerComponent () {
               </ListItemButton>
             </ListItem>
 
-            <ListItem key="Budget" disablePadding>
+            {/* <ListItem key="Budget" disablePadding>
               <ListItemButton onClick={() => handleBudget()}>
                 <ListItemIcon>
                   <AttachMoneyIcon />
                 </ListItemIcon>
                 <ListItemText primary="Budget" />
               </ListItemButton>
-            </ListItem>
+            </ListItem> */}
           </List>
           <Divider />
           <List>
