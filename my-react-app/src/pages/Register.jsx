@@ -15,21 +15,21 @@ function Register() {
 
     const validateForm = () => {
         if (!user_login || !password || !confirmPassword || !email || !tg_login) {
-            setError("All fields are required");
+            setError("Все порля необходимы");
             return false;
         }
 
         if (password !== confirmPassword) {
-                setError("Passwords do not match");
+                setError("Пароли не совпадают");
                 return false;
         }
         if (!validateEmail(email)) {
-            setError("Invalid email address");
+            setError("Неправильный email адрес");
             return false;
         }
 
         if (!validateTgLogin(tg_login)) {
-            setError("Invalid Telegram login");
+            setError("Неправильный Telegram логин");
             return false;
         }
 
@@ -91,12 +91,12 @@ function Register() {
                 navigate("/home");
             } else {
                 const errorData = await response.json();
-                setError(errorData.detail || "Registration failed!");
+                setError(errorData.detail || "Ошибка регистрации!");
             }
         } catch (error) {
             console.log(error)
             setLoading(false);
-            setError("Registration failed!");
+            setError("Ошибка регистрации!");
         }
     };
 
@@ -109,7 +109,7 @@ function Register() {
                     type="text"
                     value={user_login}
                     onChange={(event) => setUsername(event.target.value)}
-                    placeholder="Username"
+                    placeholder="Логин"
                 />
             </div>
             <div className="input-group">
@@ -117,7 +117,7 @@ function Register() {
                     type="password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    placeholder="Password"
+                    placeholder="Пароль"
                 />
             </div>
                 <div className="input-group">
@@ -125,7 +125,7 @@ function Register() {
                     type="password"
                     value={confirmPassword}
                     onChange={(event) => setConfirmPassword(event.target.value)}
-                    placeholder="Confirm password"
+                    placeholder="Повторно пароль"
                 />
             </div>
                 <div className="input-group">
@@ -134,7 +134,7 @@ function Register() {
                     type="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    placeholder="Email"
+                    placeholder="email"
                 />
             </div>
                 <div className="input-group">
@@ -142,14 +142,14 @@ function Register() {
                     type="text"
                     value={tg_login}
                     onChange={(event) => setTgLogin(event.target.value)}
-                    placeholder="Telegram Login"
+                    placeholder="Telegram Логин"
                 />
             </div>
 
             {error && <p className="error" style={{ color: "red" }}>{error}</p>}
-            <button type="submit">Register</button>
+            <button type="submit">Регистрация</button>
         </form>
-        <a className="signup-link" href='/login'>Sign In</a>
+        <a className="signup-link" href='/login'>Вход</a>
 
         </div>
     );

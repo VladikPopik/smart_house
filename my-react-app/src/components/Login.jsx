@@ -13,7 +13,7 @@ function Login() {
 
   const validateForm = () => {
     if (!username || !password) {
-      setError('Username and password are required');
+      setError('Логин и пароль обязательны');
       return false;
     }
     setError('');
@@ -46,11 +46,11 @@ function Login() {
         navigate('/home');
       } else {
         const errorData = await response.json();
-        setError(errorData.detail || 'Authentication failed!');
+        setError(errorData.detail || 'Ошибка Ауентитификации');
       }
     } catch (error) {
       setLoading(false);
-      setError('An error occurred. Please try again later.');
+      setError('Ошибка. Пожалуйста, попробуйте позже');
     }
   };
   return ( 
@@ -63,7 +63,7 @@ function Login() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder='Username'
+                placeholder='Логин'
               />
             </div>
           </div>
@@ -73,16 +73,16 @@ function Login() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder='Password'
+                placeholder='Пароль'
               />
             </div>
           </div>
           <button type="submit" disabled={loading} className='input-group'>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Входим...' : 'Вход'}
           </button>
           {error && <p className='error' style={{ color: 'red' }}>{error}</p>}
         </form>
-        <a className="signup-link" href='/register'>Sign up</a>
+        <a className="signup-link" href='/register'>Регистрация</a>
         
       </div>
   );

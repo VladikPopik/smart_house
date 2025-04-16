@@ -39,13 +39,27 @@ async def push_data_monitroing_ws(websocket: WebSocket) -> None:
                         data = json.loads(msg.value)
                         prev_t = data["temperature"]
                         prev_h = data["humidity"]
+                        prev_t_pred_max, prev_t_pred_min = data["temperature"] + 5, data["temperature"] - 5
+                        prev_h_pred_max, prev_h_pred_min = data["humidity"] + 5, data["humidity"] - 5
+                        data.update(
+                            {
+                            "pred_temperature_max": prev_t_pred_max,
+                            "pred_temperature_min": prev_t_pred_min,
+                            "pred_humidity_max": prev_h_pred_max,
+                            "pred_humidity_min": prev_h_pred_min
+                            }
+                        )
                     else:
                         data = None
             if data is None:
                 data = {
                     "time": datetime.datetime.now().timestamp(),
                     "temperature": prev_t,
-                    "humidity": prev_h
+                    "humidity": prev_h,
+                    "pred_temperature_max": prev_t_pred_max,
+                    "pred_temperature_min": prev_t_pred_min,
+                    "pred_humidity_max": prev_h_pred_max,
+                    "pred_humidity_min": prev_h_pred_min
                 }
         except Exception as e:  # noqa: BLE001
             logger.info(e)

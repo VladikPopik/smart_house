@@ -15,7 +15,7 @@ export default function AppBarComponent(){
                 
                 <AppBar position='static' sx={{width: "100%", height: "10%", backgroundColor: "#228BE6"}}>
                     <Toolbar sx={{width: "100%", height: "100%", justifyContent: "centre"}}>
-                    <h1 style={{position: 'absolute', top: "50%", left: '50%', transform: 'translate(-50%, -50%)'}}>&#128187; My Smart House &#128187;</h1>
+                    <h1 style={{position: 'absolute', top: "50%", left: '50%', transform: 'translate(-50%, -50%)'}}>&#127968; Мой Умный Дом &#127968;</h1>
                         <DrawerComponent />
                     </Toolbar>
                 </AppBar>

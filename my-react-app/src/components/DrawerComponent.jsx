@@ -71,7 +71,7 @@ export default function DrawerComponent () {
                 <ListItemIcon>
                   <HomeIcon />
                 </ListItemIcon>
-                <ListItemText primary="HomePage"/>
+                <ListItemText primary="Домой"/>
               </ListItemButton>
             </ListItem>
             
@@ -108,7 +108,7 @@ export default function DrawerComponent () {
                 <ListItemIcon>
                   <SettingsIcon />
                 </ListItemIcon>
-                <ListItemText primary="Settings" />
+                <ListItemText primary="Настройки" />
               </ListItemButton>
             </ListItem>
 
@@ -128,7 +128,7 @@ export default function DrawerComponent () {
                   <ListItemIcon>
                   <LogoutIcon />
                   </ListItemIcon>
-                  <ListItemText primary={"Logout"} />
+                  <ListItemText primary={"Выход"} />
                 </ListItemButton>
               </ListItem>
           </List>

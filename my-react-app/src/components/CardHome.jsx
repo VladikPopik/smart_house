@@ -36,10 +36,10 @@ export default function CardHome() {
                         />
                         <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
-                            Monitoring
+                            Мониторинг
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            Page for monitoring functionallity
+                            Модуль мониторинга Влажости и Температуры
                         </Typography>
                         </CardContent>
                     </CardActionArea>
@@ -78,10 +78,10 @@ export default function CardHome() {
                         />
                         <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
-                            Light
+                            Свет
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            Page for light functionallity
+                            Модуль контроля света
                         </Typography>
                         </CardContent>
                     </CardActionArea>
