@@ -236,8 +236,8 @@ export default function MonitoringCharts (message="monitoring") {
                 >
                     <Gauge
                     value={gauge_coefficient}
-                    startAngle={-90}
-                    endAngle={90}
+                    // startAngle={-90}
+                    // endAngle={90}
                     valueMax={100}
                     sx={{
                         [`& .${gaugeClasses.valueText}`]: {

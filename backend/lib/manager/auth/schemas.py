@@ -9,6 +9,8 @@ class CreateUser(Base):
     password: str
     is_superuser: bool = False
 
+class UserLogin(Base):
+    user_login: str
 
 class RegisterUser(Base):
     user_login: str
