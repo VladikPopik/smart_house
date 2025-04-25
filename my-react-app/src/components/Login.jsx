@@ -12,6 +12,7 @@ function Login() {
   const navigate = useNavigate();
 
   const handlerClick = async (event) => {
+    setLoading(true);
     try {
       const response = await fetch(`${config.protocol}://${config.host}:${config.port}/auth/token/face_recognition`, {
         method: 'POST',

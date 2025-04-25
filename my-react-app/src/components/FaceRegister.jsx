@@ -33,7 +33,7 @@ export default function FaceRegister () {
                 // }
                 const data = await response.json()
                 if (data.success){
-                    setLogin(data.login.user_login)
+                    setLogin(data.login)
                 }
             } else {
                 const errorData = await response.json();

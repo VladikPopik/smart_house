@@ -108,15 +108,25 @@ async def logout() -> ty.Literal[True]:
 async def face_register(user_login: UserLogin) -> dict[str, ty.Any]:
     try:
         # TODO<VladikPopik>: Create request from face recognition and get response
-        # async with httpx.AsyncClient(timeout=5000) as client:
-        #     response = await client.get(
-        #         "http://backend:8001/settings/devices"
-        #     )
-        # access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        # access_token = create_access_token(
-        #     data={"sub": user_login}, expires_delta=access_token_expires
-        # )
-        return {"success": True, "login": user_login}
+        async with httpx.AsyncClient(timeout=5000) as client:
+            response = await client.get(
+                "http://face:8889/face",
+                params={"command": "register", "login": user_login.user_login}
+            )
+            if not response.is_success:
+                raise Exception
+            response = response.json()
+            status, saved_to, photo_url = response.get("status"), response.get("saved_to"), response.get("photo_url")
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": user_login.user_login}, expires_delta=access_token_expires
+        )
+        return {
+            "success": True if status == "success" else False,
+            "login": user_login.user_login,
+            "saved_to": saved_to,
+            "photo_url": photo_url
+        }
     except Exception as e:
         logger.exception(e)
 
@@ -124,32 +134,48 @@ async def face_register(user_login: UserLogin) -> dict[str, ty.Any]:
 async def login_facerecognition() -> dict[str, ty.Any]:
     #TODO<VladikPopik>: Create request from face recognition and get response
     try:
-        #async with httpx.AsyncClient(timeout=5000) as client:
-        #     response = await client.get(
-        #         "http://backend:8001/settings/devices"
-        #     )
-        response = {"login": "Vlad"}
+        async with httpx.AsyncClient(timeout=5000) as client:
+            response = await client.get(
+                "http://face:8889/face",
+                params={"command": "auth"}
+            )
+            # response = {
+            # "status": "success",
+            # "auth_photo": auth_photo_url,
+            # "matched_user": best_user,
+            # "similarity": {
+            #     "score": round(float(best_similarity) * 100, 2),
+            #     "best_match": best_match
+            #     }
+            # }
+        logger.info(response)
+        if not response.is_success:
+            raise Exception
+        response = response.json()
+        response["login"] = response.get("matched_user")
     except Exception:
+        logger.info(response)
+        print(response)
         return JSONResponse(content="Невозможно получить токен, попробуйте позже", status_code=400)
 
 
     try:
+        logger.info(response)
+        print(response)
         user_login = response.get("login", None)
         if not user_login:
             raise ValueError
 
         db_user = await u_crud.get_user(user_login=user_login)
-        if not db_user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
-                headers={"WWW-Authenticate": "Bearer"},
+        if db_user:
+            logger.info(db_user)
+            print(db_user)
+            access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            access_token = create_access_token(
+                data={"sub": user_login}, expires_delta=access_token_expires
             )
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = create_access_token(
-            data={"sub": user_login}, expires_delta=access_token_expires
-        )
-        return {"access_token": access_token, "token_type": "bearer"}
+            return {"access_token": access_token, "token_type": "bearer"}
+        return JSONResponse(content="Невозможно получить токен, попробуйте позже", status_code=400)
     except Exception as e:
         logger.exception(e)
         return JSONResponse(content="Невозможно получить токен, попробуйте позже", status_code=400)

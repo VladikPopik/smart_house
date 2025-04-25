@@ -3,6 +3,8 @@ import time
 import cv2
 import joblib
 import numpy as np
+from uvicorn import run
+
 from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -26,10 +28,10 @@ os.makedirs("auth", exist_ok=True)
 os.makedirs("debug", exist_ok=True)
 
 # Монтирование статических файлов
-app.mount("/static", StaticFiles(directory="frontend", html=True), name="static")
-app.mount("/static/auth", StaticFiles(directory="auth"), name="auth_photos")
-app.mount("/static/registered", StaticFiles(directory="registered"), name="registered_photos")
-app.mount("/static/debug", StaticFiles(directory="debug"), name="debug_photos")
+# app.mount("/static", StaticFiles(directory="frontend", html=True), name="static")
+# app.mount("/static/auth", StaticFiles(directory="auth"), name="auth_photos")
+# app.mount("/static/registered", StaticFiles(directory="registered"), name="registered_photos")
+# app.mount("/static/debug", StaticFiles(directory="debug"), name="debug_photos")
 
 # Загрузка модели и артефактов
 try:
@@ -161,13 +163,6 @@ def capture_face():
     finally:
         cap.release()
 
-@app.get("/")
-async def serve_html():
-    """Отдача HTML-интерфейса"""
-    with open("frontend/index.html", "r") as f:
-        html_content = f.read()
-    return HTMLResponse(content=html_content)
-
 @app.get("/face")
 def handle_face(command: str = Query(...), login: str = Query(None)):
     """Обработка запросов распознавания/регистрации"""
@@ -175,12 +170,12 @@ def handle_face(command: str = Query(...), login: str = Query(None)):
         response = authenticate_user()
         print("Auth response:", response.body.decode())
         return response
-    elif command == "register":
+    if command == "register":
         if login is None:
             return JSONResponse({"status": "error", "reason": "Login is required for registration"})
+        print(type(login), login)
         return register_user(login)
-    else:
-        return JSONResponse({"status": "error", "reason": "Unknown command"})
+    return JSONResponse({"status": "error", "reason": "Unknown command"})
 
 def register_user(login: str):
     """Регистрация нового пользователя"""
@@ -335,6 +330,5 @@ def authenticate_user():
         return JSONResponse({"status": "error", "reason": str(e)})
 
 if __name__ == "__main__":
-    import uvicorn
     print("\nFace Recognition API готов к работе")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    run(app, host="0.0.0.0", port=8889)

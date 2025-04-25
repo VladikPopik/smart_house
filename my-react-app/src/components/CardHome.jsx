@@ -45,7 +45,7 @@ export default function CardHome() {
                     </CardActionArea>
                 </Card>
 
-                <Card sx={{ width: "25%", marginRight:5, backgroundColor: "aliceblue"}}>
+                {/* <Card sx={{ width: "25%", marginRight:5, backgroundColor: "aliceblue"}}>
                     <CardActionArea
                         onClick={() => handleMotion()}
                     >
@@ -64,7 +64,7 @@ export default function CardHome() {
                         </Typography>
                         </CardContent>
                     </CardActionArea>
-                </Card>
+                </Card> */}
 
                 <Card sx={{ width: "25%", marginLeft: 10, backgroundColor: "aliceblue"}}>
                     <CardActionArea
