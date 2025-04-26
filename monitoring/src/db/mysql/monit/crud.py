@@ -18,7 +18,7 @@ async def create_record(
     with db_instance.session() as session:
         session.execute(
             insert(monitoring_table).values(
-                time = payload['time'],
+                time = datetime.datetime.now(),
                 temperature = payload['temperature'],
                 humidity = payload['humidity']
             )

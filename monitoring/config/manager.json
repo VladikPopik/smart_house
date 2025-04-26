@@ -1,10 +1,10 @@
 {
     "SQL": {
     "engine": "mysql+pymysql",
-    "user": "root",
-    "password": "admin",
-    "host": "0.0.0.0",
+    "user": "admin",
+    "password": "Admin123!",
+    "host": "db",
     "port": 3306,
-    "db": "test"
+    "db": "my_house"
   }
 }
