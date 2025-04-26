@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { LineChart } from '@mui/x-charts/LineChart';
 import config from "../config";
-import { Box, Grid, Stack } from "@mui/material";
+import { Box, Button, Grid, Stack } from "@mui/material";
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { BarChart } from "@mui/x-charts";
 import ws_monitoring from "../websocket_monitoring";
@@ -48,6 +48,17 @@ export default function MonitoringCharts (message="monitoring") {
     var [humidity_min, setHumidityMin] = useState(localHumidity_min);
     var [timings, setTime] = useState(localTime);
 
+    const handleClick = () => {
+        localStorage.setItem("temperature", result.at(-1));
+        localStorage.setItem("humidity", result_h.at(-1));
+        localStorage.setItem("temperature_max", result_t_max.at(-1));
+        localStorage.setItem("temperature_min", result_t_min.at(-1));
+        localStorage.setItem("humidity_max", result_h_max.at(-1));
+        localStorage.setItem("humidity_min", result_h_min.at(-1));
+        localStorage.setItem("monitoring_time", t_result.at(-1));
+        window.location.reload();
+    }
+
     const addItem = (event) => {
         const dt = JSON.parse(event.data);
         if (dt){
@@ -86,14 +97,14 @@ export default function MonitoringCharts (message="monitoring") {
         }
     }, []);
 
-    if (temperature.length > 30){
-        var t_result = timings.slice(timings.length - 30, -1);
-        var result  = temperature.slice(temperature.length - 30, -1);
-        var result_h = humidity.slice(humidity.length - 30, -1);
-        var result_t_max  = temperature_max.slice(temperature_max.length - 30, -1);
-        var result_t_min  = temperature_min.slice(temperature_min.length - 30, -1);
-        var result_h_max  = humidity_max.slice(humidity_max.length - 30, -1);
-        var result_h_min  = humidity_min.slice(humidity_min.length - 30, -1);
+    if (temperature.length > 120){
+        var t_result = timings.slice(timings.length - 120, -1);
+        var result  = temperature.slice(temperature.length - 120, -1);
+        var result_h = humidity.slice(humidity.length - 120, -1);
+        var result_t_max  = temperature_max.slice(temperature_max.length - 120, -1);
+        var result_t_min  = temperature_min.slice(temperature_min.length - 120, -1);
+        var result_h_max  = humidity_max.slice(humidity_max.length - 120, -1);
+        var result_h_min  = humidity_min.slice(humidity_min.length - 120, -1);
 
         setHumidity(prevItems => result_h)
         setTemperature(prevItems => result);
@@ -118,7 +129,7 @@ export default function MonitoringCharts (message="monitoring") {
     }else{
         latest_T = latest_T.toFixed(1)
     }
-    let gauge_coefficient = humidity.slice(-2, -1);
+    let gauge_coefficient = humidity.at(-1);
     if (gauge_coefficient){
         gauge_coefficient = Math.round(gauge_coefficient).toFixed(1);
     }else{
@@ -136,7 +147,7 @@ export default function MonitoringCharts (message="monitoring") {
     return (
             <Stack 
                 direction="column"
-                sx={{width: 1800, height: 920}}
+                sx={{width: 1900, height: 920}}
             >
                 <Grid
                 sx={
@@ -148,8 +159,9 @@ export default function MonitoringCharts (message="monitoring") {
                     }
                 }>
                     <LineChart
-                    
-                        xAxis={[{ data:  timings, scaleType: 'point', valueFormatter: (value) => {return new Date(value*1000).toISOString().split("T")[1].slice(0, -5)}}]}
+                        xAxis={[{ 
+                        data:  timings, scaleType: 'point', 
+                        valueFormatter: (value) => {return new Date(value*1000).toISOString().split("T")[1].slice(0, -5)}}]}
                         skipAnimation
                         series={[
                             {
@@ -271,6 +283,22 @@ export default function MonitoringCharts (message="monitoring") {
                         height={500}
                         borderRadius={13}
                     />
+                <Button
+                    sx={
+                        {
+                            height: "25%",
+                            position: "absolute",
+                            right: 50,
+                            top: 750,
+                            backgroundColor: "#228BE6",
+                            color: "#ffffff",
+                        }
+                    }
+                    variant="contained"
+                    onClick={handleClick}
+                >
+                Обновить графики
+                </Button>
                 </Grid>
             </Stack>
     )

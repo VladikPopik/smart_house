@@ -166,7 +166,7 @@ export default function SettingsTable() {
     }
 
     return (
-            <TableContainer component={Paper} sx={{position: "absolute", top: 150, left: 0, width: "75%", height: "75%"}}>
+            <TableContainer component={Paper} sx={{position: "absolute", top: 125, left: 0, width: "50%", height: "75%"}}>
                 <Table>
                     <TableHead sx={{}}>
                         <TableRow sx={{display: "flex", alignContent: "center", justifyContent: "center"}}>

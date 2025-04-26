@@ -11,6 +11,34 @@ function Login() {
 
   const navigate = useNavigate();
 
+  const handlerClick = async (event) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${config.protocol}://${config.host}:${config.port}/auth/token/face_recognition`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {},
+      });
+
+      setLoading(false);
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('login', username);
+        navigate('/home');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || 'Ошибка Ауентитификации');
+      }
+    } catch (error) {
+      setLoading(false);
+      setError('Ошибка. Пожалуйста, попробуйте позже');
+    }
+  }
+
   const validateForm = () => {
     if (!username || !password) {
       setError('Логин и пароль обязательны');
@@ -43,6 +71,7 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.access_token);
+        localStorage.setItem('login', username);
         navigate('/home');
       } else {
         const errorData = await response.json();
@@ -79,6 +108,9 @@ function Login() {
           </div>
           <button type="submit" disabled={loading} className='input-group'>
             {loading ? 'Входим...' : 'Вход'}
+          </button>
+          <button onClick={handlerClick} disabled={loading} className='input-group'>
+            {loading ? 'Входим...' : 'Вход по Биометрии'}
           </button>
           {error && <p className='error' style={{ color: 'red' }}>{error}</p>}
         </form>

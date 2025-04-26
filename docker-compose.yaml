@@ -71,10 +71,12 @@ services:
       - backend
       - kafka
 
-  motion:
-    build: ./motion
+  face:
+    build: ./face_recognition
     ports: 
-      - "8881:8881"
+      - "8889:8889"
+    devices:
+      - '/dev/video0:/dev/video0'
     depends_on:
       - backend
       - kafka
