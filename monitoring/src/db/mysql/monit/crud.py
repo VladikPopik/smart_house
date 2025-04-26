@@ -13,13 +13,14 @@ log = getLogger()
 
 
 async def create_record(
-    inserted_at: datetime.time,
+    payload: ty.Dict,
 ) -> None:
     with db_instance.session() as session:
         session.execute(
             insert(monitoring_table).values(
-                id=uuid.uuid4(),
-                inserted_at=inserted_at
+                time = payload['time'],
+                temperature = payload['temperature'],
+                humidity = payload['humidity']
             )
         )
         log.info("Запись успешно произведена!")      
