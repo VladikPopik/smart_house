@@ -33,3 +33,8 @@ CREATE TABLE `settingsd` ( `device_name` CHAR(8) PRIMARY KEY,
     `pin` INTEGER NOT NULL,
     `on` BOOLEAN NOT NULL DEFAULT false  
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `monitoring` ( `time` TIMESTAMP NOT NULL,
+    `temperature` FLOAT NOT NULL, 
+    `humidity` FLOAT NOT NULL 
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
