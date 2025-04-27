@@ -1,7 +1,8 @@
-from src.db.mysql.monit.crud import create_record
+from src.db.mysql.monit.crud import create_record, predict_next_temperatures, fetch_last_60_temps_for_prediction
 import asyncio
 import json
 import pickle
+import numpy
 from kafka_functions import produce_message_kafka, consume_message
 from logging import getLogger, basicConfig, INFO
 import httpx
@@ -9,12 +10,6 @@ import datetime
 
 basicConfig(filename="monitoring.log", level=INFO)
 log = getLogger(__name__)
-
-MODEL_PATH = "svr_temperature_model.pkl"
-
-async def load_model(path):
-    async with open(path, 'rb') as f:
-        return pickle.load(f)
 
 async def main(time_to_cycle=5):
     start = datetime.datetime.now().timestamp()
@@ -38,13 +33,16 @@ async def main(time_to_cycle=5):
         raise httpx.NetworkError(f"{e}")
 
     try:
-        log.info("Проверка захода в новый try/catch блок")
         data = await consume_message(consumer_topic)
-        log.info(f"{data['time']} проверка на пенисность времени")
-        log.info(f"{data['temperature']} проверка на пенисность температуры")
-        # pickle.load("svr_temperature_model.pkl")
-        result_inserting = await create_record(data)
-        log.info(result_inserting)
+        _ = await create_record(data)
+        temperatures = await fetch_last_60_temps_for_prediction()
+        log.info("После выборки с бд")
+        log.info(temperatures)
+        array_for_model = numpy.array(temperatures)
+        predict =  await predict_next_temperatures(array_for_model)
+        log.info("Предсказанная температура")
+        log.info(predict)
+        
 
         produce_task = await produce_message_kafka(producer_topic, data)
         # log.info(data)
