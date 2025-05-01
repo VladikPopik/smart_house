@@ -1,6 +1,8 @@
-from src.db.mysql.monit.crud import create_record
+from src.db.mysql.monit.crud import create_record, predict_next_temperatures, fetch_last_60_temps_for_prediction
 import asyncio
 import json
+import pickle
+import numpy
 from kafka_functions import produce_message_kafka, consume_message
 from logging import getLogger, basicConfig, INFO
 import httpx
@@ -13,12 +15,16 @@ async def main(time_to_cycle=5):
     start = datetime.datetime.now().timestamp()
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(
-                "http://backend:8001/settings/device/type/dht11",
-                params={"device_type": "dht11"}
-            )
-        if response.is_success:
+            while True:
+                response = await client.get(
+                    "http://backend:8001/settings/device/type/dht11",
+                    params={"device_type": "dht11"}
+                )
+                if response.is_success:
+                    break
             r = response.json()
+            if not (r and r['device_name'] and r['device_type']):
+                asyncio.get_running_loop().create_task(main(time_to_cycle))
             producer_topic = f"{r['device_name']}-{r['device_type']}"
             consumer_topic = producer_topic + "-rasp"
             log.info(f"{producer_topic}, {consumer_topic}")
@@ -28,9 +34,18 @@ async def main(time_to_cycle=5):
 
     try:
         data = await consume_message(consumer_topic)
+        _ = await create_record(data)
+        temperatures = await fetch_last_60_temps_for_prediction()
+        log.info("После выборки с бд")
+        log.info(temperatures)
+        array_for_model = numpy.array(temperatures)
+        predict =  await predict_next_temperatures(array_for_model)
+        log.info("Предсказанная температура")
+        log.info(predict)
+        
 
         produce_task = await produce_message_kafka(producer_topic, data)
-        log.info(data)
+        # log.info(data)
 
     except Exception as e:
         log.error(e)

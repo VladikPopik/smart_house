@@ -11,9 +11,37 @@ function Login() {
 
   const navigate = useNavigate();
 
+  const handlerClick = async (event) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${config.protocol}://${config.host}:${config.port}/auth/token/face_recognition`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {},
+      });
+
+      setLoading(false);
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('login', username);
+        navigate('/home');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || 'Ошибка Ауентитификации');
+      }
+    } catch (error) {
+      setLoading(false);
+      setError('Ошибка. Пожалуйста, попробуйте позже');
+    }
+  }
+
   const validateForm = () => {
     if (!username || !password) {
-      setError('Username and password are required');
+      setError('Логин и пароль обязательны');
       return false;
     }
     setError('');
@@ -43,14 +71,15 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.access_token);
+        localStorage.setItem('login', username);
         navigate('/home');
       } else {
         const errorData = await response.json();
-        setError(errorData.detail || 'Authentication failed!');
+        setError(errorData.detail || 'Ошибка Ауентитификации');
       }
     } catch (error) {
       setLoading(false);
-      setError('An error occurred. Please try again later.');
+      setError('Ошибка. Пожалуйста, попробуйте позже');
     }
   };
   return ( 
@@ -63,7 +92,7 @@ function Login() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder='Username'
+                placeholder='Логин'
               />
             </div>
           </div>
@@ -73,16 +102,19 @@ function Login() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder='Password'
+                placeholder='Пароль'
               />
             </div>
           </div>
           <button type="submit" disabled={loading} className='input-group'>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Входим...' : 'Вход'}
+          </button>
+          <button onClick={handlerClick} disabled={loading} className='input-group'>
+            {loading ? 'Входим...' : 'Вход по Биометрии'}
           </button>
           {error && <p className='error' style={{ color: 'red' }}>{error}</p>}
         </form>
-        <a className="signup-link" href='/register'>Sign up</a>
+        <a className="signup-link" href='/register'>Регистрация</a>
         
       </div>
   );

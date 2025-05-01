@@ -1,7 +1,5 @@
 from uuid import UUID, uuid4
 
-import asyncio
-
 from .test_dht11 import DHT11, DHT11Result  # pyright: ignore[reportMissingTypeStubs]
 from logging import getLogger
 import RPi.GPIO as GPIO

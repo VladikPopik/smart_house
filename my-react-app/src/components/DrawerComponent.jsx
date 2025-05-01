@@ -71,7 +71,7 @@ export default function DrawerComponent () {
                 <ListItemIcon>
                   <HomeIcon />
                 </ListItemIcon>
-                <ListItemText primary="HomePage"/>
+                <ListItemText primary="Домой"/>
               </ListItemButton>
             </ListItem>
             
@@ -108,18 +108,18 @@ export default function DrawerComponent () {
                 <ListItemIcon>
                   <SettingsIcon />
                 </ListItemIcon>
-                <ListItemText primary="Settings" />
+                <ListItemText primary="Настройки" />
               </ListItemButton>
             </ListItem>
 
-            <ListItem key="Budget" disablePadding>
+            {/* <ListItem key="Budget" disablePadding>
               <ListItemButton onClick={() => handleBudget()}>
                 <ListItemIcon>
                   <AttachMoneyIcon />
                 </ListItemIcon>
                 <ListItemText primary="Budget" />
               </ListItemButton>
-            </ListItem>
+            </ListItem> */}
           </List>
           <Divider />
           <List>
@@ -128,7 +128,7 @@ export default function DrawerComponent () {
                   <ListItemIcon>
                   <LogoutIcon />
                   </ListItemIcon>
-                  <ListItemText primary={"Logout"} />
+                  <ListItemText primary={"Выход"} />
                 </ListItemButton>
               </ListItem>
           </List>

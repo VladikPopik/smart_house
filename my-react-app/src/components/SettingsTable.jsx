@@ -30,7 +30,7 @@ async function ReadAllDevices() {
             }
         );
         if (!response.ok) {
-          throw new Error('Cannot get devices from server');
+          throw new Error('Невозможно прочитать устройства с сервера');
         }
         values = await response.json();
         return values;
@@ -56,7 +56,7 @@ async function CreateDevice(props) {
             }
         );
         if (!response.ok) {
-          throw new Error('Cannot add devices to server');
+          throw new Error('Невозможно зарегистрировать устройство');
         }
         return response
 
@@ -82,7 +82,7 @@ async function UpdateDevice(props){
             }
         );
         if (!response.ok) {
-          throw new Error('Cannot add devices to server');
+          throw new Error('Невозможно зарегистрировать устройство');
         }
 
         return response
@@ -100,7 +100,7 @@ async function DeleteDevice(device_name){
             }
         );
         if (!response.ok) {
-          throw new Error('Cannot delete device from server');
+          throw new Error('Невозможно удалить устройство');
         }
         
         return response
@@ -160,35 +160,35 @@ export default function SettingsTable() {
     }, [toReload])
 
     let naming_type_hash = {
-        "cam": "Camera",
-        "dht11": "Climate",
-        "photoel": "PhotoResistor"
+        "cam": "Камера",
+        "dht11": "Климатический датчик",
+        "photoel": "Фото резистор"
     }
 
     return (
-            <TableContainer component={Paper} sx={{position: "absolute", top: 150, left: 0, width: "75%", height: "75%"}}>
+            <TableContainer component={Paper} sx={{position: "absolute", top: 125, left: 0, width: "50%", height: "75%"}}>
                 <Table>
                     <TableHead sx={{}}>
                         <TableRow sx={{display: "flex", alignContent: "center", justifyContent: "center"}}>
                         </TableRow>
                         <TableRow>
                             <TableCell>
-                                Device name
+                                Имя устройства (уникальное)
                             </TableCell>
                             <TableCell>
-                                Voltage (V)
+                                Питание
                             </TableCell>
                             <TableCell>
-                                DeviceType
+                                Тип устройства
                             </TableCell>
                             <TableCell>
-                                Pin Number
+                                Номер пина на плате
                             </TableCell>
                             <TableCell sx={{position: "relative", marginLeft: 150}}>
                                 <Fragment >
                                     <Button variant="text" onClick={handleClickOpen}>
                                         <AddIcon>
-                                            Create device
+                                            Создать устройство
                                         </AddIcon>
                                     </Button>
                                     <Dialog
@@ -213,8 +213,8 @@ export default function SettingsTable() {
                                         <DialogTitle>Create Device</DialogTitle>
                                         <DialogContent>
                                             <DialogContentText>
-                                            Please fill fields to add device to your system. 
-                                            Be aware that you have to check if pins are the same.
+                                            Пожалуйста заполните все поля чтобы добавить устройство. 
+                                            Будьте внимательны с номером пина (должен совпадать с физическим).
                                             </DialogContentText>
                                             <TextField
                                                 autoFocus
@@ -222,7 +222,7 @@ export default function SettingsTable() {
                                                 margin="dense"
                                                 id="device_name"
                                                 name="device_name"
-                                                label="Device Name (8 chars)"
+                                                label="Имя устройства (8 символов)"
                                                 type="string"
                                                 fullWidth
                                                 variant="standard"
@@ -233,7 +233,7 @@ export default function SettingsTable() {
                                                 margin="dense"
                                                 id="voltage"
                                                 name="voltage"
-                                                label="Device Voltage"
+                                                label="Питание устройства"
                                                 type="float"
                                                 fullWidth
                                                 variant="standard"
@@ -244,7 +244,7 @@ export default function SettingsTable() {
                                                 margin="dense"
                                                 id="pin"
                                                 name="pin"
-                                                label="Device PIN number"
+                                                label="PIN номер устройства"
                                                 type="number"
                                                 fullWidth
                                                 variant="standard"
@@ -253,18 +253,18 @@ export default function SettingsTable() {
                                                 labelId="device_type"
                                                 id="device_type"
                                                 value={deviceType}
-                                                label="Device Type"
+                                                label="Тип устройства"
                                                 sx={{width: "50%", marginTop: 3}}
                                                 onChange={handleChangeDeviceType}
                                             >
-                                                <MenuItem value={"cam"}>Camera</MenuItem>
-                                                <MenuItem value={"dht11"}>Climate</MenuItem>
-                                                <MenuItem value={"photoel"}>PhotoResistor</MenuItem>
+                                                <MenuItem value={"cam"}>Камера</MenuItem>
+                                                <MenuItem value={"dht11"}>Климатический датчик</MenuItem>
+                                                <MenuItem value={"photoel"}>Фото резистор</MenuItem>
                                             </Select>
                                         </DialogContent>
                                         <DialogActions>
-                                        <Button onClick={handleClose}>Cancel</Button>
-                                        <Button type="submit">Add</Button>
+                                        <Button onClick={handleClose}>Отмена</Button>
+                                        <Button type="submit">Добавить</Button>
                                         </DialogActions>
                                     </Dialog>
                                 </Fragment>
@@ -287,10 +287,8 @@ export default function SettingsTable() {
                             color="primary"
                             onChange={async (event) => handleOnClick(event, item)}
                             checked={item.on}
-                            // disabled={isDisabled(0, 2000)}
-                            // checkedIcon={<CheckIcon></CheckIcon>}
                             />}
-                            label="Active"
+                            label="Включен"
                             labelPlacement="end"
                             />
                         </TableCell>
@@ -324,8 +322,8 @@ export default function SettingsTable() {
                                     <DialogTitle>Create Device</DialogTitle>
                                     <DialogContent>
                                         <DialogContentText>
-                                        Please fill fields to add device to your system. 
-                                        Be aware that you have to check if pins are the same.
+                                        Пожалуйста заполните все поля чтобы добавить устройство. 
+                                        Будьте внимательны с номером пина (должен совпадать с физическим).
                                         </DialogContentText>
                                         <TextField
                                             autoFocus
@@ -333,7 +331,7 @@ export default function SettingsTable() {
                                             margin="dense"
                                             id="voltage"
                                             name="voltage"
-                                            label="Device Voltage"
+                                            label="Питание устройства"
                                             type="float"
                                             fullWidth
                                             variant="standard"
@@ -344,7 +342,7 @@ export default function SettingsTable() {
                                             margin="dense"
                                             id="pin"
                                             name="pin"
-                                            label="Device PIN number"
+                                            label="PIN номер устройства"
                                             type="number"
                                             fullWidth
                                             variant="standard"
@@ -357,15 +355,15 @@ export default function SettingsTable() {
                                                 sx={{width: "50%", marginTop: 3}}
                                                 onChange={handleChangeDeviceType}
                                             >
-                                                <MenuItem value={"cam"}>Camera</MenuItem>
-                                                <MenuItem value={"dht11"}>Climate</MenuItem>
-                                                <MenuItem value={"photoel"}>PhotoResistor</MenuItem>
+                                                <MenuItem value={"cam"}>Камера</MenuItem>
+                                                <MenuItem value={"dht11"}>Климатический датчик</MenuItem>
+                                                <MenuItem value={"photoel"}>Фото резистор</MenuItem>
 
                                             </Select>
                                     </DialogContent>
                                     <DialogActions>
-                                    <Button onClick={handleCloseUpdate}>Cancel</Button>
-                                    <Button type="submit">Add</Button>
+                                    <Button onClick={handleCloseUpdate}>Отмена</Button>
+                                    <Button type="submit">Добавить</Button>
                                     </DialogActions>
                                 </Dialog>
                             </Fragment>

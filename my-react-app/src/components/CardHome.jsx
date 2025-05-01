@@ -36,16 +36,16 @@ export default function CardHome() {
                         />
                         <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
-                            Monitoring
+                            Мониторинг
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            Page for monitoring functionallity
+                            Модуль мониторинга Влажости и Температуры
                         </Typography>
                         </CardContent>
                     </CardActionArea>
                 </Card>
 
-                <Card sx={{ width: "25%", marginRight:5, backgroundColor: "aliceblue"}}>
+                {/* <Card sx={{ width: "25%", marginRight:5, backgroundColor: "aliceblue"}}>
                     <CardActionArea
                         onClick={() => handleMotion()}
                     >
@@ -64,7 +64,7 @@ export default function CardHome() {
                         </Typography>
                         </CardContent>
                     </CardActionArea>
-                </Card>
+                </Card> */}
 
                 <Card sx={{ width: "25%", marginLeft: 10, backgroundColor: "aliceblue"}}>
                     <CardActionArea
@@ -78,10 +78,10 @@ export default function CardHome() {
                         />
                         <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
-                            Light
+                            Свет
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            Page for light functionallity
+                            Модуль контроля света
                         </Typography>
                         </CardContent>
                     </CardActionArea>

@@ -35,19 +35,33 @@ services:
     depends_on:
       - kafka
       - db
-    
-  budget:
-    build: ./budget_back
+
+  server:
+    build: ./raspberry_server
     ports:
       - "8080:8080"
     volumes:
       - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
-    devices:
-      - '/dev/video0:/dev/video0'
-      - '/dev/gpiomem:/dev/gpiomem'
-    privileged: true
+    # devices:
+    #   - '/dev/video0:/dev/video0'
+    #   - '/dev/gpiomem:/dev/gpiomem'
+    # privileged: true
     depends_on:
       - backend
+
+  # rr_server:
+  #   build: ./rr_server
+  #   ports:
+  #     - "5000:5000"
+  #   volumes:
+  #     - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
+  #   # devices:
+  #   #   - '/dev/video0:/dev/video0'
+  #   #   - '/dev/gpiomem:/dev/gpiomem'
+  #   # privileged: true
+  #   depends_on:
+  #     - backend
+  #     - kafka
 
   monitoring:
     build: ./monitoring
@@ -57,10 +71,12 @@ services:
       - backend
       - kafka
 
-  motion:
-    build: ./motion
+  face:
+    build: ./face_recognition
     ports: 
-      - "8881:8881"
+      - "8889:8889"
+    devices:
+      - '/dev/video0:/dev/video0'
     depends_on:
       - backend
       - kafka
@@ -69,52 +85,9 @@ services:
     build: ./light
     ports:
       - "8888:8888"
-    devices:
-      - '/dev/gpiomem:/dev/gpiomem'
+    # devices:
+    #   - '/dev/gpiomem:/dev/gpiomem'
     privileged: true
     depends_on:
       - backend
       - kafka
-  
-  # frontend:
-  #   build:
-  #     context: ./my-react-app
-  #   ports:
-  #     - "8080:8080"
-  #   volumes:
-  #     - '/data:/raspberry_server/data'
-  #   # devices:
-  #   #   - '/dev/video0:/dev/video0'
-  #   #   - '/dev/gpiomem:/dev/gpiomem'
-  #   privileged: true
-  #   depends_on:
-  #     - backend
-
-  # monitoring:
-  #   build: ./monitoring
-  #   ports:
-  #     - "9999:9999"
-  #   depends_on:
-  #     - backend
-  #     - kafka
-
-  # motion:
-  #   build: ./motion
-  #   ports: 
-  #     - "8881:8881"
-  #   volumes:
-  #     - '/smart_house/data:/raspberry_server/data'
-  #   depends_on:
-  #     - backend
-  #     - kafka
-
-  # light:
-  #   build: ./light
-  #   ports:
-  #     - "8888:8888"
-  #   # devices:
-  #   #   - '/dev/gpiomem:/dev/gpiomem'
-  #   privileged: true
-  #   depends_on:
-  #     - backend
-  #     - kafka
