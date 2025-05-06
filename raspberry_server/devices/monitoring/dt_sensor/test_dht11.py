@@ -1,5 +1,8 @@
 import time
 import RPi.GPIO as GPIO
+from logging import getLogger
+
+logger = getLogger()
 
 class DHT11Result:
     'DHT11 sensor result returned by DHT11.read() method'
@@ -50,6 +53,11 @@ class DHT11:
         # parse lengths of all data pull up periods
         pull_up_lengths = self.__parse_data_pull_up_lengths(data)
 
+        logger.info("DATA")
+        logger.info(data)
+
+        logger.info("PULLS")
+        logger.info(pull_up_lengths)
         # if bit count mismatch, return error (4 byte data + 1 byte checksum)
         if len(pull_up_lengths) != 40:
             return DHT11Result(DHT11Result.ERR_MISSING_DATA, 0, 0)

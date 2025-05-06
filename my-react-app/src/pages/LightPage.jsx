@@ -1,16 +1,14 @@
-import Light from "../components/Light";
+import Light from '../components/Light';
 import AppBarComponent from '../components/AppBarComponent.jsx';
-import LightHandleBar from "../components/LightHandleBar.jsx";
+import LightCharts from '../components/LightLayoutGraph.jsx';
 
-export default function MotionPage() {
+
+export default function MonitoringPage() {
     return (
-        <div>
-            <AppBarComponent />
+        <body>
+            <AppBarComponent/>
             <Light />
-
-            <LightHandleBar />
-            
-
-        </div>
+            <LightCharts />
+        </body>
     );
 }

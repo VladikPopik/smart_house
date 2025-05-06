@@ -8,6 +8,7 @@ from lib.manager.monthly_plan import plan_router
 from lib.manager.motion import motion_ws_router
 from lib.manager.settingsd import settings_router
 from lib.manager.systemd import system_router
+from lib.manager.light import light_router_ws
 
 app = FastAPI(openapi_url="/openapi.json", docs_url="/docs")
 
@@ -35,6 +36,11 @@ app.include_router(
     monitoring_router_ws,
     prefix="/mon_ws",
     tags=["mon_ws"],
+)
+app.include_router(
+    light_router_ws,
+    prefix="/light_ws",
+    tags=["light_ws"],
 )
 app.include_router(motion_ws_router, prefix="/motion_ws", tags=["motions_ws"])
 

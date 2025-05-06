@@ -97,14 +97,14 @@ export default function MonitoringCharts (message="monitoring") {
         }
     }, []);
 
-    if (temperature.length > 120){
-        var t_result = timings.slice(timings.length - 120, -1);
-        var result  = temperature.slice(temperature.length - 120, -1);
-        var result_h = humidity.slice(humidity.length - 120, -1);
-        var result_t_max  = temperature_max.slice(temperature_max.length - 120, -1);
-        var result_t_min  = temperature_min.slice(temperature_min.length - 120, -1);
-        var result_h_max  = humidity_max.slice(humidity_max.length - 120, -1);
-        var result_h_min  = humidity_min.slice(humidity_min.length - 120, -1);
+    if (temperature.length > 60){
+        var t_result = timings.slice(timings.length - 60, -1);
+        var result  = temperature.slice(temperature.length - 60, -1);
+        var result_h = humidity.slice(humidity.length - 60, -1);
+        var result_t_max  = temperature_max.slice(temperature_max.length - 60, -1);
+        var result_t_min  = temperature_min.slice(temperature_min.length - 60, -1);
+        var result_h_max  = humidity_max.slice(humidity_max.length - 60, -1);
+        var result_h_min  = humidity_min.slice(humidity_min.length - 60, -1);
 
         setHumidity(prevItems => result_h)
         setTemperature(prevItems => result);
@@ -260,7 +260,7 @@ export default function MonitoringCharts (message="monitoring") {
                           },
                     }}
                     text={
-                        ({ value, valueMax }) => value
+                        ({ value, valueMax }) => `${value}`
                     }
                     />
                     <BarChart

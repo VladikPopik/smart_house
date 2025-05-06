@@ -4,9 +4,10 @@ from kafka_functions import produce_message_kafka, consume_message
 from logging import getLogger, basicConfig, INFO
 import httpx
 import datetime
-from diod import Diod
+import spidev
+from matrix import Matrix
 
-basicConfig(filename="light.log", level=INFO)
+basicConfig(filename='light.log', level=INFO)
 log = getLogger(__name__)
 
 async def get_photoel(timeout: int=5000) -> httpx.Response:
@@ -41,17 +42,20 @@ async def main(time_to_cycle=5):
             if to_consume:
                 #Если девайс пришёл можно начинать слушать топики иначе идём в новый цикл и забиваем
                 data = await consume_message(consumer_topic)
-                time, percent = data.get("time"), data.get("percent")
+                lux, infrared, visible, full_spectrum = data.get("lux"), data.get("infrared"), data.get("visible"), data.get("full_spectrum")
                 #Запускаем логику переключения диода
-                diod.perform(percent)
-
+                matrix.perform(lux)
+                log.info(data)
                 await produce_message_kafka(producer_topic, data)
+            else:
+                spi = spidev.SpiDev()
+                SHUTDOWN_REGISTER = 0x0C
+                spi.xfer([SHUTDOWN_REGISTER, 0x00])  # Отключение дисплея
+                spi.close()
     except Exception as e:
         log.error(e)
 
     end = datetime.datetime.now().timestamp()
-    if end - start <= time_to_cycle:
-        await asyncio.sleep(time_to_cycle - (end - start))
 
     log.info(f"Cycle elapsed after: {end - start} sec.")
 
@@ -62,7 +66,8 @@ if __name__=="__main__":
     log.info("Start work")
 
     #Пока что создаём один диод на 29 пине на плате! is_on=False так как думаю что всё должно быть выключено
-    diod = Diod(29, "diod1", on=True, is_on=False)
+
+    matrix: Matrix = Matrix(0, "matrix", on=True)
 
     time_to_cycle = 10
     asyncio.get_event_loop().create_task(main(time_to_cycle))

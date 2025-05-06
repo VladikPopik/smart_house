@@ -51,9 +51,7 @@ async def main(time_to_cycle=5):
         log.error(e)
 
     end = datetime.datetime.now().timestamp()
-    if end - start < time_to_cycle:
-        await asyncio.sleep(time_to_cycle - (end - start))
-
+    log.info(f"Cycle consumed: {end - start}")
     asyncio.get_running_loop().create_task(main(time_to_cycle))
 
 if __name__=="__main__":

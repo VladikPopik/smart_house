@@ -67,9 +67,7 @@ class DhtSensor(metaclass=Singleton):
         """Read data from dht11 sensor."""
         logger.info("Try to read instance")
         start = datetime.datetime.now().timestamp()
-        time.sleep(0.5)
         while True:
-            time.sleep(1)
             result = self.instance.read()
             if result.error_code == 0:
                 self.prev_h = result.humidity

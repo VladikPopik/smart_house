@@ -42,10 +42,10 @@ services:
       - "8080:8080"
     volumes:
       - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
-    # devices:
-    #   - '/dev/video0:/dev/video0'
-    #   - '/dev/gpiomem:/dev/gpiomem'
-    # privileged: true
+    devices:
+      - '/dev/video0:/dev/video0'
+      - '/dev/gpiomem:/dev/gpiomem'
+    privileged: true
     depends_on:
       - backend
 
@@ -85,8 +85,9 @@ services:
     build: ./light
     ports:
       - "8888:8888"
-    # devices:
-    #   - '/dev/gpiomem:/dev/gpiomem'
+    devices:
+      - '/dev/gpiomem:/dev/gpiomem'
+      - '/dev/spi*:/dev/spi*'
     privileged: true
     depends_on:
       - backend
