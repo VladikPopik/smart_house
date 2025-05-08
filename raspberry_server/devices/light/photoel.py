@@ -5,7 +5,7 @@ import sys
 import time
 import smbus
 import RPi.GPIO as GPIO
-from devices.utils import Singleton
+from devices.utils import Singleton, Error
 from uuid import UUID, uuid4
 
 
@@ -287,8 +287,6 @@ class TSL2591:
         self.Disable()
 
 
-
-
 class PhotoEl(metaclass=Singleton):
     def __init__(self, pin: int, device_name: str, voltage: float, *, on: bool = False, device_type: str="photoel"):
         self.device_name = device_name
@@ -298,7 +296,7 @@ class PhotoEl(metaclass=Singleton):
         self.voltage = voltage
         self.on = on
 
-    def read(self) -> tuple[float, float, float, float]:
+    def read(self) -> tuple[Error, float, float, float, float]:
         logger = logging.getLogger()
         self.tsl2591 = TSL2591()
         try:
@@ -311,8 +309,9 @@ class PhotoEl(metaclass=Singleton):
             logger.info('Visible light: %d'%visible)
             full_spectrum = self.tsl2591.Read_FullSpectrum
             logger.info('Full spectrum (IR + visible) light: %d\r\n'%full_spectrum)
-            return lux, infrared, visible, full_spectrum
+            return Error.OK, lux, infrared, visible, full_spectrum
         except Exception as e:
             logging.info(f"Error occured in photo sensor {e}")
+            return Error.ERR_READ, float("-inf"), float("-inf"), float("-inf"), float("-inf")
         finally:
             self.tsl2591.Disable()

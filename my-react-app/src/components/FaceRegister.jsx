@@ -57,7 +57,7 @@ export default function FaceRegister () {
                 Регистрация с помощью фотографии
             </Button>
             {login && <p className="login" style={{ color: "green", width: "100%"}}>Пользователь успешно зарегистрирован {login}</p>}
-            {error && <p className="error" style={{ color: "red" }}>{error}</p>}
+            {error && <p className="error" style={{ color: "red" }}>Ошибка Регистрации, попробуйте позже</p>}
         </div>
     )
     

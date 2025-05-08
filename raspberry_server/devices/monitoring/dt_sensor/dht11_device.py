@@ -1,21 +1,11 @@
 from uuid import UUID, uuid4
 
-from .test_dht11 import DHT11, DHT11Result  # pyright: ignore[reportMissingTypeStubs]
 from logging import getLogger
-import RPi.GPIO as GPIO
-from devices.utils import Singleton
-
-import datetime
-import time
-
-type DhtReturnType = DHT11Result | None
+from devices.utils import Singleton, Error
+import adafruit_dht
+import board
 
 logger = getLogger()
-
-
-
-GPIO.setmode(GPIO.BCM)
-
 
 class DhtSensor(metaclass=Singleton):
     """Class to handle DHT11 sensor working."""
@@ -28,22 +18,14 @@ class DhtSensor(metaclass=Singleton):
         self.pin = pin
         self.voltage = voltage
         self.on = on
-        self.instance = DHT11(pin=pin)
-        self.prev_h = 0.0
-        self.prev_t = 0.0
+        self.instance = adafruit_dht.DHT11(board.D16)
 
-    def read(self) -> DhtReturnType:
+    def read(self) -> tuple[Error, float, float]:
         """Read data from dht11 sensor."""
         logger.info("Try to read instance")
-        time.sleep(6)
-
-        result = self.instance.read()
-        if result.error_code == 0:
-            self.prev_h = result.humidity
-            self.prev_t = result.temperature
-            return result
-        else:
-            error = f"Cannot read from pin={self.pin} due to code number {result.error_code}, {result}"
-            logger.error(error)
-            GPIO.cleanup()
-            return DHT11Result(1, float("-inf"), float("-inf"))
+        try:
+            temperature = self.instance.temperature
+            humidity = self.instance.humidity
+            return (Error.OK, temperature, humidity)
+        except (RuntimeError, ValueError, TypeError):
+            return (Error.ERR_READ, 0.0, 0.0)

@@ -45,13 +45,7 @@ async def main(time_to_cycle=5):
                 lux, infrared, visible, full_spectrum = data.get("lux"), data.get("infrared"), data.get("visible"), data.get("full_spectrum")
                 #Запускаем логику переключения диода
                 matrix.perform(lux)
-                log.info(data)
                 await produce_message_kafka(producer_topic, data)
-            else:
-                spi = spidev.SpiDev()
-                SHUTDOWN_REGISTER = 0x0C
-                spi.xfer([SHUTDOWN_REGISTER, 0x00])  # Отключение дисплея
-                spi.close()
     except Exception as e:
         log.error(e)
 

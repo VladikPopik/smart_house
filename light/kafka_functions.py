@@ -19,7 +19,6 @@ async def consume_message(topic: str) -> dict[str, ty.Any]:
             device = await consumer.getone()
             if device:
                 data = json.loads(device.value)
-                logger.info(data)
             else:
                 data = None
     except Exception as e:
