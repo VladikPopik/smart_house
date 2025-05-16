@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { LineChart } from '@mui/x-charts/LineChart';
-import config from "../config";
 import { Box, Button, Grid, Stack } from "@mui/material";
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { BarChart } from "@mui/x-charts";
 import ws_monitoring from "../websocket_monitoring";
+import AlertError from "./Alert";
+
 
 export default function MonitoringCharts (message="monitoring") { 
 
@@ -47,6 +47,8 @@ export default function MonitoringCharts (message="monitoring") {
     var [temperature_min, setTemperatureMin] = useState(localTemperature_min);
     var [humidity_min, setHumidityMin] = useState(localHumidity_min);
     var [timings, setTime] = useState(localTime);
+    var [error, setError] = useState("");
+    var [error_code, setErrorCode] = useState(0);
 
     const handleClick = () => {
         localStorage.setItem("temperature", result.at(-1));
@@ -68,6 +70,8 @@ export default function MonitoringCharts (message="monitoring") {
             const newd_min = dt.pred_temperature_min;
             const newh_max = dt.pred_humidity_max;
             const newh_min = dt.pred_humidity_min;
+            const error = dt.error;
+            const error_code = dt.error_code;
             let newt = dt.time;
             setHumidity(prevItems => [...prevItems, newh])
             setTemperatureMax(prevItems => [...prevItems, newd_max]);
@@ -75,7 +79,9 @@ export default function MonitoringCharts (message="monitoring") {
             setTemperatureMin(prevItems => [...prevItems, newd_min]);
             setHumidityMin(prevItems => [...prevItems, newh_min])
             setTemperature(prevItems => [...prevItems, newd]);
-            setTime(prevItems => [...prevItems, newt])
+            setTime(prevItems => [...prevItems, newt]);
+            setError(error);
+            setErrorCode(error_code);
         }
     };
 
@@ -299,6 +305,10 @@ export default function MonitoringCharts (message="monitoring") {
                 >
                 Обновить графики
                 </Button>
+                <AlertError
+                    error={error}
+                    error_code={error_code}
+                />
                 </Grid>
             </Stack>
     )

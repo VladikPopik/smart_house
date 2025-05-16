@@ -48,9 +48,11 @@ def dht(device: DhtSensor):
         result = device.read()
         return result
     except Exception as e:
+        result = (Error.ERR_READ, 0.0, 0.0)
         err = f"{e}"
         logger.error(err)
         logger.info(f"Dht11 result for {device}: {result}")  # noqa: G004
+        return result
 
 
 def cam(device: Capture):
@@ -70,8 +72,9 @@ def lux(device: PhotoEl):
         result = device.read()
         return result
     except Exception as e:
+        result = Error.ERR_READ, 0.0, 0.0, 0.0, 0.0
         logger.error(e)
-
+        return result
 
 
 # TODO: ADD PREV VALUES OUT OF EXECUTOR

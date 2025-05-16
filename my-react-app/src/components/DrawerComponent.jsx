@@ -77,32 +77,6 @@ export default function DrawerComponent () {
             
             }
             <Divider />
-          {/* <ListItem key="MyFunctions" disablePadding>
-              <ListItemButton onClick={() => handleFunctions()}>
-                <ListItemIcon>
-                  <AnalyticsIcon />
-                </ListItemIcon>
-                <ListItemText primary="MyFunctions"/>
-              </ListItemButton>
-            </ListItem>
-            <ListItem key="Telegram Bot" disablePadding>
-              <ListItemButton onClick={() => handleTelegram()}>
-                <ListItemIcon>
-                  <TelegramIcon />
-                </ListItemIcon>
-                <ListItemText primary="Telegram Bot"/>
-              </ListItemButton>
-            </ListItem>
-          <Divider />
-            <ListItem key="Help" disablePadding>
-              <ListItemButton onClick={() => handleHelp()}>
-                <ListItemIcon>
-                  <HelpIcon />
-                </ListItemIcon>
-                <ListItemText primary="Help" />
-              </ListItemButton>
-            </ListItem> */}
-    
             <ListItem key="Settings" disablePadding>
               <ListItemButton onClick={() => handleSettings()}>
                 <ListItemIcon>
@@ -111,15 +85,6 @@ export default function DrawerComponent () {
                 <ListItemText primary="Настройки" />
               </ListItemButton>
             </ListItem>
-
-            {/* <ListItem key="Budget" disablePadding>
-              <ListItemButton onClick={() => handleBudget()}>
-                <ListItemIcon>
-                  <AttachMoneyIcon />
-                </ListItemIcon>
-                <ListItemText primary="Budget" />
-              </ListItemButton>
-            </ListItem> */}
           </List>
           <Divider />
           <List>

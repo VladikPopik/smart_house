@@ -6,6 +6,8 @@ import { Box, Button, Grid, Stack } from "@mui/material";
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { BarChart } from "@mui/x-charts";
 import ws_light from "../websocket_light";
+import AlertError from "./Alert";
+
 
 export default function LightCharts (message="light") { 
 
@@ -37,6 +39,8 @@ export default function LightCharts (message="light") {
     var [ws_visible, setVisible] = useState(visible);
     var [ws_full_spectrum, setFull] = useState(full_spectrum);
     var [timings, setTime] = useState(time);
+    var [error, setError] = useState("");
+    var [error_code, setErrorCode] = useState(0);
 
 
     const handleClick = () => {
@@ -61,6 +65,8 @@ export default function LightCharts (message="light") {
             setVisible(prevItems => [...prevItems, new_visible])
             setFull(prevItems => [...prevItems, new_full_spectrum]);
             setTime(prevItems => [...prevItems, newt])
+            setError(error);
+            setErrorCode(error_code);
         }
     };
 
@@ -187,6 +193,10 @@ export default function LightCharts (message="light") {
                 >
                 Обновить графики
                 </Button>
+                <AlertError
+                    error={error}
+                    error_code={error_code}
+                />
             </Stack>
     )
 }

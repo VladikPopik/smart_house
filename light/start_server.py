@@ -1,10 +1,8 @@
 import asyncio
-import json
 from kafka_functions import produce_message_kafka, consume_message
 from logging import getLogger, basicConfig, INFO
 import httpx
 import datetime
-import spidev
 from matrix import Matrix
 
 basicConfig(filename='light.log', level=INFO)

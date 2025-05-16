@@ -312,6 +312,6 @@ class PhotoEl(metaclass=Singleton):
             return Error.OK, lux, infrared, visible, full_spectrum
         except Exception as e:
             logging.info(f"Error occured in photo sensor {e}")
-            return Error.ERR_READ, float("-inf"), float("-inf"), float("-inf"), float("-inf")
+            return Error.ERR_READ, 0.0, 0.0, 0.0, 0.0
         finally:
             self.tsl2591.Disable()
