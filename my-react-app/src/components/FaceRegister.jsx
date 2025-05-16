@@ -25,19 +25,14 @@ export default function FaceRegister () {
                 body: JSON.stringify({user_login: user_login}),
             });
             setLoading(false);
-
+            var data = await response.json();
             if (response.ok) {
-                // if (response_token.ok){
-                //     const data = await response_token.json();
-                //     localStorage.setItem("token", data.access_token);
-                // }
-                const data = await response.json()
                 if (data.success){
-                    setLogin(data.login)
+                    setLogin(data.login);
                 }
             } else {
-                const errorData = await response.json();
-                setError(errorData.detail || "Ошибка регистрации!");
+                // const errorData = await response.json();
+                setError(data.success);
             }
         } catch (error) {
             console.log(error)
@@ -47,7 +42,7 @@ export default function FaceRegister () {
     };
     
     return (
-        <div style={{"position": "absolute", "top": 125, "right": 350, "width": "25%", "height": "10%"}}>
+        <div style={{"position": "absolute", "top": 150, "right": 350, "width": "25%", "height": "10%"}}>
             <br></br>
             <Button
                 onClick={handleSubmit}

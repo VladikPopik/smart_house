@@ -4,7 +4,7 @@ import datetime
 
 res = []
 
-with open("/home/admin/smart_house/smart_house/data.csv", 'w', newline='') as csvfile:
+with open("/home/admin/smart_house/smart_house/data_hot.csv", 'w', newline='') as csvfile:
     fieldnames = ["cpu0", "cpu1", "cpu2", "cpu3", "memory_used", "memory_percent", "timestamp"]
     writer =  csv.DictWriter(csvfile, fieldnames=fieldnames)
 

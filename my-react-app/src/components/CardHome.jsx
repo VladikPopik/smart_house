@@ -24,7 +24,7 @@ export default function CardHome() {
     return (
         <div>
             <Grid container spacing={2} sx={{ position: "absolute", top: "25%", justifyContent: "center"}}>
-                <Card sx={{width: "25%", marginLeft: 5, backgroundColor: "aliceblue", marginRight: 20}}>
+                <Card sx={{width: "40%", marginLeft: 5, backgroundColor: "aliceblue", marginRight: 20}}>
                     <CardActionArea
                         onClick={() => handleMonitoring()}
                     >
@@ -66,7 +66,7 @@ export default function CardHome() {
                     </CardActionArea>
                 </Card> */}
 
-                <Card sx={{ width: "25%", marginLeft: 10, backgroundColor: "aliceblue"}}>
+                <Card sx={{ width: "40%", marginLeft: 10, backgroundColor: "aliceblue"}}>
                     <CardActionArea
                         onClick={() => handleLight()}
                     >

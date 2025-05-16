@@ -36,7 +36,7 @@ try:
         # Инициализация дисплея
         while True:
         # Заполняем колонки постепенно (от одной точки до полной строки)
-            for col_value in range(1 << 1):  # 0..255
+            for col_value in range(1 << 8):  # 0..255
                 data = [(col_value >> x & 1) * 0xff for x in range(8)]
             set_leds(data)
             time.sleep(0.5)

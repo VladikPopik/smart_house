@@ -166,7 +166,7 @@ export default function SettingsTable() {
     }
 
     return (
-            <TableContainer component={Paper} sx={{position: "absolute", top: 125, left: 0, width: "50%", height: "75%"}}>
+            <TableContainer component={Paper} sx={{position: "absolute", top: 150, left: 50, width: "50%", height: "75%"}}>
                 <Table>
                     <TableHead sx={{}}>
                         <TableRow sx={{display: "flex", alignContent: "center", justifyContent: "center"}}>
@@ -210,7 +210,7 @@ export default function SettingsTable() {
                                         },
                                         }}
                                     >
-                                        <DialogTitle>Create Device</DialogTitle>
+                                        <DialogTitle>Добавление устройства</DialogTitle>
                                         <DialogContent>
                                             <DialogContentText>
                                             Пожалуйста заполните все поля чтобы добавить устройство. 
@@ -296,7 +296,7 @@ export default function SettingsTable() {
                             <Fragment>
                                 <Button variant="text" onClick={handleClickUpdateOpen}>
                                     <CreateIcon>
-                                        Create device
+                                        Обновление устройства
                                     </CreateIcon>
                                 </Button>
                                 <Dialog
@@ -319,7 +319,7 @@ export default function SettingsTable() {
                                     },
                                     }}
                                 >
-                                    <DialogTitle>Create Device</DialogTitle>
+                                    <DialogTitle>Обновление устройства</DialogTitle>
                                     <DialogContent>
                                         <DialogContentText>
                                         Пожалуйста заполните все поля чтобы добавить устройство. 
