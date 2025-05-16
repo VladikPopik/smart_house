@@ -13,6 +13,7 @@ log = getLogger(__name__)
 
 async def main(time_to_cycle=5):
     start = datetime.datetime.now().timestamp()
+    to_consume = False
     try:
         async with httpx.AsyncClient() as client:
             while True:
@@ -27,25 +28,29 @@ async def main(time_to_cycle=5):
                 asyncio.get_running_loop().create_task(main(time_to_cycle))
             producer_topic = f"{r['device_name']}-{r['device_type']}"
             consumer_topic = producer_topic + "-rasp"
+            to_consume = True
             log.info(f"{producer_topic}, {consumer_topic}")
     except Exception as e:
         log.error(e)
         raise httpx.NetworkError(f"{e}")
 
     try:
-        data = await consume_message(consumer_topic)
-        _ = await create_record(data)
-        temperatures = await fetch_last_60_temps_for_prediction()
-        log.info("После выборки с бд")
-        log.info(temperatures)
-        array_for_model = numpy.array(temperatures)
-        predict =  await predict_next_temperatures(array_for_model)
-        log.info("Предсказанная температура")
-        log.info(predict)
-        
-
-        produce_task = await produce_message_kafka(producer_topic, data)
-        # log.info(data)
+        if to_consume:
+            try:
+                data = await consume_message(consumer_topic)
+                _ = await create_record(data)
+                temperatures = await fetch_last_60_temps_for_prediction()
+                log.info("После выборки с бд")
+                log.info(temperatures)
+                array_for_model = numpy.array(temperatures)
+                predict =  await predict_next_temperatures(array_for_model)
+                log.info("Предсказанная температура")
+                log.info(predict)
+            except Exception as e:
+                log.error(e)
+            finally:
+                produce_task = await produce_message_kafka(producer_topic, data)
+            # log.info(data)
 
     except Exception as e:
         log.error(e)

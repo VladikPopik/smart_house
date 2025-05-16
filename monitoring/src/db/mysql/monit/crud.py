@@ -13,7 +13,8 @@ from sqlalchemy import (
     select,
     update,
     func,
-    desc
+    desc,
+    and_
 )
 
 from src.db import db_instance
@@ -30,19 +31,24 @@ async def create_record(
     with db_instance.session() as session:
         session.execute(
             insert(monitoring_table).values(
-                time = payload['time'],
-                temperature = payload['temperature'],
-                humidity = payload['humidity']
+                payload['time'],
+                payload['temperature'],
+                payload['humidity']
             )
         )
-        # log.info("Запись успешно произведена!")      
 
 async def fetch_last_60_temps_for_prediction():
     with db_instance.session() as session:
         # current_offset = OFFSET
 
         temperatures = session.execute(
-            select(monitoring_table.c.temperature)
+            select(monitoring_table.c.temperature).
+            where(
+                and_(
+                    monitoring_table.c.time >= datetime.datetime.now().timestamp - 75
+                )
+            )
+            .order_by(monitoring_table.c.time)
             .limit(60)
         ).scalars().all()
 
