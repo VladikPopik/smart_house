@@ -44,6 +44,18 @@ async def main(time_to_cycle=5):
                 #Запускаем логику переключения диода
                 matrix.perform(lux)
                 await produce_message_kafka(producer_topic, data)
+            else:
+                try:
+                    matrix.matrix.brightness(0)  # Выключаем матрицу перед выходом’’’
+                    matrix.matrix.fill(False)
+                    matrix.matrix.show()
+                    if matrix.process and matrix.process.is_alive():
+                        matrix.process.kill()
+                        matrix.matrix.brightness(0)  # Выключаем матрицу перед выходом’’’
+                        matrix.matrix.fill(False)
+                        matrix.matrix.show()
+                except Exception as e:
+                    log.info(e)
     except Exception as e:
         log.error(e)
 

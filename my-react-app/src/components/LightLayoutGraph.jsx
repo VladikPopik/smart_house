@@ -7,11 +7,13 @@ import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { BarChart } from "@mui/x-charts";
 import ws_light from "../websocket_light";
 import AlertError from "./Alert";
-
+import TextField from '@mui/material/TextField';
 
 export default function LightCharts (message="light") { 
 
     let newdt = (+new Date())/1000;
+
+    var eta = localStorage.getItem("eta");
 
     var lux = localStorage.getItem("lux");
     var infrared = localStorage.getItem("infrared");
@@ -34,6 +36,7 @@ export default function LightCharts (message="light") {
     time = (time !== null && time !== 'null') ? 
     time.split(',').map(x => parseFloat(x)): [newdt];
 
+    var [eta_ref, setEta] = useState(eta);
     var [ws_lux, setLux] = useState(lux);
     var [ws_infrared, setInfrared] = useState(infrared);
     var [ws_visible, setVisible] = useState(visible);
@@ -50,6 +53,33 @@ export default function LightCharts (message="light") {
         localStorage.setItem("full_spectrum", result_full_spectrum.at(-1));
         localStorage.setItem("light_time", time_result.at(-1));
         window.location.reload();
+    }
+
+    const handleClickEta = async () => {
+        try {
+            const response = await fetch(`${config.protocol}://${config.host}:${config.port}/auth/token/face_recognition`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: {},
+            });
+      
+            setLoading(false);
+      
+            if (response.ok) {
+              const data = await response.json();
+              localStorage.setItem('token', data.access_token);
+              localStorage.setItem('login', username);
+              navigate('/home');
+            } else {
+              const errorData = await response.json();
+              setError(errorData.detail || 'Ошибка Ауентитификации');
+            }
+          } catch (error) {
+            setLoading(false);
+            setError('Ошибка. Пожалуйста, попробуйте позже');
+          }
     }
 
     const addItem = (event) => {
@@ -179,6 +209,42 @@ export default function LightCharts (message="light") {
                     />
                 
                 </Grid>
+                <TextField
+                    autoFocus
+                    required
+                    margin="dense"
+                    id="eta"
+                    name="eta"
+                    label="Желаемая освещенность"
+                    type="float"
+                    onChange={(e) => setEta(e.target.value)}
+                    sx={
+                        {
+                            height: "5%",
+                            position: "absolute",
+                            right: 500,
+                            top: 850,
+                            color: "#ffffff",
+                        }
+                    }
+                >
+                </TextField>
+                <Button
+                    variant="contained"
+                    sx={
+                        {
+                            height: "5%",
+                            position: "absolute",
+                            right: 445,
+                            top: 925,
+                            backgroundColor: "#228BE6",
+                            color: "#ffffff",
+                        }
+                    }
+                    onClick={handleClickEta}
+                >
+                    Изменить Эталонное значение
+                </Button>
                 <Button
                     sx={
                         {

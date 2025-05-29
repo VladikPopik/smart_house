@@ -49,20 +49,6 @@ services:
     depends_on:
       - backend
 
-  # rr_server:
-  #   build: ./rr_server
-  #   ports:
-  #     - "5000:5000"
-  #   volumes:
-  #     - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
-  #   # devices:
-  #   #   - '/dev/video0:/dev/video0'
-  #   #   - '/dev/gpiomem:/dev/gpiomem'
-  #   # privileged: true
-  #   depends_on:
-  #     - backend
-  #     - kafka
-
   monitoring:
     build: ./monitoring
     ports:

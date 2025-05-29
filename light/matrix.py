@@ -1,9 +1,16 @@
 import time
 from logging import getLogger
 from singletonmeta import Singleton
-from multiprocessing import Process, Queue
-
-import spidev
+from multiprocessing import Process
+import adafruit_max7219.matrices
+import board
+import busio
+import digitalio
+import adafruit_max7219
+import time
+import skfuzzy as fuzz
+import numpy as np
+from skfuzzy import control as ctrl
 
 logger = getLogger()
 
@@ -19,107 +26,94 @@ class Matrix(metaclass=Singleton):
         self.on = on
         #Храним процесс отвечающий за переключение 
         self.process: Process | None = None
+        self.lux = 0
+        self.coef = 15
+        self.brightness_res = 0
 
         self.process: Process = Process(
-                    target=self.adjust
-                )
+                    target=self.adjust,
+        )
         self.process.start()
 
-        self.queue = Queue()
-        self.cols = 8
-        self.intensity = 1
+        # Инициализация драйвера MAX7219
+        self.spi = busio.SPI(clock=board.SCLK, MISO=None, MOSI=board.MOSI)
+        self.cs_pin = digitalio.DigitalInOut(board.CE0)
+        self.matrix = adafruit_max7219.matrices.Matrix8x8(spi=self.spi, cs=self.cs_pin)
 
-        # Настройка SPI интерфейса
-        self.spi = spidev.SpiDev()
-        self.spi.open(0, 0) # bus=0, device=0
-        self.spi.max_speed_hz = 1000000
-        self.NO_OP = 0x00
-        self.DIGIT_0 = 0x01
-        self.SHUTDOWN_REGISTER = 0x0C
-        self.DISPLAY_TEST_REGISTER = 0x0F
-        self.DECODE_MODE_REGISTER = 0x09
-        self.INTENSITY_REGISTER = 0x0A
-        self.SCAN_LIMIT_REGISTER = 0x0B
+        # Входящая переменная: уровень освещенности
+        self.illuminance = ctrl.Antecedent(np.arange(0, 80000, 1), 'illuminance')
 
-    def write_register(self, register, value):
-        self.spi.xfer([register, value])
+        # Исходящая переменная: яркость матрицы
+        self.brightness = ctrl.Consequent(np.arange(0, 100, 1), 'brightness')
 
-    def adjust(self, cols=0, intensity=0x0E) -> None:
+    def adjust(self) -> None:
         #Включение
         try:
-            # Определяем константы регистров MAX7219
-            self.spi.open(0, 0) # bus=0, device=0
-            self.spi.max_speed_hz = 1000000
-            # Инициализация дисплея
-            self.write_register(self.SHUTDOWN_REGISTER, 0x01)     # Включаем дисплей
-            self.write_register(self.DISPLAY_TEST_REGISTER, 0x00)  # Выключаем тестовый режим
-            self.write_register(self.DECODE_MODE_REGISTER, 0x00)   # Устанавливаем прямой доступ к регистраторам
-            self.write_register(self.INTENSITY_REGISTER, intensity)     # Увеличиваем яркость до среднего уровня
-            self.write_register(self.SCAN_LIMIT_REGISTER, 0x07)    # Максимальное количество строк сканирования (всего 8 строк)
-            def set_leds(column_data):
-                for i in range(8):       # Цикл по столбцам (цифрам)
-                    self.write_register(i + self.DIGIT_0, column_data[i])  
+            low = fuzz.trimf(self.illuminance.universe, [0, 0, 150])
+            medium = fuzz.trimf(self.illuminance.universe, [0, 150, 300])
+            high = fuzz.trimf(self.illuminance.universe, [150, 300, 800000])
 
-            for col_value in range(1 << cols):  # 0..255
-                data = [(col_value >> x & 1) * 0xff for x in range(8)]
-            set_leds(data)
-            time.sleep(0.1)
+            dim = fuzz.trimf(self.brightness.universe, [0, 0, 50])
+            normal = fuzz.trimf(self.brightness.universe, [0, 50, 100])
+            bright = fuzz.trimf(self.brightness.universe, [50, 100, 100])
+            # Функции принадлежности для освещенности (низкая, средняя, высокая)
+            self.illuminance['low'] = low
+            self.illuminance['medium'] = medium
+            self.illuminance['high'] = high
+
+            # Функции принадлежности для яркости (низкая, средняя, высокая)
+            self.brightness['dim'] = dim
+            self.brightness['normal'] = normal
+            self.brightness['bright'] = bright
+
+            # Правила нечёткого вывода
+            rules = [
+                ctrl.Rule(self.illuminance['low'], self.brightness['bright']),       # Если темно, делаем ярко
+                ctrl.Rule(self.illuminance['medium'], self.brightness['normal']),   # Средняя освещенность, нормальный режим
+                ctrl.Rule(self.illuminance['high'], self.brightness['dim']),         # Высокая освещенность, приглушённый режим
+            ]
+
+            # Система контроля
+            self.control_system = ctrl.ControlSystem(rules)
+            self.simulator = ctrl.ControlSystemSimulation(self.control_system)
+            try:
+                self.matrix.fill(True)
+                while True:
+                    logger.info(f"Освещенность: {self.lux:.2f} lux")
+                    
+                    # Передача входящего значения освещенности в нечёткий регулятор
+                    self.simulator.input['illuminance'] = self.lux
+                    self.simulator.compute()
+                    # Получаем выходное значение яркости
+                    output_brightness = self.simulator.output['brightness']
+                    self.brightness_res = round(output_brightness / 100 * self.coef)
+                    logger.info(f"Яркость матрицы: {output_brightness:.2f}")
+                    logger.info(self.brightness_res)
+                    # Устанавливаем яркость матрицы
+                    self.matrix.brightness(self.brightness_res)  # Масштабируем яркость в диапазон от 0 до 15
+                    self.matrix.show()
+                    time.sleep(0.5)
+
+            except Exception as e:
+                logger.info(e)
+            finally:
+                self.matrix.brightness(self.brightness_res)  # Выключаем матрицу перед выходом’’’
+                self.matrix.fill(False)
+                self.matrix.show()
         
         except Exception as e:
             logger.exception(f"{e}")
-            self.write_register(self.SHUTDOWN_REGISTER, 0x00)  # Отключение дисплея
-            self.spi.close()
-
-        logger.info(f"ON PROCESS {self.process}")
-
-    def kill(self):
-        try:
-            if self.process:
-                self.process.kill()
-                logger.info(f"PROCESS TERMINATED {self.process}")
-                self.process = None
-        except Exception as e:
-            logger.info(e)
-        finally:
-            try:
-                self.spi.close()
-                self.write_register(self.SHUTDOWN_REGISTER, 0x00)
-            except Exception:
-                logger.info("Cannot close SPIDEV")
 
     def perform(self, lux) -> None:
         try:
+            self.lux = lux
+            if self.process.is_alive():
+                self.process.kill()
+            logger.info(f"ON PROCESS {self.process}")
+            self.process = Process(
+                target=self.adjust,
+            )
+            self.process.start()
             logger.info(f"Пришло: {lux}, люкс")
-            if lux < 140:
-                self.kill()
-                if self.intensity < 255:
-                    self.intensity += 1
-                else:
-                    self.intensity = 255
-
-                p = Process(
-                        target=self.adjust,
-                        args=(self.cols, self.intensity)
-                    )
-                p.start()
-                logger.info(p)
-                self.process = p
-                logger.info(f"TO ON PROCESS {self.process}")
-            elif lux > 160:
-                if self.intensity > 2:
-                    self.intensity -= 1
-                else:
-                    self.intensity = 1
-
-                self.kill()
-
-                p = Process(
-                        target=self.adjust,
-                        args=(self.cols, self.intensity)
-                    )
-                p.start()
-                self.process = p
-                logger.info(f"TO OFF PROCESS {self.process}")
         except Exception as e:
             logger.exception(f"{e}")
-            self.kill()

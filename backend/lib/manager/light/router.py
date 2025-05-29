@@ -14,7 +14,6 @@ logger = getLogger()
 
 light_router_ws = APIRouter()
 
-
 @light_router_ws.websocket("/light_ws")
 async def push_data_monitroing_ws(websocket: WebSocket) -> None:
     """WebSocket for light data."""

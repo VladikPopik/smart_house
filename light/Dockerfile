@@ -4,8 +4,7 @@ WORKDIR /light
 RUN apt-get update 
 RUN pip install --upgrade pip setuptools wheel
 COPY requirements.txt requirements.txt
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --use-pep517
 EXPOSE 9999
 COPY . .
 CMD [ "python3", "/light/start_server.py" ]
