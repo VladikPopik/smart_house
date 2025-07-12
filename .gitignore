@@ -3,8 +3,5 @@ __pycache__/
 raspberry_server/data/
 Cargo.lock
 target/
-<<<<<<< Updated upstream
 venv
-=======
 .env
->>>>>>> Stashed changes

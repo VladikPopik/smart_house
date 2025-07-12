@@ -36,45 +36,46 @@ services:
       - kafka
       - db
 
+# Not a bug, needed for PC
   server:
-    build: ./raspberry_server
+    build: ./server
     ports:
       - "8080:8080"
-    volumes:
-      - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
-    devices:
-      - '/dev/video0:/dev/video0'
-      - '/dev/gpiomem:/dev/gpiomem'
+    # volumes:
+    #   - /home/admin/smart_house/smart_house/raspberry_server/data:/raspberry_server/data
+    # devices:
+    #   - '/dev/video0:/dev/video0'
+    #   - '/dev/gpiomem:/dev/gpiomem'
     privileged: true
     depends_on:
       - backend
 
-  monitoring:
-    build: ./monitoring
-    ports:
-      - "9999:9999"
-    depends_on:
-      - backend
-      - kafka
+  # monitoring:
+  #   build: ./monitoring
+  #   ports:
+  #     - "9999:9999"
+  #   depends_on:
+  #     - backend
+  #     - kafka
 
-  face:
-    build: ./face_recognition
-    ports: 
-      - "8889:8889"
-    devices:
-      - '/dev/video0:/dev/video0'
-    depends_on:
-      - backend
-      - kafka
+  # face:
+  #   build: ./face_recognition
+  #   ports: 
+  #     - "8889:8889"
+  #   devices:
+  #     - '/dev/video0:/dev/video0'
+  #   depends_on:
+  #     - backend
+  #     - kafka
 
-  light:
-    build: ./light
-    ports:
-      - "8888:8888"
-    devices:
-      - '/dev/gpiomem:/dev/gpiomem'
-      - '/dev/spi*:/dev/spi*'
-    privileged: true
-    depends_on:
-      - backend
-      - kafka
+  # light:
+  #   build: ./light
+  #   ports:
+  #     - "8888:8888"
+  #   devices:
+  #     - '/dev/gpiomem:/dev/gpiomem'
+  #     - '/dev/spi*:/dev/spi*'
+  #   privileged: true
+  #   depends_on:
+  #     - backend
+  #     - kafka
